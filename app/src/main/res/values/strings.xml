@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Verdinho</string>
+    <string name="falha_acesso_servidor">Não foi possível conectar ao servidor.</string>
+    <string name="detalhes">Detalhes</string>
+
+    <string name="ponto_n_">Ponto: %s</string>
+    <string name="meno_minuto">Em menos de um minuto</string>
+    <string name="mais_hora">%1$d h %2$d min</string>
+
+    <plurals name="minutos">
+        <item quantity="one">%d minuto</item>
+        <item quantity="other">%d minutos</item>
+    </plurals>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_linha_detalhe">Settings</string>
+    <string name="adicionar">Adicionar</string>
+    <string name="sobre">As previsões são obtidas pelo sistema \"Ponto Vitória\" da Prefeitura Municipal de Vitória e estão sujeitas a
+        disponibilidade
+    </string>
+    <string name="informacoes">Informações</string>
+    <string name="idealizador">Idealizador: Lucas Romano M. Rizzi</string>
+    <string name="desenvolvedor">Desenvolvedor: Victor Pinto</string>
+    <string name="designer_">Designer: Urlan Maciel</string>
+    <string name="favoritos">Favoritos</string>
+    <string name="ponto_adicionado">Ponto adicionado aos favoritos</string>
+    <string name="ponto_removido">Ponto removido dos favoritos</string>
+    <string name="linha_adicionado">Linha adicionada aos favoritos</string>
+    <string name="linha_removido">Linha removida dos favoritos</string>
+    <string name="desfazer">Desfazer</string>
+    <string name="favoritos_empty_subtitle">Encontre mais facilmente seus pontos e ônibus mais usados. Marque-os como favorito e eles
+        aparecerão aqui.
+    </string>
+    <string name="favoritos_empty_title">Não há pontos favoritos</string>
+
+    <string name="ponto_empty_subtitle">Isso pode ter ocorrido por uma falha de conexão com o servidor da Prefeitura de Vitória.
+        Verifique sua conexão com a internet e tente novamente.
+    </string>
+    <string name="ponto_empty_title">Não há ônibus nesse ponto</string>
+    <string name="linhas_favoritas">LINHAS FAVORITAS</string>
+    <string name="linhas">LINHAS</string>
+
+</resources>

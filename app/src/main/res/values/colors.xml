@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4CAF50</color>
+    <color name="colorPrimaryDark">#388E3C</color>
+    <color name="colorAccent">#8BC34A</color>
+
+    <color name="background_acessibilidae">#006DD9</color>
+
+    <color name="confiabilidade_ruim">#FF4D4D</color>
+    <color name="confiabilidade_medio">#FFAA00</color>
+    <color name="confiabilidade_ok">#1ABC9C</color>
+    <color name="divider">#CCC</color>
+
+    <color name="background_header">#F0EDE5</color>
+    <color name="background_barra">#282828</color>
+
+</resources>

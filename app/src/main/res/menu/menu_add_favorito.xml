@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.github.ovictorpinto.verdinho.PontoDetalheActivity">
+
+    <item android:id="@+id/menu_add_favorito"
+          android:icon="@drawable/ic_add_favoritos"
+          android:orderInCategory="1"
+          android:title="@string/adicionar"
+          app:showAsAction="always"/>
+</menu>
