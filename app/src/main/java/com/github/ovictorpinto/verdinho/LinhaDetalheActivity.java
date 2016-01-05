@@ -1,5 +1,6 @@
 package com.github.ovictorpinto.verdinho;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -211,6 +212,15 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Fragment alert = fragmentManager.findFragmentByTag(AlertDialogFragmentV11.FRAGMENT_ID);
+            if(alert != null){
+                fragmentManager.beginTransaction().remove(alert).commitAllowingStateLoss();
+            }
+        }
+
+        @Override
         protected Boolean doInBackground(Void... params) {
             try {
                 if (FragmentExtended.isOnline(context)) {
@@ -237,16 +247,15 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
                             }
                         });
 
+                        return true;
                     } catch (UnknownHostException e) {
-                        e.printStackTrace();
-                        return false;
+                        LogHelper.log(e);
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                return false;
+                LogHelper.log(e);
             }
-            return true;
+            return false;
         }
 
         @Override
