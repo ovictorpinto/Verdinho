@@ -38,5 +38,9 @@
     <string name="ponto_empty_title">Não há ônibus nesse ponto</string>
     <string name="linhas_favoritas">LINHAS FAVORITAS</string>
     <string name="linhas">LINHAS</string>
+    <string name="location_not_found">Localização não encontrada</string>
+    <string name="explicacao_gps_sem_permissao">Habilite acesso ao GPS nas configurações
+        para ver os pontos mais próximos.
+    </string>
 
 </resources>

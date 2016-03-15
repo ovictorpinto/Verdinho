@@ -25,8 +25,8 @@ import br.com.tcsistemas.common.string.StringHelper;
  */
 public class EstimativaPontoRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int HEADER = 0;
-    private static final int ITEM = 1;
+    private static final int HEADER = 10;
+    private static final int ITEM = 11;
 
     Context context;
     private List<Estimativa> estimativas;
@@ -44,9 +44,9 @@ public class EstimativaPontoRecyclerAdapter extends RecyclerView.Adapter<Recycle
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
-        final Estimativa item = estimativas.get(position);
-        if (item.getItinerarioId() == null) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
+        if (viewType == HEADER) {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ly_header, viewGroup, false);
             return new HeadeHolder(view);
         } else {

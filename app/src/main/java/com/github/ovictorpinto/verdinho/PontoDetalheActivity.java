@@ -1,5 +1,6 @@
 package com.github.ovictorpinto.verdinho;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -205,6 +206,15 @@ public class PontoDetalheActivity extends AppCompatActivity {
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Fragment alert = fragmentManager.findFragmentByTag(AlertDialogFragmentV11.FRAGMENT_ID);
+            if(alert != null){
+                fragmentManager.beginTransaction().remove(alert).commitAllowingStateLoss();
+            }
+        }
+
+        @Override
         protected Boolean doInBackground(Void... params) {
             try {
 
@@ -324,17 +334,15 @@ public class PontoDetalheActivity extends AppCompatActivity {
                             retornoLinhasPonto.setEstimativas(comHeaders);
 
                         }
-
+                        return true;
                     } catch (UnknownHostException e) {
-                        e.printStackTrace();
-                        return false;
+                        LogHelper.log(e);
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                return false;
+                LogHelper.log(e);
             }
-            return true;
+            return false;
         }
 
         @Override
@@ -352,7 +360,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
                     recyclerView.setVisibility(has ? View.VISIBLE : View.GONE);
                     emptyView.setVisibility(has ? View.GONE : View.VISIBLE);
 
-                    if (retornoLinhasPonto != null) {
+                    if (has) {
                         EstimativaPontoRecyclerAdapter adapter = new EstimativaPontoRecyclerAdapter(context, retornoLinhasPonto
                                 .getEstimativas(), retornoLinhasPonto.getHorarioDoServidor(), mapLinhas, pontoTO);
                         recyclerView.setAdapter(adapter);

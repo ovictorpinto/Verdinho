@@ -1,5 +1,6 @@
 package com.github.ovictorpinto.verdinho;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -10,10 +11,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     
     private static final String TAG = "MainActivity";
     private static final String OPCAO = "opcaoSelecionada";
+    private static final int PERMISSION_GPS_REQUEST_CODE = 201;
 
     public static ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private ProcessoLoadPontos processo;
@@ -290,6 +295,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onConnected(Bundle connectionHint) {
         LogHelper.log(TAG, "Conectou no fused");
+
+        boolean hasPermission = (ContextCompat
+                .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+        if (hasPermission) {
+            getLocation();
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Toast.makeText(this, getString(R.string.explicacao_gps_sem_permissao), Toast.LENGTH_LONG).show();
+            } else {
+                ActivityCompat
+                        .requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_GPS_REQUEST_CODE);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_GPS_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getLocation();
+                }
+                break;
+        }
+    }
+
+    private void getLocation() {
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
             LogHelper.log(TAG, "Encontrou última posição!");
@@ -307,13 +339,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
         } else {
-            Toast.makeText(this, "Localização não encontrada", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.location_not_found, Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        LogHelper.log(TAG, "onConnectionSuspended "+ i);
+        LogHelper.log(TAG, "onConnectionSuspended " + i);
     }
 
     @Override
@@ -371,17 +403,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             PontoTO pontoTO = pontosDeParada.get(i);
                             dao.create(new PontoPO(pontoTO));
                         }
+                        return true;
 
                     } catch (UnknownHostException e) {
-                        e.printStackTrace();
-                        return false;
+                        LogHelper.log(e);
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                return false;
+                LogHelper.log(e);
             }
-            return true;
+            return false;
         }
 
         @Override
