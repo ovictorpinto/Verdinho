@@ -235,6 +235,13 @@ public class PontoDetalheActivity extends AppCompatActivity {
                         }
 
                         List<Estimativa> tmp = retornoLinhasPonto.getEstimativas();
+                        //ordena antes de filtrar o primeiro de cada
+                        Collections.sort(tmp, new Comparator<Estimativa>() {
+                            @Override
+                            public int compare(Estimativa lhs, Estimativa rhs) {
+                                return lhs.getHorarioNaOrigem().compareTo(rhs.getHorarioNaOrigem());
+                            }
+                        });
                         List<Estimativa> estimativas = new ArrayList<>();
 
                         Set<Integer> linhas = new HashSet<>();

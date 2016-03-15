@@ -44,7 +44,7 @@ public class DetalhePontoDialogFrag extends DialogFragment {
         getDialog().getWindow()
                    .setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT)); //remove fundo do dialog e obedece o shape
         getDialog().setCanceledOnTouchOutside(true);
-//        getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        //        getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
         viewPrincipal = inflater.inflate(R.layout.ly_detalhe_ponto_dialog, null);
         TextView textViewPonto = (TextView) viewPrincipal.findViewById(R.id.textview_ponto);
@@ -96,7 +96,7 @@ public class DetalhePontoDialogFrag extends DialogFragment {
         map.getUiSettings().setMyLocationButtonEnabled(false);
         map.setMyLocationEnabled(true);
 
-//        GoogleMapOptions.zOrderOnTop(true);
+        //        GoogleMapOptions.zOrderOnTop(true);
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(this.getActivity().getApplicationContext());
 
@@ -128,8 +128,8 @@ public class DetalhePontoDialogFrag extends DialogFragment {
 
     @Override
     public void onResume() {
-        mapView.onResume();
         super.onResume();
+        mapView.onResume();
     }
 
     @Override
@@ -144,4 +144,9 @@ public class DetalhePontoDialogFrag extends DialogFragment {
         mapView.onLowMemory();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
 }

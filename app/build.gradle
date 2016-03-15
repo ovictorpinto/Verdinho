@@ -22,8 +22,8 @@ android {
         applicationId "com.github.ovictorpinto.verdinho"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 10
-        versionName "1.0"
+        versionCode 12
+        versionName "1.0.2"
     }
     buildTypes {
         release {
