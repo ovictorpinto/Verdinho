@@ -3,7 +3,8 @@
     <string name="falha_acesso_servidor">Não foi possível conectar ao servidor.</string>
     <string name="detalhes">Detalhes</string>
 
-    <string name="ponto_n_">Ponto: %s</string>
+    <string name="ponto_n_linha_n_">Ponto: %1$s    Linha: %2$s</string>
+    <string name="ponto_n_">Ponto: %1$s</string>
     <string name="meno_minuto">Em menos de um minuto</string>
     <string name="mais_hora">%1$d h %2$d min</string>
 
@@ -42,5 +43,8 @@
     <string name="explicacao_gps_sem_permissao">Habilite acesso ao GPS nas configurações
         para ver os pontos mais próximos.
     </string>
+    <string name="description_button_info">Exibir informações sobre o aplicativo</string>
+    <string name="description_button_mapa">Exibe o mapa com os pontos</string>
+    <string name="description_button_favoritos">Exibe os pontos marcados como favorito</string>
 
 </resources>

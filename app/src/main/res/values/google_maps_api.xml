@@ -1,3 +1,4 @@
 <resources>
+    <!--projeto TeamTracking-->
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyB7eKeB-J7iJUisKfzGkwxkQdpsgmDR3g0</string>
 </resources>

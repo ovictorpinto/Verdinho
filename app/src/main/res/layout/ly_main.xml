@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -23,11 +23,11 @@
                   android:name="com.google.android.gms.maps.MapFragment"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  tools:context=".MainActivity"
-                  tools:visibility="invisible"
                   map:cameraTargetLat="-20.303115"
                   map:cameraTargetLng="-40.306101"
-                  map:cameraZoom="16"/>
+                  map:cameraZoom="16"
+                  tools:context=".MainActivity"
+                  tools:visibility="invisible"/>
 
         <fragment android:id="@+id/fragment_sobre"
                   android:name="com.github.ovictorpinto.verdinho.SobreFragment"
@@ -54,9 +54,9 @@
                 android:id="@+id/button_favoritos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/description_button_favoritos"
                 android:minWidth="@dimen/minimun_height"
-                android:src="@drawable/favorito_tabbar_desmarcado"
-                tools:src="@drawable/mapa"/>
+                android:src="@drawable/favorito_tabbar_desmarcado"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -68,9 +68,9 @@
                 android:id="@+id/button_sobre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/description_button_info"
                 android:minWidth="@dimen/minimun_height"
-                android:src="@drawable/info_tabbar_desmarcado"
-                tools:src="@drawable/mapa"/>
+                android:src="@drawable/info_tabbar_desmarcado"/>
         </LinearLayout>
     </LinearLayout>
     <ImageButton
@@ -79,5 +79,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/mapa"/>
+        android:background="@drawable/mapa"
+        android:contentDescription="@string/description_button_mapa"/>
 </RelativeLayout>
