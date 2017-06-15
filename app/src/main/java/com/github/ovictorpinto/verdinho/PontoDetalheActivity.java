@@ -1,7 +1,6 @@
 package com.github.ovictorpinto.verdinho;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -185,32 +184,30 @@ public class PontoDetalheActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        task.cancel();
         if (processo != null) {
             processo.cancel(true);
         }
         LocalBroadcastManager.getInstance(this).unregisterReceiver(updatePontoFavoritoReceive);
-        task.cancel();
     }
 
     private class ProcessoLoadLinhasPonto extends AsyncTask<Void, String, Boolean> {
 
         private final String TAG = "ProcessoLoadLinhasPonto";
         protected Context context;
-        private FragmentManager fragmentManager;
         private RetornoLinhasPonto retornoLinhasPonto;
         private RetornoListarLinhas retornoListarLinhas;
 
         public ProcessoLoadLinhasPonto() {
             this.context = PontoDetalheActivity.this;
-            this.fragmentManager = getFragmentManager();
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Fragment alert = fragmentManager.findFragmentByTag(AlertDialogFragmentV11.FRAGMENT_ID);
+            Fragment alert = getFragmentManager().findFragmentByTag(AlertDialogFragmentV11.FRAGMENT_ID);
             if(alert != null){
-                fragmentManager.beginTransaction().remove(alert).commitAllowingStateLoss();
+                getFragmentManager().beginTransaction().remove(alert).commitAllowingStateLoss();
             }
         }
 
@@ -352,7 +349,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
                 if (!success) {
                     //abrir uma nova janela de erro
                     AlertDialogFragmentV11 alert = AlertDialogFragmentV11.newInstance(null, null, R.string.falha_acesso_servidor);
-                    fragmentManager.beginTransaction().add(alert, AlertDialogFragmentV11.FRAGMENT_ID).commitAllowingStateLoss();
+                    getFragmentManager().beginTransaction().add(alert, AlertDialogFragmentV11.FRAGMENT_ID).commitAllowingStateLoss();
                 } else {
 
                     boolean has = retornoLinhasPonto != null && retornoLinhasPonto.getEstimativas() != null && !retornoLinhasPonto

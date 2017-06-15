@@ -1,7 +1,6 @@
 package com.github.ovictorpinto.verdinho;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -35,7 +34,7 @@ import com.github.ovictorpinto.verdinho.to.PontoTO;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -66,46 +65,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String TAG = "MainActivity";
     private static final String OPCAO = "opcaoSelecionada";
     private static final int PERMISSION_GPS_REQUEST_CODE = 201;
-
+    
     public static ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private ProcessoLoadPontos processo;
-
+    
     private ImageView buttonFavorito;
     private ImageView buttonSobre;
-
+    
     //0 favorito, 1 mapa, 2 sobre
     private int opcao = 1;
-
+    
     private GoogleMap mMap;
     private Map<String, PontoTO> mapPontos = new HashMap<>();
-
+    
     private MapFragment mapFragment;
     private Fragment sobreFragment;
     private Fragment favoritoFragment;
-
+    
     private LatLng devicePosition;
     private Set<Integer> setFavoritos;
     private BroadcastReceiver favoriteReceive;
     private GoogleApiClient mGoogleApiClient;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         buildGoogleApiClient();
         setContentView(R.layout.ly_main);
-
+        
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean loaded = preferences.getBoolean(Constantes.pref_loaded, false);
-
+        
         if (!loaded) {
             processo = new ProcessoLoadPontos();
             processo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
-
+        
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         favoritoFragment = getFragmentManager().findFragmentById(R.id.fragment_favoritos);
         sobreFragment = getFragmentManager().findFragmentById(R.id.fragment_sobre);
-
+        
         View buttonMapa = findViewById(R.id.image_mapa);
         buttonMapa.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 clickFavorito();
             }
         });
-
+        
         buttonSobre = (ImageView) findViewById(R.id.button_sobre);
         buttonSobre.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,14 +127,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 clickSobre();
             }
         });
-
-        int isAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (isAvailable != ConnectionResult.SUCCESS) {//caso nao esteja disponivel aparece o botao para baixar
-            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(isAvailable, this, 1);
-            errorDialog.show();
-            return;
-        }
-
+        
+        //        checkPlayServices();
+        
         fillFavoritos();
         favoriteReceive = new BroadcastReceiver() {
             @Override
@@ -145,11 +139,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         };
         LocalBroadcastManager.getInstance(this).registerReceiver(favoriteReceive, new IntentFilter(Constantes.actionUpdatePontoFavorito));
-
-        mapFragment.getMapAsync(this);
-
+        
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
+        
         clickMapa();
-
+        
         if (savedInstanceState != null) {
             switch (savedInstanceState.getInt(OPCAO)) {
                 case 0:
@@ -163,7 +159,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
-
+    
+    /**
+     * https://stackoverflow.com/questions/31016722/googleplayservicesutil-vs-googleapiavailability
+     * @return
+     */
+    private boolean checkPlayServices() {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(this);
+        if (result != ConnectionResult.SUCCESS) {
+            if (googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog(this, result, 9000).show();
+            }
+            return false;
+        }
+        return true;
+    }
+    
     private void fillFavoritos() {
         PontoFavoritoDAO favoritoDAO = new PontoFavoritoDAO(this);
         List<PontoPO> allFavoritos = favoritoDAO.findAllFavoritos();
@@ -173,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             setFavoritos.add(po.getPontoTO().getIdPonto());
         }
     }
-
+    
     private void clickMapa() {
         setTitle(R.string.app_name);
         opcao = 1;
@@ -183,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         buttonSobre.setImageResource(R.drawable.info_tabbar_desmarcado);
         buttonFavorito.setImageResource(R.drawable.favorito_tabbar_desmarcado);
     }
-
+    
     private void clickSobre() {
         setTitle(R.string.informacoes);
         opcao = 2;
@@ -193,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         buttonSobre.setImageResource(R.drawable.info_tabbar_marcado);
         buttonFavorito.setImageResource(R.drawable.favorito_tabbar_desmarcado);
     }
-
+    
     private void clickFavorito() {
         setTitle(R.string.favoritos);
         opcao = 0;
@@ -203,13 +215,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         buttonSobre.setImageResource(R.drawable.info_tabbar_desmarcado);
         buttonFavorito.setImageResource(R.drawable.favorito_tabbar_marcado);
     }
-
+    
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(OPCAO, opcao);
         super.onSaveInstanceState(outState);
     }
-
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -218,16 +230,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         LocalBroadcastManager.getInstance(this).unregisterReceiver(favoriteReceive);
     }
-
+    
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LogHelper.log(TAG, "Mapa pronto");
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
+        if (ActivityCompat
+                .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat
+                .checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+        }
+        
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
-
+        
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-
+            
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 fillMarkers();
@@ -236,22 +253,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-
+                
                 PontoTO clicado = mapPontos.get(marker.getId());
-
+                
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(PontoTO.PARAM, clicado);
-
+                
                 DialogFragment frag = new DetalhePontoDialogFrag();
                 frag.setArguments(bundle);
                 frag.show(getFragmentManager(), DetalhePontoDialogFrag.TAG_FRAG);
-
+                
                 return true;
             }
         });
         fillMarkers();
     }
-
+    
     private void fillMarkers() {
         LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
         mMap.clear();
@@ -259,43 +276,43 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         PontoDAO dao = new PontoDAO(this);
         List<PontoPO> list = dao.findByRegiao(bounds);
         LogHelper.log(TAG, "Encontrados " + list.size());
-
+        
         for (int i = 0; i < list.size(); i++) {
             PontoPO pontoPO = list.get(i);
             PontoTO to = pontoPO.getPontoTO();
-
+            
             int pin = setFavoritos.contains(to.getIdPonto()) ? R.drawable.pin_favorito : R.drawable.pin;
-
+            
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.icon(BitmapDescriptorFactory.fromResource(pin));
             markerOptions.position(new LatLng(to.getLatitude(), to.getLongitude()));
-
+            
             Marker marker = mMap.addMarker(markerOptions);
             mapPontos.put(marker.getId(), to);
         }
     }
-
+    
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this)
                                                             .addApi(LocationServices.API).build();
     }
-
+    
     @Override
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
     }
-
+    
     @Override
     protected void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
     }
-
+    
     @Override
     public void onConnected(Bundle connectionHint) {
         LogHelper.log(TAG, "Conectou no fused");
-
+        
         boolean hasPermission = (ContextCompat
                 .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
         if (hasPermission) {
@@ -309,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
-
+    
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -320,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
         }
     }
-
+    
     private void getLocation() {
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
@@ -332,70 +349,70 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void onFinish() {
                     fillMarkers();
                 }
-
+                
                 @Override
                 public void onCancel() {
-
+                    
                 }
             });
         } else {
             Toast.makeText(this, R.string.location_not_found, Toast.LENGTH_SHORT).show();
         }
     }
-
+    
     @Override
     public void onConnectionSuspended(int i) {
         LogHelper.log(TAG, "onConnectionSuspended " + i);
     }
-
+    
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         LogHelper.log(TAG, "onConnectionFailed");
         Toast.makeText(this, "Localização não disponível", Toast.LENGTH_SHORT).show();
     }
-
+    
     private class ProcessoLoadPontos extends AsyncTask<Void, String, Boolean> {
-
+        
         private final String TAG = "ProcessoLoadPontos";
         protected Context context;
         private FragmentManager fragmentManager;
-
+        
         public ProcessoLoadPontos() {
             this.context = MainActivity.this;
             this.fragmentManager = getFragmentManager();
         }
-
+        
         @Override
         protected Boolean doInBackground(Void... params) {
-
+            
             try {
                 if (FragmentExtended.isOnline(context)) {
                     try {
-
+                        
                         String url = Constantes.listarPontos;
                         String urlParam = "{\"envelope\":[-40.2558446019482, -20.3411474261535, -40.3615017219324, -20.1865857661999]}";
                         Map<String, String> headers = new HashMap<>();
                         headers.put("Content-Type", "application/json");
                         LogHelper.log(TAG, url);
                         LogHelper.log(TAG, urlParam);
-
+                        
                         String retorno = HttpHelper.doPost(url, urlParam, HttpHelper.UTF8, headers);
                         LogHelper.log(TAG, retorno);
-
+                        
                         RetornoPesquisarPontos retornoPesquisarPontos = mapper.readValue(retorno, RetornoPesquisarPontos.class);
                         LogHelper.log(TAG, retornoPesquisarPontos.getPontosDeParada().size() + " item(s)");
-
+                        
                         url = Constantes.detalharPontos;
                         urlParam = "{\"listaIds\": " + retornoPesquisarPontos.getPontosDeParada().toString() + " }";
                         LogHelper.log(TAG, url);
                         LogHelper.log(TAG, urlParam);
-
+                        
                         retorno = HttpHelper.doPost(url, urlParam, HttpHelper.UTF8, headers);
                         LogHelper.log(TAG, retorno);
-
+                        
                         RetornoDetalharPontos retornoDetalharPontos = mapper.readValue(retorno, RetornoDetalharPontos.class);
                         LogHelper.log(TAG, retornoDetalharPontos.getPontosDeParada().size() + " item(s)");
-
+                        
                         List<PontoTO> pontosDeParada = retornoDetalharPontos.getPontosDeParada();
                         PontoDAO dao = new PontoDAO(context);
                         dao.removeAll();
@@ -404,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             dao.create(new PontoPO(pontoTO));
                         }
                         return true;
-
+                        
                     } catch (UnknownHostException e) {
                         LogHelper.log(e);
                     }
@@ -414,10 +431,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             return false;
         }
-
+        
         @Override
         protected void onPostExecute(Boolean success) {
-
+            
             if (!isCancelled()) {
                 if (!success) {
                     //abrir uma nova janela de erro
@@ -433,7 +450,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             processo = null;
         }
-
+        
     }
-
+    
 }
