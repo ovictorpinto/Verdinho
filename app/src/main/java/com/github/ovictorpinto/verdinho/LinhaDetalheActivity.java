@@ -27,6 +27,7 @@ import com.github.ovictorpinto.verdinho.retorno.RetornoLinhasPonto;
 import com.github.ovictorpinto.verdinho.to.Estimativa;
 import com.github.ovictorpinto.verdinho.to.LinhaTO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
+import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
 import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
@@ -61,6 +62,7 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
     private FloatingActionButton buttonFavorito;
     private BroadcastReceiver favoritoReceive;
     private SubtitleCollapsingToolbarLayout collapsingToolbarLayout;
+    private AnalyticsHelper analyticsHelper;
     
     private Timer timerAtual = new Timer();
     private TimerTask task;
@@ -69,6 +71,7 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        analyticsHelper = new AnalyticsHelper(this);
         setContentView(R.layout.ly_linha_detalhe);
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         collapsingToolbarLayout = (SubtitleCollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
@@ -91,6 +94,7 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                analyticsHelper.forceRefresh(pontoTO, linhaTO);
                 refresh();
             }
         });

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.ovictorpinto.verdinho.to.PontoTO;
+import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 
 import java.util.List;
 
@@ -19,10 +20,12 @@ public class FavoritoRecyclerAdapter extends RecyclerView.Adapter<FavoritoRecycl
 
     private Context context;
     private List<PontoTO> pontos;
+    private AnalyticsHelper analyticsHelper;
 
     public FavoritoRecyclerAdapter(Context context, List<PontoTO> pontos) {
         this.context = context;
         this.pontos = pontos;
+        analyticsHelper = new AnalyticsHelper(context);
     }
 
     @Override
@@ -43,6 +46,7 @@ public class FavoritoRecyclerAdapter extends RecyclerView.Adapter<FavoritoRecycl
         viewHolder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                analyticsHelper.selecionouPonto(item, "favorito");
                 Intent i = new Intent(context, PontoDetalheActivity.class);
                 i.putExtra(PontoTO.PARAM, item);
                 context.startActivity(i);

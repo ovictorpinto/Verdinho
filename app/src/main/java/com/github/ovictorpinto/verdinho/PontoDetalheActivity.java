@@ -28,6 +28,7 @@ import com.github.ovictorpinto.verdinho.retorno.RetornoListarLinhas;
 import com.github.ovictorpinto.verdinho.to.Estimativa;
 import com.github.ovictorpinto.verdinho.to.LinhaTO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
+import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.DividerItemDecoration;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
@@ -60,7 +61,8 @@ public class PontoDetalheActivity extends AppCompatActivity {
     private View progress;
     private View emptyView;
     private BroadcastReceiver updateLinhaFavoritoReceive;
-
+    private AnalyticsHelper analyticsHelper;
+    
     private Timer timerAtual = new Timer();
     private TimerTask task;
     private final Handler handler = new Handler();
@@ -69,7 +71,8 @@ public class PontoDetalheActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ly_ponto_detalhe);
-
+    
+        analyticsHelper = new AnalyticsHelper(this);
         pontoTO = (PontoTO) getIntent().getSerializableExtra(PontoTO.PARAM);
         setTitle(getString(R.string.ponto_n_, pontoTO.getIdentificador()));
 
@@ -91,6 +94,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                analyticsHelper.forceRefresh(pontoTO);
                 refresh();
             }
         });
@@ -103,6 +107,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
                 final PontoFavoritoDAO dao = new PontoFavoritoDAO(PontoDetalheActivity.this);
                 PontoFavoritoPO banco = dao.findByPK(pontoTO.getIdPonto().toString());
                 if (banco == null) {
+                    analyticsHelper.favoritou(pontoTO, "ponto_detalhe");
                     dao.create(new PontoFavoritoPO(pontoTO));
                     View.OnClickListener desfazerListener = new View.OnClickListener() {
                         @Override
@@ -115,6 +120,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
                     Snackbar.make(view, R.string.ponto_adicionado, Snackbar.LENGTH_SHORT).setAction(R.string.desfazer, desfazerListener)
                             .show();
                 } else {
+                    analyticsHelper.removeuFavoritou(pontoTO, "ponto_detalhe");
                     dao.removeByPK(new PontoFavoritoPO(pontoTO));
                     View.OnClickListener desfazerListener = new View.OnClickListener() {
                         @Override

@@ -31,6 +31,7 @@ import com.github.ovictorpinto.verdinho.persistencia.po.PontoPO;
 import com.github.ovictorpinto.verdinho.retorno.RetornoDetalharPontos;
 import com.github.ovictorpinto.verdinho.retorno.RetornoPesquisarPontos;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
+import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
 import com.google.android.gms.common.ConnectionResult;
@@ -41,7 +42,6 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -66,27 +66,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String TAG = "MainActivity";
     private static final String OPCAO = "opcaoSelecionada";
     private static final int PERMISSION_GPS_REQUEST_CODE = 201;
-    
     public static ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    
     private ProcessoLoadPontos processo;
-    
     private ImageView buttonFavorito;
-    private ImageView buttonSobre;
     
+    private ImageView buttonSobre;
     //0 favorito, 1 mapa, 2 sobre
     private int opcao = 1;
     
     private GoogleMap mMap;
-    private Map<String, PontoTO> mapPontos = new HashMap<>();
     
+    private Map<String, PontoTO> mapPontos = new HashMap<>();
     private MapFragment mapFragment;
+    
     private Fragment sobreFragment;
     private Fragment favoritoFragment;
-    
     private LatLng devicePosition;
+    
     private Set<Integer> setFavoritos;
     private BroadcastReceiver favoriteReceive;
     private GoogleApiClient mGoogleApiClient;
+    
+    private AnalyticsHelper analyticsHelper;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         buildGoogleApiClient();
         setContentView(R.layout.ly_main);
         
+        analyticsHelper = new AnalyticsHelper(this);
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean loaded = preferences.getBoolean(Constantes.pref_loaded, false);
         
@@ -187,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     
     private void clickMapa() {
+        analyticsHelper.clickMapa();
         setTitle(R.string.app_name);
         opcao = 1;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -197,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     
     private void clickSobre() {
+        analyticsHelper.clickSobre();
         setTitle(R.string.informacoes);
         opcao = 2;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -207,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     
     private void clickFavorito() {
+        analyticsHelper.clickFavorito();
         setTitle(R.string.favoritos);
         opcao = 0;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
