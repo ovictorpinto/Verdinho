@@ -41,6 +41,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -100,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             processo = new ProcessoLoadPontos();
             processo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
-        
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         favoritoFragment = getFragmentManager().findFragmentById(R.id.fragment_favoritos);
         sobreFragment = getFragmentManager().findFragmentById(R.id.fragment_sobre);
@@ -236,8 +236,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LogHelper.log(TAG, "Mapa pronto");
         mMap = googleMap;
         if (ActivityCompat
-                .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat
-                .checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat
+                .checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
         
