@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class DetalhePontoDialogFrag extends DialogFragment {
     
     public static final String TAG_FRAG = "fragmentConfirmacaoConsultaFrag";
+    private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     
     private View viewPrincipal;
     private ImageView buttonFavoritos;
@@ -89,20 +90,25 @@ public class DetalhePontoDialogFrag extends DialogFragment {
             }
         });
         
-        //        MapFragment fragment = new MapFragment();
-        //        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        //        transaction.add(R.id.mapa_popup, fragment).commit();
         mapView = (MapView) viewPrincipal.findViewById(R.id.mapview);
-        mapView.onCreate(savedInstanceState);
+        // *** IMPORTANT ***
+        // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK
+        // objects or sub-Bundles.
+        //https://github.com/googlemaps/android-samples/blob/master/ApiDemos/app/src/main/java/com/example/mapdemo/RawMapViewDemoActivity.java
+        Bundle mapViewBundle = null;
+        if (savedInstanceState != null) {
+            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
+        }
+        mapView.onCreate(mapViewBundle);
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 // Gets to GoogleMap from the MapView and does initialization stuff
                 googleMap.getUiSettings().setMyLocationButtonEnabled(false);
                 if (ActivityCompat
-                        .checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager
-                        .PERMISSION_GRANTED && ActivityCompat
-                        .checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager
+                        .checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager
+                        .PERMISSION_GRANTED || ActivityCompat
+                        .checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager
                         .PERMISSION_GRANTED) {
                     googleMap.setMyLocationEnabled(true);
                 }
@@ -137,6 +143,19 @@ public class DetalhePontoDialogFrag extends DialogFragment {
         } else {
             buttonFavoritos.setImageResource(R.drawable.favorito_tabbar_desmarcado);
         }
+    }
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        
+        Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
+        if (mapViewBundle == null) {
+            mapViewBundle = new Bundle();
+            outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
+        }
+        
+        mapView.onSaveInstanceState(mapViewBundle);
     }
     
     @Override
