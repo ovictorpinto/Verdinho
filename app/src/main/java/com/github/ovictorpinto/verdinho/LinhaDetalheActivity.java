@@ -30,6 +30,7 @@ import com.github.ovictorpinto.verdinho.to.PontoTO;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
+import com.github.ovictorpinto.verdinho.util.RatingHelper;
 import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
 import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.StreetViewPanoramaFragment;
@@ -53,25 +54,36 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
     private Estimativa estimativa;
     private PontoTO pontoTO;
     private LinhaTO linhaTO;
+    
     private ProcessoLoadDetalheLinha processo;
+    
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefresh;
     private AppBarLayout appBarLayout;
     private View progress;
     private View emptyView;
     private FloatingActionButton buttonFavorito;
-    private BroadcastReceiver favoritoReceive;
     private SubtitleCollapsingToolbarLayout collapsingToolbarLayout;
-    private AnalyticsHelper analyticsHelper;
     
-    private Timer timerAtual = new Timer();
-    private TimerTask task;
+    private BroadcastReceiver favoritoReceive;
+    
+    private AnalyticsHelper analyticsHelper;
+    private RatingHelper ratingHelper;
+    
+    private Timer timerAtualizacao = new Timer();
+    private TimerTask taskAtualizacao;
+    private Timer timerRating = new Timer();
+    private TimerTask taskRating;
     private final Handler handler = new Handler();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         analyticsHelper = new AnalyticsHelper(this);
+        ratingHelper = new RatingHelper(this);
+        ratingHelper.show();
+        
         setContentView(R.layout.ly_linha_detalhe);
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         collapsingToolbarLayout = (SubtitleCollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
@@ -152,7 +164,16 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
         };
         LocalBroadcastManager.getInstance(this).registerReceiver(favoritoReceive, new IntentFilter(Constantes.actionUpdateLinhaFavorito));
         
-        task = new TimerTask() {
+        configuraRefreshAutomatico();
+        configuraRating();
+        
+        StreetViewPanoramaFragment streetViewPanoramaFragment = (StreetViewPanoramaFragment) getFragmentManager()
+                .findFragmentById(R.id.streetviewpanorama);
+        streetViewPanoramaFragment.getStreetViewPanoramaAsync(this);
+    }
+    
+    private void configuraRefreshAutomatico() {
+        taskAtualizacao = new TimerTask() {
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
@@ -162,12 +183,20 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
                 });
             }
         };
-        
-        timerAtual.schedule(task, PontoDetalheActivity.TIME_REFRESH_MILI, PontoDetalheActivity.TIME_REFRESH_MILI);
-        
-        StreetViewPanoramaFragment streetViewPanoramaFragment = (StreetViewPanoramaFragment) getFragmentManager()
-                .findFragmentById(R.id.streetviewpanorama);
-        streetViewPanoramaFragment.getStreetViewPanoramaAsync(this);
+        timerAtualizacao.schedule(taskAtualizacao, PontoDetalheActivity.TIME_REFRESH_MILI, PontoDetalheActivity.TIME_REFRESH_MILI);
+    }
+    
+    private void configuraRating() {
+        taskRating = new TimerTask() {
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        ratingHelper.show();
+                    }
+                });
+            }
+        };
+        timerRating.schedule(taskRating, RatingHelper.DELAY_ABERTURA_MILI);
     }
     
     @Override
@@ -218,7 +247,8 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
             processo.cancel(true);
         }
         LocalBroadcastManager.getInstance(this).unregisterReceiver(favoritoReceive);
-        task.cancel();
+        taskAtualizacao.cancel();
+        taskRating.cancel();
     }
     
     private class ProcessoLoadDetalheLinha extends AsyncTask<Void, String, Boolean> {

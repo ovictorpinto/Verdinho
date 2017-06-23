@@ -46,5 +46,9 @@
     <string name="description_button_info">Exibir informações sobre o aplicativo</string>
     <string name="description_button_mapa">Exibe o mapa com os pontos</string>
     <string name="description_button_favoritos">Exibe os pontos marcados como favorito</string>
+    <string name="rating_message">Que tal aproveitar enquanto seu ônibus não chega e avalia o aplicativo na Play Store?</string>
+    <string name="rating_positive">Sim!!!</string>
+    <string name="rating_neutral">Mais tarde</string>
+    <string name="rating_negative">Nem pensar</string>
 
 </resources>
