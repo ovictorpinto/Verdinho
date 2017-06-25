@@ -1,4 +1,4 @@
-package com.github.ovictorpinto.verdinho;
+package com.github.ovictorpinto.verdinho.ui.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.to.Estimativa;
 import com.github.ovictorpinto.verdinho.to.LinhaTO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
+import com.github.ovictorpinto.verdinho.ui.linha.LinhaDetalheActivity;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 
 import java.util.Date;

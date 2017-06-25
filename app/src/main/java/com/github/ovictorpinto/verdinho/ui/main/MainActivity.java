@@ -1,4 +1,4 @@
-package com.github.ovictorpinto.verdinho;
+package com.github.ovictorpinto.verdinho.ui.main;
 
 import android.Manifest;
 import android.app.DialogFragment;
@@ -25,12 +25,16 @@ import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.ovictorpinto.ConstantesEmpresa;
+import com.github.ovictorpinto.verdinho.Constantes;
+import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoFavoritoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.po.PontoPO;
 import com.github.ovictorpinto.verdinho.retorno.RetornoDetalharPontos;
 import com.github.ovictorpinto.verdinho.retorno.RetornoPesquisarPontos;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
+import com.github.ovictorpinto.verdinho.ui.ponto.DetalhePontoDialogFrag;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
@@ -395,10 +399,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (FragmentExtended.isOnline(context)) {
                     try {
                         
-                        String url = Constantes.listarPontos;
-                        String urlParam = "{\"envelope\":[-40.2558446019482, -20.3411474261535, -40.3615017219324, -20.1865857661999]}";
-                        Map<String, String> headers = new HashMap<>();
-                        headers.put("Content-Type", "application/json");
+                        String url = ConstantesEmpresa.listarPontos;
+                        String urlParam = "{\"envelope\":"+ ConstantesEmpresa.ENVELOPE+ "}";
+                        Map<String, String> headers = new ConstantesEmpresa(context).getHeaders();
+                        
                         LogHelper.log(TAG, url);
                         LogHelper.log(TAG, urlParam);
                         
@@ -408,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         RetornoPesquisarPontos retornoPesquisarPontos = mapper.readValue(retorno, RetornoPesquisarPontos.class);
                         LogHelper.log(TAG, retornoPesquisarPontos.getPontosDeParada().size() + " item(s)");
                         
-                        url = Constantes.detalharPontos;
+                        url = ConstantesEmpresa.detalharPontos;
                         urlParam = "{\"listaIds\": " + retornoPesquisarPontos.getPontosDeParada().toString() + " }";
                         LogHelper.log(TAG, url);
                         LogHelper.log(TAG, urlParam);

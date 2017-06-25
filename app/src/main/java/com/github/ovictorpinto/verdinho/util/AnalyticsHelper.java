@@ -98,4 +98,8 @@ public class AnalyticsHelper {
     public void clickRatingSim() {
         mFirebaseAnalytics.logEvent("click_rating_sim", new Bundle());
     }
+    
+    public void clickLegenda() {
+        mFirebaseAnalytics.logEvent("click_legenda", new Bundle());
+    }
 }

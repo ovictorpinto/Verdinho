@@ -27,7 +27,7 @@
         <meta-data android:name="com.google.android.gms.version"
                    android:value="@integer/google_play_services_version"/>
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -36,19 +36,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PontoDetalheActivity"
-            android:parentActivityName=".MainActivity">
+            android:name=".ui.ponto.PontoDetalheActivity"
+            android:parentActivityName=".ui.main.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value=".ui.main.MainActivity"/>
         </activity>
         <activity
-            android:name=".LinhaDetalheActivity"
-            android:parentActivityName=".PontoDetalheActivity"
+            android:name=".ui.linha.LinhaDetalheActivity"
+            android:parentActivityName=".ui.ponto.PontoDetalheActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".PontoDetalheActivity"/>
+                android:value=".ui.ponto.PontoDetalheActivity"/>
         </activity>
         <activity
             android:name=".teste.MainActivity">

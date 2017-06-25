@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Verdinho</string>
     <string name="falha_acesso_servidor">Não foi possível conectar ao servidor.</string>
     <string name="detalhes">Detalhes</string>
 
@@ -15,13 +14,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_linha_detalhe">Settings</string>
     <string name="adicionar">Adicionar</string>
-    <string name="sobre">As previsões são obtidas pelo sistema \"Ponto Vitória\" da Prefeitura Municipal de Vitória e estão sujeitas a
-        disponibilidade
-    </string>
     <string name="informacoes">Informações</string>
-    <string name="idealizador">Idealizador: Lucas Romano M. Rizzi</string>
-    <string name="desenvolvedor">Desenvolvedor: Victor Pinto</string>
-    <string name="designer_">Designer: Urlan Maciel</string>
     <string name="favoritos">Favoritos</string>
     <string name="ponto_adicionado">Ponto adicionado aos favoritos</string>
     <string name="ponto_removido">Ponto removido dos favoritos</string>
@@ -50,5 +43,12 @@
     <string name="rating_positive">Sim!!!</string>
     <string name="rating_neutral">Mais tarde</string>
     <string name="rating_negative">Nem pensar</string>
+    <string name="imagem_ponto">Foto do ponto</string>
+    <string name="legenda">Legenda</string>
+    <string name="example_legenda">12:00 - 10 minutos</string>
+    <string name="legenda_bom">Última localização transmitida há menos de 7 minutos</string>
+    <string name="legenda_medio">Última localização transmitida há menos de 22 minutos</string>
+    <string name="legenda_ruim">Última localização transmitida há mais de minutos</string>
+    <string name="entendi">Entendi</string>
 
 </resources>
