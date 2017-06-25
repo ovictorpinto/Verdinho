@@ -3,7 +3,7 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.2'
+        classpath 'com.android.tools.build:gradle:2.3.3'
         classpath 'io.fabric.tools:gradle:1.21.6'
     }
 }
@@ -19,9 +19,7 @@ repositories {
 android {
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
-
     defaultConfig {
-        applicationId "com.github.ovictorpinto.verdinho"
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 16
@@ -33,10 +31,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+        transcol {
+            applicationId "com.github.ovictorpinto.meutranscol"
+            buildConfigField "String", "TRANSCOL_AUTH", "\"${TRANSCOL_AUTH}\""
+        }
+        verdinho {
+            applicationId "com.github.ovictorpinto.verdinho"
+        }
+    }
 }
 
 def supportVersion = "25.4.0"
-def playServiceVersion = "11.0.0"
+def playServiceVersion = "11.0.1"
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')

@@ -86,4 +86,20 @@ public class AnalyticsHelper {
         bundle.putString("descricao_linha", item.getDescricaoLinha());
         bundle.putString("bandeira_linha", item.getBandeira());
     }
+    
+    public void clickRatingMaisTarde() {
+        mFirebaseAnalytics.logEvent("click_rating_mais_tarde", new Bundle());
+    }
+    
+    public void clickRatingNao() {
+        mFirebaseAnalytics.logEvent("click_rating_nao", new Bundle());
+    }
+    
+    public void clickRatingSim() {
+        mFirebaseAnalytics.logEvent("click_rating_sim", new Bundle());
+    }
+    
+    public void clickLegenda() {
+        mFirebaseAnalytics.logEvent("click_legenda", new Bundle());
+    }
 }

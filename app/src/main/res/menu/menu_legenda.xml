@@ -3,9 +3,9 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.github.ovictorpinto.verdinho.ui.ponto.PontoDetalheActivity">
 
-    <item android:id="@+id/menu_photo"
-          android:icon="@drawable/ic_photo"
+    <item android:id="@+id/menu_legenda"
+          android:icon="@drawable/ic_subtitles"
           android:orderInCategory="1"
-          android:title="@string/imagem_ponto"
+          android:title="@string/legenda"
           app:showAsAction="always"/>
 </menu>
