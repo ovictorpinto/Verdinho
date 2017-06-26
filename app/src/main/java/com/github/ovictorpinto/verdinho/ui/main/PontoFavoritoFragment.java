@@ -1,4 +1,4 @@
-package com.github.ovictorpinto.verdinho;
+package com.github.ovictorpinto.verdinho.ui.main;
 
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.ovictorpinto.verdinho.Constantes;
+import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoFavoritoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.po.PontoPO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;

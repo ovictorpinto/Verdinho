@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ui.main.MainActivity">
 
     <FrameLayout
         android:id="@+id/main_layout"
@@ -14,7 +14,7 @@
         android:layout_above="@+id/layout_menu">
 
         <fragment android:id="@+id/fragment_favoritos"
-                  android:name="com.github.ovictorpinto.verdinho.PontoFavoritoFragment"
+                  android:name="com.github.ovictorpinto.verdinho.ui.main.PontoFavoritoFragment"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   tools:layout="@layout/ly_recycler"/>
@@ -23,14 +23,12 @@
                   android:name="com.google.android.gms.maps.MapFragment"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  map:cameraTargetLat="-20.303115"
-                  map:cameraTargetLng="-40.306101"
                   map:cameraZoom="16"
-                  tools:context=".MainActivity"
+                  tools:context=".ui.main.MainActivity"
                   tools:visibility="invisible"/>
 
         <fragment android:id="@+id/fragment_sobre"
-                  android:name="com.github.ovictorpinto.verdinho.SobreFragment"
+                  android:name="com.github.ovictorpinto.verdinho.ui.main.SobreFragment"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   tools:layout="@layout/ly_sobre"/>

@@ -1,4 +1,4 @@
-package com.github.ovictorpinto.verdinho;
+package com.github.ovictorpinto.verdinho.ui.ponto;
 
 import android.Manifest;
 import android.app.DialogFragment;
@@ -16,9 +16,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.ovictorpinto.verdinho.Constantes;
+import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoFavoritoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.po.PontoFavoritoPO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
+import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,9 +41,13 @@ public class DetalhePontoDialogFrag extends DialogFragment {
     private ImageView buttonFavoritos;
     private PontoTO pontoTO;
     private MapView mapView;
+    private AnalyticsHelper analyticsHelper;
+    private String ORIGEM = "ponto_dialog";
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        
+        analyticsHelper = new AnalyticsHelper(getActivity());
         
         pontoTO = (PontoTO) getArguments().getSerializable(PontoTO.PARAM);
         assert pontoTO != null;
@@ -62,6 +69,7 @@ public class DetalhePontoDialogFrag extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                analyticsHelper.selecionouPonto(pontoTO, ORIGEM);
                 Intent i = new Intent(getActivity(), PontoDetalheActivity.class);
                 i.putExtra(PontoTO.PARAM, pontoTO);
                 startActivity(i);
@@ -79,9 +87,11 @@ public class DetalhePontoDialogFrag extends DialogFragment {
                 final PontoFavoritoDAO dao = new PontoFavoritoDAO(getActivity());
                 PontoFavoritoPO banco = dao.findByPK(pontoTO.getIdPonto().toString());
                 if (banco == null) {
+                    analyticsHelper.favoritou(pontoTO, ORIGEM);
                     dao.create(new PontoFavoritoPO(pontoTO));
                     Toast.makeText(getActivity(), R.string.ponto_adicionado, Toast.LENGTH_SHORT).show();
                 } else {
+                    analyticsHelper.removeuFavoritou(pontoTO, ORIGEM);
                     dao.removeByPK(new PontoFavoritoPO(pontoTO));
                     Toast.makeText(getActivity(), R.string.ponto_removido, Toast.LENGTH_SHORT).show();
                 }
@@ -90,11 +100,15 @@ public class DetalhePontoDialogFrag extends DialogFragment {
             }
         });
         
+        // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
+        MapsInitializer.initialize(getActivity().getApplicationContext());
+        
         mapView = (MapView) viewPrincipal.findViewById(R.id.mapview);
         // *** IMPORTANT ***
         // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK
         // objects or sub-Bundles.
-        //https://github.com/googlemaps/android-samples/blob/master/ApiDemos/app/src/main/java/com/example/mapdemo/RawMapViewDemoActivity.java
+        //https://github.com/googlemaps/android-samples/blob/master/ApiDemos/app/src/main/java/com/example/mapdemo/RawMapViewDemoActivity
+        // .java
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
@@ -112,10 +126,6 @@ public class DetalhePontoDialogFrag extends DialogFragment {
                         .PERMISSION_GRANTED) {
                     googleMap.setMyLocationEnabled(true);
                 }
-                
-                //        GoogleMapOptions.zOrderOnTop(true);
-                // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
-                MapsInitializer.initialize(getActivity().getApplicationContext());
                 
                 // Updates the location and zoom of the MapView
                 CameraPosition cameraPosition = CameraPosition.builder().tilt(45).zoom(17)

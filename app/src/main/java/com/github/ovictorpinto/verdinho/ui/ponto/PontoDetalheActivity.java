@@ -1,13 +1,16 @@
-package com.github.ovictorpinto.verdinho;
+package com.github.ovictorpinto.verdinho.ui.ponto;
 
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
@@ -15,10 +18,17 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.ovictorpinto.ConstantesEmpresa;
+import com.github.ovictorpinto.verdinho.Constantes;
+import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.persistencia.dao.LinhaFavoritoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoFavoritoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.po.LinhaFavoritoPO;
@@ -28,9 +38,16 @@ import com.github.ovictorpinto.verdinho.retorno.RetornoListarLinhas;
 import com.github.ovictorpinto.verdinho.to.Estimativa;
 import com.github.ovictorpinto.verdinho.to.LinhaTO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
+import com.github.ovictorpinto.verdinho.ui.main.EstimativaPontoRecyclerAdapter;
+import com.github.ovictorpinto.verdinho.ui.main.MainActivity;
+import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.DividerItemDecoration;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
+import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
+import com.google.android.gms.maps.StreetViewPanorama;
+import com.google.android.gms.maps.StreetViewPanoramaFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -47,55 +64,66 @@ import java.util.TimerTask;
 import br.com.mobilesaude.androidlib.widget.AlertDialogFragmentV11;
 import br.com.tcsistemas.common.net.HttpHelper;
 
-public class PontoDetalheActivity extends AppCompatActivity {
-
+public class PontoDetalheActivity extends AppCompatActivity implements OnStreetViewPanoramaReadyCallback {
+    
     public static final long TIME_REFRESH_MILI = 30 * 1000;
     private PontoTO pontoTO;
-    private ProcessoLoadLinhasPonto processo;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private RecyclerView recyclerView;
-    private HashMap<Integer, LinhaTO> mapLinhas;
-    private FloatingActionButton buttonFavorito;
-    private BroadcastReceiver updatePontoFavoritoReceive;
+    
     private View progress;
     private View emptyView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView recyclerView;
+    private FloatingActionButton buttonFavorito;
+    private AppBarLayout appBarLayout;
+    
+    private HashMap<Integer, LinhaTO> mapLinhas;
+    private BroadcastReceiver updatePontoFavoritoReceive;
     private BroadcastReceiver updateLinhaFavoritoReceive;
-
-    private Timer timerAtual = new Timer();
+    private ProcessoLoadLinhasPonto processo;
+    private AnalyticsHelper analyticsHelper;
+    
+    private boolean fotoExpandida = false;
+    private Timer timerAtual;
     private TimerTask task;
     private final Handler handler = new Handler();
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ly_ponto_detalhe);
-
+        
+        analyticsHelper = new AnalyticsHelper(this);
         pontoTO = (PontoTO) getIntent().getSerializableExtra(PontoTO.PARAM);
+        
+        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         setTitle(getString(R.string.ponto_n_, pontoTO.getIdentificador()));
-
+        
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
-
+        
         progress = findViewById(R.id.layout_progress);
         progress.setVisibility(View.VISIBLE);
-
+        
         emptyView = findViewById(android.R.id.empty);
         ((ImageView) emptyView.findViewById(R.id.image)).setImageResource(R.drawable.error);
         ((TextView) emptyView.findViewById(R.id.textview_title)).setText(R.string.ponto_empty_title);
         ((TextView) emptyView.findViewById(R.id.textview_subtitle)).setText(R.string.ponto_empty_subtitle);
-
+        
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe);
-
+        
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                analyticsHelper.forceRefresh(pontoTO);
                 refresh();
             }
         });
         refresh();
-
+        
         buttonFavorito = (FloatingActionButton) findViewById(R.id.fab);
         buttonFavorito.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +131,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
                 final PontoFavoritoDAO dao = new PontoFavoritoDAO(PontoDetalheActivity.this);
                 PontoFavoritoPO banco = dao.findByPK(pontoTO.getIdPonto().toString());
                 if (banco == null) {
+                    analyticsHelper.favoritou(pontoTO, "ponto_detalhe");
                     dao.create(new PontoFavoritoPO(pontoTO));
                     View.OnClickListener desfazerListener = new View.OnClickListener() {
                         @Override
@@ -115,6 +144,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
                     Snackbar.make(view, R.string.ponto_adicionado, Snackbar.LENGTH_SHORT).setAction(R.string.desfazer, desfazerListener)
                             .show();
                 } else {
+                    analyticsHelper.removeuFavoritou(pontoTO, "ponto_detalhe");
                     dao.removeByPK(new PontoFavoritoPO(pontoTO));
                     View.OnClickListener desfazerListener = new View.OnClickListener() {
                         @Override
@@ -148,7 +178,38 @@ public class PontoDetalheActivity extends AppCompatActivity {
         };
         LocalBroadcastManager.getInstance(this)
                              .registerReceiver(updateLinhaFavoritoReceive, new IntentFilter(Constantes.actionUpdateLinhaFavorito));
-
+        
+        exibeLegenda();
+        configuraFoto();
+    }
+    
+    private void configuraFoto() {
+        StreetViewPanoramaFragment streetViewPanoramaFragment = (StreetViewPanoramaFragment) getFragmentManager()
+                .findFragmentById(R.id.streetviewpanorama);
+        streetViewPanoramaFragment.getStreetViewPanoramaAsync(this);
+    }
+    
+    @Override
+    public void onStreetViewPanoramaReady(StreetViewPanorama panorama) {
+        panorama.setPosition(new LatLng(pontoTO.getLatitude(), pontoTO.getLongitude()));
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timerAtual.cancel();
+        timerAtual = null;
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (timerAtual == null) {
+            iniciaRefresh();
+        }
+    }
+    
+    private void iniciaRefresh() {
         task = new TimerTask() {
             public void run() {
                 handler.post(new Runnable() {
@@ -159,10 +220,19 @@ public class PontoDetalheActivity extends AppCompatActivity {
                 });
             }
         };
-
+        timerAtual = new Timer();
         timerAtual.schedule(task, TIME_REFRESH_MILI, TIME_REFRESH_MILI);
     }
-
+    
+    private void exibeLegenda() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean jaExibiu = sharedPreferences.getBoolean(Constantes.pref_show_legenda, false);
+        if (!jaExibiu) {
+            getFragmentManager().beginTransaction().add(new LegendaDialogFrag(), null).commitAllowingStateLoss();
+            sharedPreferences.edit().putBoolean(Constantes.pref_show_legenda, true).apply();
+        }
+    }
+    
     private void refresh() {
         if (processo != null) {
             processo.cancel(true);
@@ -170,7 +240,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
         processo = new ProcessoLoadLinhasPonto();
         processo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
-
+    
     private void setButtonFavorito() {
         PontoFavoritoDAO dao = new PontoFavoritoDAO(PontoDetalheActivity.this);
         PontoFavoritoPO banco = dao.findByPK(pontoTO.getIdPonto().toString());
@@ -180,7 +250,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
             buttonFavorito.setImageResource(R.drawable.ic_add_favoritos);
         }
     }
-
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -190,48 +260,70 @@ public class PontoDetalheActivity extends AppCompatActivity {
         }
         LocalBroadcastManager.getInstance(this).unregisterReceiver(updatePontoFavoritoReceive);
     }
-
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_legenda, menu);
+        inflater.inflate(R.menu.menu_show_foto, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_legenda) {
+            analyticsHelper.clickLegenda();
+            getFragmentManager().beginTransaction().add(new LegendaDialogFrag(), null).commitAllowingStateLoss();
+            return true;
+        } else if (item.getItemId() == R.id.menu_photo) {
+            analyticsHelper.clickFoto();
+            fotoExpandida = !fotoExpandida;
+            appBarLayout.setExpanded(fotoExpandida, true);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    
     private class ProcessoLoadLinhasPonto extends AsyncTask<Void, String, Boolean> {
-
+        
         private final String TAG = "ProcessoLoadLinhasPonto";
         protected Context context;
         private RetornoLinhasPonto retornoLinhasPonto;
         private RetornoListarLinhas retornoListarLinhas;
-
+        
         public ProcessoLoadLinhasPonto() {
             this.context = PontoDetalheActivity.this;
         }
-
+        
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             Fragment alert = getFragmentManager().findFragmentByTag(AlertDialogFragmentV11.FRAGMENT_ID);
-            if(alert != null){
+            if (alert != null) {
                 getFragmentManager().beginTransaction().remove(alert).commitAllowingStateLoss();
             }
         }
-
+        
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-
+                
                 if (FragmentExtended.isOnline(context)) {
                     try {
-
-                        String url = Constantes.linhasPonto;
+                        
+                        String url = ConstantesEmpresa.linhasPonto;
                         String urlParam = "{\"pontoDeOrigemId\": " + pontoTO.getIdPonto() + "}";
-
-                        Map<String, String> headers = new HashMap<>();
-                        headers.put("Content-Type", "application/json");
+                        
+                        Map<String, String> headers = new ConstantesEmpresa(context).getHeaders();
                         LogHelper.log(TAG, url);
                         LogHelper.log(TAG, urlParam);
-
+                        
                         String retorno = HttpHelper.doPost(url, urlParam, HttpHelper.UTF8, headers);
                         LogHelper.log(TAG, retorno);
-
+                        
                         retornoLinhasPonto = MainActivity.mapper.readValue(retorno, RetornoLinhasPonto.class);
                         LogHelper.log(TAG, retornoLinhasPonto.getEstimativas().size() + " item(s)");
-
+                        
                         //vejo as linhas favoritas
                         LinhaFavoritoDAO linhaFavoritoDAO = new LinhaFavoritoDAO(context);
                         List<LinhaFavoritoPO> favoritoPOList = linhaFavoritoDAO.findAll();
@@ -240,7 +332,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
                             LinhaFavoritoPO linhaFavoritoPO = favoritoPOList.get(i);
                             favoritoSet.add(linhaFavoritoPO.getId());
                         }
-
+                        
                         List<Estimativa> tmp = retornoLinhasPonto.getEstimativas();
                         //ordena antes de filtrar o primeiro de cada
                         Collections.sort(tmp, new Comparator<Estimativa>() {
@@ -250,7 +342,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
                             }
                         });
                         List<Estimativa> estimativas = new ArrayList<>();
-
+                        
                         Set<Integer> linhas = new HashSet<>();
                         for (int i = 0; i < tmp.size(); i++) {
                             Estimativa estimativa = tmp.get(i);
@@ -258,36 +350,36 @@ public class PontoDetalheActivity extends AppCompatActivity {
                                 estimativas.add(estimativa);
                             }
                         }
-
+                        
                         retornoLinhasPonto.setEstimativas(estimativas);
-
-                        url = Constantes.listarLinhas;
+                        
+                        url = ConstantesEmpresa.listarLinhas;
                         urlParam = "{\"listaIds\": " + linhas.toString() + " }";
                         LogHelper.log(TAG, url);
                         LogHelper.log(TAG, urlParam);
-
+                        
                         retorno = HttpHelper.doPost(url, urlParam, HttpHelper.UTF8, headers);
                         LogHelper.log(TAG, retorno);
-
+                        
                         retornoListarLinhas = MainActivity.mapper.readValue(retorno, RetornoListarLinhas.class);
                         LogHelper.log(TAG, retornoListarLinhas.getLinhas().size() + " item(s)");
-
+                        
                         mapLinhas = new HashMap<>(retornoListarLinhas.getLinhas().size());
                         for (int i = 0; i < retornoListarLinhas.getLinhas().size(); i++) {
                             LinhaTO linha = retornoListarLinhas.getLinhas().get(i);
                             mapLinhas.put(linha.getId(), linha);
                         }
-
+                        
                         //se existe pelo menos um favorito
                         boolean hasFavorito = false;
-
+                        
                         for (int i = 0; i < estimativas.size(); i++) {
                             Estimativa estimativa = estimativas.get(i);
                             boolean favorito = favoritoSet.contains(mapLinhas.get(estimativa.getItinerarioId()).getIdentificadorLinha());
                             hasFavorito = hasFavorito | favorito;
                             estimativa.setFavorito(favorito);
                         }
-
+                        
                         Collections.sort(retornoLinhasPonto.getEstimativas(), new Comparator<Estimativa>() {
                             @Override
                             public int compare(Estimativa lhs, Estimativa rhs) {
@@ -299,18 +391,18 @@ public class PontoDetalheActivity extends AppCompatActivity {
                                 }
                             }
                         });
-
+                        
                         if (hasFavorito) {
                             //inclui os headers
                             List<Estimativa> favoritos = new ArrayList<>();
                             List<Estimativa> comuns = new ArrayList<>();
-
+                            
                             Estimativa linhasFavoritas = new Estimativa();
                             linhasFavoritas.setVeiculo(getString(R.string.linhas_favoritas));
-
+                            
                             Estimativa linhasComuns = new Estimativa();
                             linhasComuns.setVeiculo(getString(R.string.linhas));
-
+                            
                             List<Estimativa> estimativas1 = retornoLinhasPonto.getEstimativas();
                             for (int i = 0; i < estimativas1.size(); i++) {
                                 Estimativa estimativa = estimativas1.get(i);
@@ -319,17 +411,17 @@ public class PontoDetalheActivity extends AppCompatActivity {
                                 } else {
                                     comuns.add(estimativa);
                                 }
-
+                                
                             }
-
+                            
                             List<Estimativa> comHeaders = new ArrayList<>();
                             comHeaders.add(linhasFavoritas);
                             comHeaders.addAll(favoritos);
                             comHeaders.add(linhasComuns);
                             comHeaders.addAll(comuns);
-
+                            
                             retornoLinhasPonto.setEstimativas(comHeaders);
-
+                            
                         }
                         return true;
                     } catch (UnknownHostException e) {
@@ -341,34 +433,34 @@ public class PontoDetalheActivity extends AppCompatActivity {
             }
             return false;
         }
-
+        
         @Override
         protected void onPostExecute(Boolean success) {
-
+            
             if (!isCancelled()) {
                 if (!success) {
                     //abrir uma nova janela de erro
                     AlertDialogFragmentV11 alert = AlertDialogFragmentV11.newInstance(null, null, R.string.falha_acesso_servidor);
                     getFragmentManager().beginTransaction().add(alert, AlertDialogFragmentV11.FRAGMENT_ID).commitAllowingStateLoss();
                 } else {
-
+                    
                     boolean has = retornoLinhasPonto != null && retornoLinhasPonto.getEstimativas() != null && !retornoLinhasPonto
                             .getEstimativas().isEmpty();
                     recyclerView.setVisibility(has ? View.VISIBLE : View.GONE);
                     emptyView.setVisibility(has ? View.GONE : View.VISIBLE);
-
+                    
                     if (has) {
                         EstimativaPontoRecyclerAdapter adapter = new EstimativaPontoRecyclerAdapter(context, retornoLinhasPonto
                                 .getEstimativas(), retornoLinhasPonto.getHorarioDoServidor(), mapLinhas, pontoTO);
                         recyclerView.setAdapter(adapter);
                     }
-
+                    
                 }
                 swipeRefreshLayout.setRefreshing(false);
                 progress.setVisibility(View.GONE);
             }
             processo = null;
         }
-
+        
     }
 }

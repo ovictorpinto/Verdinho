@@ -1,4 +1,4 @@
-package com.github.ovictorpinto.verdinho;
+package com.github.ovictorpinto.verdinho.ui.main;
 
 import android.Manifest;
 import android.app.DialogFragment;
@@ -25,12 +25,17 @@ import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.ovictorpinto.ConstantesEmpresa;
+import com.github.ovictorpinto.verdinho.Constantes;
+import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoFavoritoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.po.PontoPO;
 import com.github.ovictorpinto.verdinho.retorno.RetornoDetalharPontos;
 import com.github.ovictorpinto.verdinho.retorno.RetornoPesquisarPontos;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
+import com.github.ovictorpinto.verdinho.ui.ponto.DetalhePontoDialogFrag;
+import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
 import com.google.android.gms.common.ConnectionResult;
@@ -41,7 +46,6 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -66,27 +70,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String TAG = "MainActivity";
     private static final String OPCAO = "opcaoSelecionada";
     private static final int PERMISSION_GPS_REQUEST_CODE = 201;
-    
     public static ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    
     private ProcessoLoadPontos processo;
-    
     private ImageView buttonFavorito;
-    private ImageView buttonSobre;
     
+    private ImageView buttonSobre;
     //0 favorito, 1 mapa, 2 sobre
     private int opcao = 1;
     
     private GoogleMap mMap;
-    private Map<String, PontoTO> mapPontos = new HashMap<>();
     
+    private Map<String, PontoTO> mapPontos = new HashMap<>();
     private MapFragment mapFragment;
+    
     private Fragment sobreFragment;
     private Fragment favoritoFragment;
-    
     private LatLng devicePosition;
+    
     private Set<Integer> setFavoritos;
     private BroadcastReceiver favoriteReceive;
     private GoogleApiClient mGoogleApiClient;
+    
+    private AnalyticsHelper analyticsHelper;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         buildGoogleApiClient();
         setContentView(R.layout.ly_main);
         
+        analyticsHelper = new AnalyticsHelper(this);
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean loaded = preferences.getBoolean(Constantes.pref_loaded, false);
         
@@ -187,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     
     private void clickMapa() {
+        analyticsHelper.clickMapa();
         setTitle(R.string.app_name);
         opcao = 1;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -197,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     
     private void clickSobre() {
+        analyticsHelper.clickSobre();
         setTitle(R.string.informacoes);
         opcao = 2;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -207,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     
     private void clickFavorito() {
+        analyticsHelper.clickFavorito();
         setTitle(R.string.favoritos);
         opcao = 0;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -389,10 +399,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (FragmentExtended.isOnline(context)) {
                     try {
                         
-                        String url = Constantes.listarPontos;
-                        String urlParam = "{\"envelope\":[-40.2558446019482, -20.3411474261535, -40.3615017219324, -20.1865857661999]}";
-                        Map<String, String> headers = new HashMap<>();
-                        headers.put("Content-Type", "application/json");
+                        String url = ConstantesEmpresa.listarPontos;
+                        String urlParam = "{\"envelope\":"+ ConstantesEmpresa.ENVELOPE+ "}";
+                        Map<String, String> headers = new ConstantesEmpresa(context).getHeaders();
+                        
                         LogHelper.log(TAG, url);
                         LogHelper.log(TAG, urlParam);
                         
@@ -402,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         RetornoPesquisarPontos retornoPesquisarPontos = mapper.readValue(retorno, RetornoPesquisarPontos.class);
                         LogHelper.log(TAG, retornoPesquisarPontos.getPontosDeParada().size() + " item(s)");
                         
-                        url = Constantes.detalharPontos;
+                        url = ConstantesEmpresa.detalharPontos;
                         urlParam = "{\"listaIds\": " + retornoPesquisarPontos.getPontosDeParada().toString() + " }";
                         LogHelper.log(TAG, url);
                         LogHelper.log(TAG, urlParam);

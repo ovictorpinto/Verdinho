@@ -1,11 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.github.ovictorpinto.verdinho.PontoDetalheActivity">
+      tools:context="com.github.ovictorpinto.verdinho.ui.ponto.PontoDetalheActivity">
 
-    <item android:id="@+id/menu_add_favorito"
-          android:icon="@drawable/ic_add_favoritos"
+    <item android:id="@+id/menu_photo"
+          android:icon="@drawable/ic_photo"
           android:orderInCategory="1"
-          android:title="@string/adicionar"
+          android:title="@string/imagem_ponto"
           app:showAsAction="always"/>
 </menu>
