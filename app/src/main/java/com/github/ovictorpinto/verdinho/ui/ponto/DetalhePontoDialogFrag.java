@@ -100,6 +100,9 @@ public class DetalhePontoDialogFrag extends DialogFragment {
             }
         });
         
+        // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
+        MapsInitializer.initialize(getActivity().getApplicationContext());
+        
         mapView = (MapView) viewPrincipal.findViewById(R.id.mapview);
         // *** IMPORTANT ***
         // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK
@@ -123,10 +126,6 @@ public class DetalhePontoDialogFrag extends DialogFragment {
                         .PERMISSION_GRANTED) {
                     googleMap.setMyLocationEnabled(true);
                 }
-                
-                //        GoogleMapOptions.zOrderOnTop(true);
-                // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
-                MapsInitializer.initialize(getActivity().getApplicationContext());
                 
                 // Updates the location and zoom of the MapView
                 CameraPosition cameraPosition = CameraPosition.builder().tilt(45).zoom(17)

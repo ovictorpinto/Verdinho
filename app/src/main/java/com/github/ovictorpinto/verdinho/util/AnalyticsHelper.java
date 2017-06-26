@@ -102,4 +102,8 @@ public class AnalyticsHelper {
     public void clickLegenda() {
         mFirebaseAnalytics.logEvent("click_legenda", new Bundle());
     }
+    
+    public void clickFoto() {
+        mFirebaseAnalytics.logEvent("click_foto", new Bundle());
+    }
 }
