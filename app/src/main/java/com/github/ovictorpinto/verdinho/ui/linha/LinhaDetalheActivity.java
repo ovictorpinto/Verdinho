@@ -12,13 +12,11 @@ import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.SubtitleCollapsingToolbarLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.github.ovictorpinto.ConstantesEmpresa;
@@ -36,10 +34,6 @@ import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
 import com.github.ovictorpinto.verdinho.util.RatingHelper;
-import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
-import com.google.android.gms.maps.StreetViewPanorama;
-import com.google.android.gms.maps.StreetViewPanoramaFragment;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.net.UnknownHostException;
 import java.util.Collections;
@@ -52,8 +46,7 @@ import java.util.TimerTask;
 import br.com.mobilesaude.androidlib.widget.AlertDialogFragmentV11;
 import br.com.tcsistemas.common.net.HttpHelper;
 
-public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener,
-        OnStreetViewPanoramaReadyCallback {
+public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
     
     private Estimativa estimativa;
     private PontoTO pontoTO;
@@ -63,11 +56,9 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
     
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefresh;
-    private AppBarLayout appBarLayout;
     private View progress;
     private View emptyView;
     private FloatingActionButton buttonFavorito;
-    private SubtitleCollapsingToolbarLayout collapsingToolbarLayout;
     
     private BroadcastReceiver favoritoReceive;
     
@@ -90,10 +81,6 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
         ratingHelper.show();
         
         setContentView(R.layout.ly_linha_detalhe);
-        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        collapsingToolbarLayout = (SubtitleCollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         
         estimativa = (Estimativa) getIntent().getSerializableExtra(Estimativa.PARAM);
         pontoTO = (PontoTO) getIntent().getSerializableExtra(PontoTO.PARAM);
@@ -101,8 +88,10 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
         
         final String subtitle = getString(R.string.ponto_n_linha_n_, pontoTO.getIdentificador(), linhaTO.getIdentificadorLinhaFiltrado());
         final String title = linhaTO.getBandeira();
-        collapsingToolbarLayout.setTitle(title);
-        collapsingToolbarLayout.setSubtitle(subtitle);
+        setTitle(title);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(subtitle);
+        }
         
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -168,10 +157,6 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
             }
         };
         LocalBroadcastManager.getInstance(this).registerReceiver(favoritoReceive, new IntentFilter(Constantes.actionUpdateLinhaFavorito));
-        
-        StreetViewPanoramaFragment streetViewPanoramaFragment = (StreetViewPanoramaFragment) getFragmentManager()
-                .findFragmentById(R.id.streetviewpanorama);
-        streetViewPanoramaFragment.getStreetViewPanoramaAsync(this);
     }
     
     private void configuraRefreshAutomatico() {
@@ -203,11 +188,6 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
         timerRating.schedule(taskRating, RatingHelper.DELAY_ABERTURA_MILI);
     }
     
-    @Override
-    public void onStreetViewPanoramaReady(StreetViewPanorama panorama) {
-        panorama.setPosition(new LatLng(pontoTO.getLatitude(), pontoTO.getLongitude()));
-    }
-    
     private void setButtonFavorito() {
         LinhaFavoritoDAO dao = new LinhaFavoritoDAO(this);
         LinhaFavoritoPO banco = dao.findByPK(linhaTO.getIdentificadorLinha());
@@ -235,7 +215,6 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
     @Override
     protected void onResume() {
         super.onResume();
-        appBarLayout.addOnOffsetChangedListener(this);
         configuraRefreshAutomatico();
         configuraRating();
     }
@@ -243,7 +222,6 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
     @Override
     protected void onPause() {
         super.onPause();
-        appBarLayout.removeOnOffsetChangedListener(this);
         timerAtualizacao.cancel();
         timerAtualizacao = null;
         

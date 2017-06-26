@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,6 +18,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,6 +44,10 @@ import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.DividerItemDecoration;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
+import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
+import com.google.android.gms.maps.StreetViewPanorama;
+import com.google.android.gms.maps.StreetViewPanoramaFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -58,21 +64,25 @@ import java.util.TimerTask;
 import br.com.mobilesaude.androidlib.widget.AlertDialogFragmentV11;
 import br.com.tcsistemas.common.net.HttpHelper;
 
-public class PontoDetalheActivity extends AppCompatActivity {
+public class PontoDetalheActivity extends AppCompatActivity implements OnStreetViewPanoramaReadyCallback {
     
     public static final long TIME_REFRESH_MILI = 30 * 1000;
     private PontoTO pontoTO;
-    private ProcessoLoadLinhasPonto processo;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private RecyclerView recyclerView;
-    private HashMap<Integer, LinhaTO> mapLinhas;
-    private FloatingActionButton buttonFavorito;
-    private BroadcastReceiver updatePontoFavoritoReceive;
+    
     private View progress;
     private View emptyView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView recyclerView;
+    private FloatingActionButton buttonFavorito;
+    private AppBarLayout appBarLayout;
+    
+    private HashMap<Integer, LinhaTO> mapLinhas;
+    private BroadcastReceiver updatePontoFavoritoReceive;
     private BroadcastReceiver updateLinhaFavoritoReceive;
+    private ProcessoLoadLinhasPonto processo;
     private AnalyticsHelper analyticsHelper;
     
+    private boolean fotoExpandida = false;
     private Timer timerAtual;
     private TimerTask task;
     private final Handler handler = new Handler();
@@ -84,6 +94,10 @@ public class PontoDetalheActivity extends AppCompatActivity {
         
         analyticsHelper = new AnalyticsHelper(this);
         pontoTO = (PontoTO) getIntent().getSerializableExtra(PontoTO.PARAM);
+        
+        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         setTitle(getString(R.string.ponto_n_, pontoTO.getIdentificador()));
         
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
@@ -166,6 +180,18 @@ public class PontoDetalheActivity extends AppCompatActivity {
                              .registerReceiver(updateLinhaFavoritoReceive, new IntentFilter(Constantes.actionUpdateLinhaFavorito));
         
         exibeLegenda();
+        configuraFoto();
+    }
+    
+    private void configuraFoto() {
+        StreetViewPanoramaFragment streetViewPanoramaFragment = (StreetViewPanoramaFragment) getFragmentManager()
+                .findFragmentById(R.id.streetviewpanorama);
+        streetViewPanoramaFragment.getStreetViewPanoramaAsync(this);
+    }
+    
+    @Override
+    public void onStreetViewPanoramaReady(StreetViewPanorama panorama) {
+        panorama.setPosition(new LatLng(pontoTO.getLatitude(), pontoTO.getLongitude()));
     }
     
     @Override
@@ -239,6 +265,7 @@ public class PontoDetalheActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_legenda, menu);
+        inflater.inflate(R.menu.menu_show_foto, menu);
         return super.onCreateOptionsMenu(menu);
     }
     
@@ -247,6 +274,11 @@ public class PontoDetalheActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.menu_legenda) {
             analyticsHelper.clickLegenda();
             getFragmentManager().beginTransaction().add(new LegendaDialogFrag(), null).commitAllowingStateLoss();
+            return true;
+        } else if (item.getItemId() == R.id.menu_photo) {
+            analyticsHelper.clickFoto();
+            fotoExpandida = !fotoExpandida;
+            appBarLayout.setExpanded(fotoExpandida, true);
             return true;
         }
         return super.onOptionsItemSelected(item);
