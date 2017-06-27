@@ -22,8 +22,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 17
-        versionName "1.1.0"
+        versionCode 18
+        versionName "1.3.0"
     }
     buildTypes {
         release {
@@ -54,6 +54,7 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$supportVersion"
     compile "com.google.android.gms:play-services-maps:$playServiceVersion"
     compile "com.google.android.gms:play-services-location:$playServiceVersion"
+    compile 'com.google.maps.android:android-maps-utils:0.5'
     //https://stackoverflow.com/a/43582900/2096828
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
