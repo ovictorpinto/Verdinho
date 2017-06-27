@@ -39,7 +39,6 @@ import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -51,11 +50,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -80,8 +79,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private int opcao = 1;
     
     private GoogleMap mMap;
+    // Declare a variable for the cluster manager.
+    private ClusterManager<PontoTO> mClusterManager;
     
-    private Map<String, PontoTO> mapPontos = new HashMap<>();
     private MapFragment mapFragment;
     
     private Fragment sobreFragment;
@@ -135,8 +135,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
         
-        //        checkPlayServices();
-        
         fillFavoritos();
         favoriteReceive = new BroadcastReceiver() {
             @Override
@@ -165,22 +163,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     clickMapa();
             }
         }
-    }
-    
-    /**
-     * https://stackoverflow.com/questions/31016722/googleplayservicesutil-vs-googleapiavailability
-     * @return
-     */
-    private boolean checkPlayServices() {
-        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-        int result = googleAPI.isGooglePlayServicesAvailable(this);
-        if (result != ConnectionResult.SUCCESS) {
-            if (googleAPI.isUserResolvableError(result)) {
-                googleAPI.getErrorDialog(this, result, 9000).show();
-            }
-            return false;
-        }
-        return true;
     }
     
     private void fillFavoritos() {
@@ -241,8 +223,50 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LocalBroadcastManager.getInstance(this).unregisterReceiver(favoriteReceive);
     }
     
+    /**
+     * "Intercepta" a criação do marker no mapa
+     */
+    private class PontoRenderer extends DefaultClusterRenderer<PontoTO> {
+        
+        public PontoRenderer(Context context, GoogleMap map, ClusterManager<PontoTO> clusterManager) {
+            super(context, map, clusterManager);
+        }
+        
+        @Override
+        protected void onBeforeClusterItemRendered(PontoTO item, MarkerOptions markerOptions) {
+            int pin = setFavoritos.contains(item.getIdPonto()) ? R.drawable.pin_favorito : R.drawable.pin;
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(pin));
+            super.onBeforeClusterItemRendered(item, markerOptions);
+        }
+        
+    }
+    
+    /**
+     * Define a regra ao clicar no marker do mapa
+     */
+    private class PontoPinClickListener implements ClusterManager.OnClusterItemClickListener<PontoTO> {
+        
+        @Override
+        public boolean onClusterItemClick(PontoTO clicado) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(PontoTO.PARAM, clicado);
+            
+            DialogFragment frag = new DetalhePontoDialogFrag();
+            frag.setArguments(bundle);
+            frag.show(getFragmentManager(), DetalhePontoDialogFrag.TAG_FRAG);
+            return true;
+        }
+    }
+    
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        
+        mClusterManager = new ClusterManager<>(this, googleMap);
+        mClusterManager.setRenderer(new PontoRenderer(this, googleMap, mClusterManager));
+        mClusterManager.setOnClusterItemClickListener(new PontoPinClickListener());
+        googleMap.setOnCameraIdleListener(mClusterManager);
+        googleMap.setOnMarkerClickListener(mClusterManager);
+        
         LogHelper.log(TAG, "Mapa pronto");
         mMap = googleMap;
         if (ActivityCompat
@@ -260,46 +284,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 fillMarkers();
             }
         });
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                
-                PontoTO clicado = mapPontos.get(marker.getId());
-                
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(PontoTO.PARAM, clicado);
-                
-                DialogFragment frag = new DetalhePontoDialogFrag();
-                frag.setArguments(bundle);
-                frag.show(getFragmentManager(), DetalhePontoDialogFrag.TAG_FRAG);
-                
-                return true;
-            }
-        });
         fillMarkers();
     }
     
     private void fillMarkers() {
         LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
         mMap.clear();
-        mapPontos = new HashMap<>();
         PontoDAO dao = new PontoDAO(this);
         List<PontoPO> list = dao.findByRegiao(bounds);
         LogHelper.log(TAG, "Encontrados " + list.size());
         
+        mClusterManager.clearItems();
         for (int i = 0; i < list.size(); i++) {
             PontoPO pontoPO = list.get(i);
             PontoTO to = pontoPO.getPontoTO();
-            
-            int pin = setFavoritos.contains(to.getIdPonto()) ? R.drawable.pin_favorito : R.drawable.pin;
-            
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(pin));
-            markerOptions.position(new LatLng(to.getLatitude(), to.getLongitude()));
-            
-            Marker marker = mMap.addMarker(markerOptions);
-            mapPontos.put(marker.getId(), to);
+            mClusterManager.addItem(to);
         }
+        mClusterManager.cluster();
     }
     
     protected synchronized void buildGoogleApiClient() {
@@ -400,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     try {
                         
                         String url = ConstantesEmpresa.listarPontos;
-                        String urlParam = "{\"envelope\":"+ ConstantesEmpresa.ENVELOPE+ "}";
+                        String urlParam = "{\"envelope\":" + ConstantesEmpresa.ENVELOPE + "}";
                         Map<String, String> headers = new ConstantesEmpresa(context).getHeaders();
                         
                         LogHelper.log(TAG, url);
