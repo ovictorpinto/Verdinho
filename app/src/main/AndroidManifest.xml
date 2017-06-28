@@ -19,13 +19,16 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key"/>
-
+        <meta-data
+            android:name="com.google.android.awareness.API_KEY"
+            android:value="@string/google_maps_key"/>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="aecbc4518d787ae1641de6590f73993905cbc08a"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
 
-        <meta-data android:name="com.google.android.gms.version"
-                   android:value="@integer/google_play_services_version"/>
         <activity
             android:name=".ui.main.MainActivity"
             android:launchMode="singleTop">
@@ -37,8 +40,8 @@
         </activity>
         <activity
             android:name=".ui.ponto.PontoDetalheActivity"
-            android:parentActivityName=".ui.main.MainActivity"
             android:launchMode="singleTop"
+            android:parentActivityName=".ui.main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -51,9 +54,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.ponto.PontoDetalheActivity"/>
         </activity>
-        <activity
-            android:name=".teste.MainActivity">
+        <activity android:name=".teste.MainActivity">
         </activity>
+
+        <receiver
+            android:name=".notificacao.ProximidadePontoReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="${applicationId}.proximidade.action"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

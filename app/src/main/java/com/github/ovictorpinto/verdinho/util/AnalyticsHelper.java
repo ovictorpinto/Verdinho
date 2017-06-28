@@ -106,4 +106,16 @@ public class AnalyticsHelper {
     public void clickFoto() {
         mFirebaseAnalytics.logEvent("click_foto", new Bundle());
     }
+    
+    public void habilitouNotificacao(PontoTO pontoTO) {
+        Bundle bundle = new Bundle();
+        fillPonto(pontoTO, bundle);
+        mFirebaseAnalytics.logEvent("enable_notificacao", bundle);
+    }
+    
+    public void desabilitouNotificacao(PontoTO pontoTO) {
+        Bundle bundle = new Bundle();
+        fillPonto(pontoTO, bundle);
+        mFirebaseAnalytics.logEvent("disable_notificacao", bundle);
+    }
 }
