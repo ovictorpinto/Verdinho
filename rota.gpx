@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="GPS Visualizer http://www.gpsvisualizer.com/" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<trk>
+  <name>R. Henrique Novaes, 103 - Centro, Vitória - ES - R. Dionísio Rosendo</name>
+  <desc>0.9 km, 0:12</desc>
+  <trkseg>
+    <trkpt lat="-20.31881" lon="-40.33101"></trkpt>
+    <trkpt lat="-20.31897" lon="-40.3314"></trkpt>
+    <trkpt lat="-20.3191" lon="-40.33175"></trkpt>
+    <trkpt lat="-20.31923" lon="-40.33209"></trkpt>
+    <trkpt lat="-20.31936" lon="-40.33242"></trkpt>
+    <trkpt lat="-20.31943" lon="-40.33264"></trkpt>
+    <trkpt lat="-20.31951" lon="-40.33286"></trkpt>
+    <trkpt lat="-20.31959" lon="-40.33306"></trkpt>
+    <trkpt lat="-20.31964" lon="-40.33323"></trkpt>
+    <trkpt lat="-20.31979" lon="-40.33362"></trkpt>
+    <trkpt lat="-20.31987" lon="-40.33382"></trkpt>
+    <trkpt lat="-20.31991" lon="-40.33392"></trkpt>
+    <trkpt lat="-20.32013" lon="-40.3345"></trkpt>
+
+  </trkseg>
+</trk>
+</gpx>

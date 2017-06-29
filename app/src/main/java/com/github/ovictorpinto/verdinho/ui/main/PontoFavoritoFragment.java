@@ -32,10 +32,6 @@ import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.DividerItemDecoration;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.fence.AwarenessFence;
-import com.google.android.gms.awareness.fence.FenceQueryRequest;
-import com.google.android.gms.awareness.fence.FenceQueryResult;
-import com.google.android.gms.awareness.fence.FenceState;
-import com.google.android.gms.awareness.fence.FenceStateMap;
 import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.LocationFence;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -119,24 +115,7 @@ public class PontoFavoritoFragment extends Fragment {
                 analyticsHelper.selecionouPonto(pontoTO, "favorito");
                 Intent i = new Intent(getActivity(), PontoDetalheActivity.class);
                 i.putExtra(PontoTO.PARAM, pontoTO);
-                //                startActivity(i);
-                
-                ResultCallback<FenceQueryResult> resultCallback = new ResultCallback<FenceQueryResult>() {
-                    @Override
-                    public void onResult(@NonNull FenceQueryResult fenceQueryResult) {
-                        if (!fenceQueryResult.getStatus().isSuccess()) {
-                            Log.e(TAG, "Could not query fence: " + "FANCE_" + pontoTO.getIdPonto());
-                            return;
-                        }
-                        FenceStateMap map = fenceQueryResult.getFenceStateMap();
-                        for (String fenceKey : map.getFenceKeys()) {
-                            FenceState fenceState = map.getFenceState(fenceKey);
-                            Log.i(TAG, "F " + fenceKey + ": " + fenceState.getCurrentState() + ",was=" + fenceState.getPreviousState());
-                        }
-                    }
-                };
-                FenceQueryRequest fenceQueryRequest = FenceQueryRequest.forFences("FANCE_" + pontoTO.getIdPonto());
-                Awareness.FenceApi.queryFences(mGoogleApiClient, fenceQueryRequest).setResultCallback(resultCallback);
+                startActivity(i);
             }
             
             @Override
@@ -147,7 +126,9 @@ public class PontoFavoritoFragment extends Fragment {
                 dao.update(new PontoPO(pontoTO));
                 Snackbar.make(coordinator, R.string.notificacao_habilitada, Snackbar.LENGTH_SHORT).show();
                 
-                AwarenessFence localtionFence = LocationFence.entering(pontoTO.getLatitude(), pontoTO.getLongitude(), 100);
+                AwarenessFence exitFence = LocationFence.exiting(pontoTO.getLatitude(), pontoTO.getLongitude(), 100);
+                AwarenessFence inFence = LocationFence.in(pontoTO.getLatitude(), pontoTO.getLongitude(), 100, 5 * 1000);
+                
                 Intent intent = new Intent(BuildConfig.APPLICATION_ID + ".proximidade.action");
                 intent.putExtra(PontoTO.PARAM_ID, pontoTO.getIdPonto());
                 
@@ -164,9 +145,12 @@ public class PontoFavoritoFragment extends Fragment {
                         }
                     }
                 };
-                final FenceUpdateRequest builder = new FenceUpdateRequest.Builder()
-                        .addFence("FANCE_" + pontoTO.getIdPonto(), localtionFence, myPendingIntent).build();
-                Awareness.FenceApi.updateFences(mGoogleApiClient, builder).setResultCallback(resultCallback);
+                FenceUpdateRequest.Builder builder = new FenceUpdateRequest.Builder();
+                builder.addFence("FANCE_IN_" + pontoTO.getIdPonto(), inFence, myPendingIntent);
+                builder.addFence("FANCE_OUT_" + pontoTO.getIdPonto(), exitFence, myPendingIntent);
+                
+                final FenceUpdateRequest request = builder.build();
+                Awareness.FenceApi.updateFences(mGoogleApiClient, request).setResultCallback(resultCallback);
             }
             
             @Override
@@ -176,10 +160,13 @@ public class PontoFavoritoFragment extends Fragment {
                 PontoDAO dao = new PontoDAO(getActivity());
                 dao.update(new PontoPO(pontoTO));
                 Snackbar.make(coordinator, R.string.notificacao_desabilitada, Snackbar.LENGTH_SHORT).show();
-                
+    
+                FenceUpdateRequest.Builder builder = new FenceUpdateRequest.Builder();
+                builder.removeFence("FANCE_IN_" + pontoTO.getIdPonto());
+                builder.removeFence("FANCE_OUT_" + pontoTO.getIdPonto());
+                FenceUpdateRequest request = builder.build();
                 Awareness.FenceApi
-                        .updateFences(mGoogleApiClient, new FenceUpdateRequest.Builder().removeFence("FANCE_" + pontoTO.getIdPonto())
-                                                                                        .build())
+                        .updateFences(mGoogleApiClient, request)
                         .setResultCallback(new ResultCallbacks<Status>() {
                             @Override
                             public void onSuccess(@NonNull Status status) {
