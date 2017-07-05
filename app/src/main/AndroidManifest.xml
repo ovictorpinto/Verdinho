@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:name=".VerdinhoApplication"
@@ -63,6 +64,26 @@
             android:enabled="true">
             <intent-filter>
                 <action android:name="${applicationId}.proximidade.action"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".notificacao.InteracaoProximidadeReceiver">
+            <intent-filter>
+                <action android:name="${applicationId}.ACTION_PUSH_OPEN"/>
+                <action android:name="${applicationId}.ACTION_PUSH_DELETE"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".notificacao.InteracaoProximidadeReceiver">
+            <intent-filter>
+                <action android:name="${applicationId}.ACTION_PUSH_OPEN"/>
+                <action android:name="${applicationId}.ACTION_PUSH_DELETE"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".notificacao.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
     </application>

@@ -22,6 +22,9 @@ import com.github.ovictorpinto.verdinho.persistencia.dao.PontoFavoritoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.po.PontoFavoritoPO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
+import com.github.ovictorpinto.verdinho.util.AwarenessHelper;
+import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -77,7 +80,9 @@ public class DetalhePontoDialogFrag extends DialogFragment {
                 dismiss();
             }
         });
-        
+    
+        final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(Awareness.API).build();
+        mGoogleApiClient.connect();
         buttonFavoritos = (ImageView) viewPrincipal.findViewById(R.id.button_favoritos);
         
         fillButton();
@@ -94,6 +99,7 @@ public class DetalhePontoDialogFrag extends DialogFragment {
                     analyticsHelper.removeuFavoritou(pontoTO, ORIGEM);
                     dao.removeByPK(new PontoFavoritoPO(pontoTO));
                     Toast.makeText(getActivity(), R.string.ponto_removido, Toast.LENGTH_SHORT).show();
+                    new AwarenessHelper(getActivity()).removeFenda(pontoTO, mGoogleApiClient);
                 }
                 fillButton();
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(Constantes.actionUpdatePontoFavorito));

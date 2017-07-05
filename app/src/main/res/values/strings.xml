@@ -52,5 +52,11 @@
     <string name="entendi">Entendi</string>
     <string name="notificacao_habilitada">Notificações habilitadas</string>
     <string name="notificacao_desabilitada">Notificações desabilitadas</string>
+    <string name="proximo_onibus__">Próximos ônibus em %s</string>
+    <string name="dialog_proximidade_titulo">Notificação por proximidade</string>
+    <string name="dialog_proximidade_texto">Você receberá uma notificação com os próximos ônibus ao se aproximar de um ponto favorito
+        habilitado
+    </string>
+    <string name="descricao_imagem_dialog_proximidade">Exemplo da notificação que será exibida</string>
 
 </resources>

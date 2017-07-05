@@ -15,6 +15,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -54,6 +55,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.List;
@@ -75,8 +78,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ImageView buttonFavorito;
     
     private ImageView buttonSobre;
+    
     //0 favorito, 1 mapa, 2 sobre
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({FAVORITO, MAPA, SOBRE})
+    public @interface TELA {}
+    
+    @TELA
     private int opcao = 1;
+    public static final int FAVORITO = 0;
+    public static final int MAPA = 1;
+    public static final int SOBRE = 2;
     
     private GoogleMap mMap;
     // Declare a variable for the cluster manager.
@@ -178,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void clickMapa() {
         analyticsHelper.clickMapa();
         setTitle(R.string.app_name);
-        opcao = 1;
+        opcao = MAPA;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.hide(sobreFragment).hide(favoritoFragment).show(mapFragment);
         transaction.commit();
@@ -189,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void clickSobre() {
         analyticsHelper.clickSobre();
         setTitle(R.string.informacoes);
-        opcao = 2;
+        opcao = SOBRE;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.show(sobreFragment).hide(favoritoFragment).hide(mapFragment);
         transaction.commit();
@@ -197,10 +209,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         buttonFavorito.setImageResource(R.drawable.favorito_tabbar_desmarcado);
     }
     
+    /**
+     * Sugestão dos usuários, quando clicar em voltar entrar no mapa
+     */
+    @Override
+    public void onBackPressed() {
+        if (opcao == MAPA) {
+            super.onBackPressed();
+        } else {
+            clickMapa();
+        }
+    }
+    
     private void clickFavorito() {
         analyticsHelper.clickFavorito();
         setTitle(R.string.favoritos);
-        opcao = 0;
+        opcao = FAVORITO;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.hide(sobreFragment).show(favoritoFragment).hide(mapFragment);
         transaction.commit();

@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,7 +34,10 @@ import com.github.ovictorpinto.verdinho.persistencia.po.PontoFavoritoPO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
 import com.github.ovictorpinto.verdinho.ui.main.EstimativaPontoRecyclerAdapter;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
+import com.github.ovictorpinto.verdinho.util.AwarenessHelper;
 import com.github.ovictorpinto.verdinho.util.DividerItemDecoration;
+import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
 import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.StreetViewPanoramaFragment;
@@ -70,6 +74,7 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ly_ponto_detalhe);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         
         analyticsHelper = new AnalyticsHelper(this);
         pontoTO = (PontoTO) getIntent().getSerializableExtra(PontoTO.PARAM);
@@ -103,6 +108,9 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
         });
         refresh();
         
+        final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(Awareness.API).build();
+        mGoogleApiClient.connect();
+        
         buttonFavorito = (FloatingActionButton) findViewById(R.id.fab);
         buttonFavorito.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,6 +143,7 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
                     };
                     Snackbar.make(view, R.string.ponto_removido, Snackbar.LENGTH_SHORT).setAction(R.string.desfazer, desfazerListener)
                             .show();
+                    new AwarenessHelper(PontoDetalheActivity.this).removeFenda(pontoTO, mGoogleApiClient);
                 }
                 LocalBroadcastManager.getInstance(PontoDetalheActivity.this)
                                      .sendBroadcast(new Intent(Constantes.actionUpdatePontoFavorito));

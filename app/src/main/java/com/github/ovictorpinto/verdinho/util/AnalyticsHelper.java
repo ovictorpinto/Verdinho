@@ -29,6 +29,7 @@ public class AnalyticsHelper {
     public void selecionouPonto(PontoTO pontoTO, String origem) {
         Bundle bundle = new Bundle();
         fillPonto(pontoTO, bundle);
+        bundle.putString(FirebaseAnalytics.Param.ORIGIN, origem);
         mFirebaseAnalytics.logEvent("select_ponto", bundle);
     }
     
@@ -117,5 +118,13 @@ public class AnalyticsHelper {
         Bundle bundle = new Bundle();
         fillPonto(pontoTO, bundle);
         mFirebaseAnalytics.logEvent("disable_notificacao", bundle);
+    }
+    
+    public void clicouNotificacaoProximidade() {
+        mFirebaseAnalytics.logEvent("click_notificacao", new Bundle());
+    }
+    
+    public void cancelaNotificacaoProximidade() {
+        mFirebaseAnalytics.logEvent("cancela_notificacao", new Bundle());
     }
 }
