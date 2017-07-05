@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="GPS Visualizer http://www.gpsvisualizer.com/" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<trk>
+  <name>Av. Getúlio Vargas, 247 - Centro, Vitória - ES, 29010-410 - Av. Mal. Mascarenhas de Moraes</name>
+  <desc>0.8 km, 0:09</desc>
+  <trkseg>
+    <trkpt lat="-20.32205" lon="-40.3412"></trkpt>
+    <trkpt lat="-20.32208" lon="-40.34075"></trkpt>
+    <trkpt lat="-20.32209" lon="-40.34045"></trkpt>
+    <trkpt lat="-20.32211" lon="-40.3397"></trkpt>
+    <trkpt lat="-20.32211" lon="-40.33953"></trkpt>
+    <trkpt lat="-20.32198" lon="-40.33834"></trkpt>
+    <trkpt lat="-20.32193" lon="-40.338"></trkpt>
+    <trkpt lat="-20.32189" lon="-40.33769"></trkpt>
+    <trkpt lat="-20.32189" lon="-40.33769"></trkpt>
+    <trkpt lat="-20.32187" lon="-40.33736"></trkpt>
+    <trkpt lat="-20.32186" lon="-40.33727"></trkpt>
+    <trkpt lat="-20.32183" lon="-40.33708"></trkpt>
+    <trkpt lat="-20.3218" lon="-40.33686"></trkpt>
+    <trkpt lat="-20.32171" lon="-40.33632"></trkpt>
+    <trkpt lat="-20.32156" lon="-40.33521"></trkpt>
+    <trkpt lat="-20.32146" lon="-40.33457"></trkpt>
+    <trkpt lat="-20.32141" lon="-40.33406"></trkpt>
+  </trkseg>
+</trk>
+</gpx>

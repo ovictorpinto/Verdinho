@@ -1,77 +1,95 @@
 package com.github.ovictorpinto.verdinho.ui.main;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
-import com.github.ovictorpinto.verdinho.ui.ponto.PontoDetalheActivity;
-import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 
 import java.util.List;
+
+import br.com.tcsistemas.common.string.StringHelper;
 
 /**
  * Created by Suleiman on 14-04-2015.
  */
 public class FavoritoRecyclerAdapter extends RecyclerView.Adapter<FavoritoRecyclerAdapter.ViewHolder> {
-
+    
+    public interface FavoritoListener {
+        
+        void onClick(PontoTO pontoTO);
+        
+        void onEnableNotification(PontoTO pontoTO);
+        
+        void onDisableNotification(PontoTO pontoTO);
+    }
+    
     private Context context;
     private List<PontoTO> pontos;
-    private AnalyticsHelper analyticsHelper;
-
-    public FavoritoRecyclerAdapter(Context context, List<PontoTO> pontos) {
+    private FavoritoListener favoritoListener;
+    
+    public FavoritoRecyclerAdapter(Context context, List<PontoTO> pontos, FavoritoListener listener) {
         this.context = context;
         this.pontos = pontos;
-        analyticsHelper = new AnalyticsHelper(context);
+        this.favoritoListener = listener;
     }
-
+    
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ly_item_favorito, viewGroup, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        return new ViewHolder(view);
     }
-
+    
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
-
+        
         final PontoTO item = pontos.get(i);
-
-        viewHolder.textviewReferencia.setText(item.getDescricao());
+        
+        viewHolder.textviewReferencia.setText(StringHelper.mergeSeparator(" - ", item.getIdentificador(), item.getDescricao()));
         viewHolder.textviewLogradouro.setText(item.getLogradouro());
-        viewHolder.textviewNumero.setText(item.getIdentificador());
-        viewHolder.mainView.setOnClickListener(new View.OnClickListener() {
+        if (favoritoListener != null) {
+            viewHolder.mainView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    favoritoListener.onClick(item);
+                }
+            });
+        }
+        viewHolder.switchCompat.setChecked(item.getNotificacao());
+        viewHolder.switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                analyticsHelper.selecionouPonto(item, "favorito");
-                Intent i = new Intent(context, PontoDetalheActivity.class);
-                i.putExtra(PontoTO.PARAM, item);
-                context.startActivity(i);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    favoritoListener.onEnableNotification(item);
+                }else{
+                    favoritoListener.onDisableNotification(item);
+                }
             }
         });
     }
-
+    
     @Override
     public int getItemCount() {
         return pontos.size();
     }
-
+    
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView textviewReferencia;
         TextView textviewLogradouro;
-        TextView textviewNumero;
+        SwitchCompat switchCompat;
         View mainView;
-
+        
         public ViewHolder(View itemView) {
             super(itemView);
             textviewReferencia = (TextView) itemView.findViewById(R.id.textview_referencia);
             textviewLogradouro = (TextView) itemView.findViewById(R.id.textview_logradouro);
-            textviewNumero = (TextView) itemView.findViewById(R.id.textview_numero);
+            switchCompat = (SwitchCompat) itemView.findViewById(R.id.switch_);
             mainView = itemView;
         }
     }

@@ -12,6 +12,8 @@ import java.io.Serializable;
 public class PontoTO implements Serializable, ClusterItem {
     
     public static final String PARAM = "paramPontoTO";
+    public static final String PARAM_ID = "paramIdPonto";
+    
     @JsonProperty("id")
     private Integer idPonto;
     
@@ -22,6 +24,7 @@ public class PontoTO implements Serializable, ClusterItem {
     private Double longitude;
     private Double latitude;
     private Integer direcao;
+    private boolean notificacao;
     
     @Override
     public LatLng getPosition() {
@@ -30,12 +33,12 @@ public class PontoTO implements Serializable, ClusterItem {
     
     @Override
     public String getTitle() {
-        return identificador;
+        return descricao;
     }
     
     @Override
     public String getSnippet() {
-        return null;
+        return descricao;
     }
     
     public Integer getIdPonto() {
@@ -102,4 +105,11 @@ public class PontoTO implements Serializable, ClusterItem {
         this.direcao = direcao;
     }
     
+    public boolean getNotificacao() {
+        return notificacao;
+    }
+    
+    public void setNotificacao(boolean notificacao) {
+        this.notificacao = notificacao;
+    }
 }

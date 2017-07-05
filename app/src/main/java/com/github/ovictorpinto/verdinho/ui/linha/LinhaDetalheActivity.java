@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.github.ovictorpinto.ConstantesEmpresa;
 import com.github.ovictorpinto.verdinho.Constantes;
@@ -75,6 +76,7 @@ public class LinhaDetalheActivity extends AppCompatActivity implements AppBarLay
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         
         analyticsHelper = new AnalyticsHelper(this);
         ratingHelper = new RatingHelper(this);
