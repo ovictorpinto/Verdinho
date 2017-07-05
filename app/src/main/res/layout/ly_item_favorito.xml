@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="wrap_content" xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/white"
     android:foreground="?attr/selectableItemBackground">
     <LinearLayout
@@ -13,33 +13,17 @@
         android:minHeight="@dimen/minimun_height"
         android:orientation="horizontal"
         android:padding="@dimen/padding_default">
-        <TextView
-            android:id="@+id/textview_numero"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/text_huge"
-            tools:text="333"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/padding_default"
-            android:layout_marginRight="@dimen/padding_default"
-            android:contentDescription="@null"
-            android:src="@drawable/bolinhas"/>
-
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textview_referencia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Em frente ao Silecar Nº123"/>
+                tools:text="333 - Em frente ao Silecar Nº123"/>
 
             <TextView
                 android:id="@+id/textview_logradouro"
@@ -48,5 +32,13 @@
                 tools:text="Av. Paulino Muller"/>
 
         </LinearLayout>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switch_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/padding_default"/>
+
+
     </LinearLayout>
 </FrameLayout>

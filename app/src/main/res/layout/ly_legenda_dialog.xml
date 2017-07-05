@@ -17,6 +17,13 @@
             android:padding="@dimen/padding_default">
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/legenda"
+            />
+            <TextView
+                android:layout_marginTop="@dimen/padding_default"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/badge_ok"
