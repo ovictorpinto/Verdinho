@@ -127,4 +127,10 @@ public class AnalyticsHelper {
     public void cancelaNotificacaoProximidade() {
         mFirebaseAnalytics.logEvent("cancela_notificacao", new Bundle());
     }
+    
+    public void exibiuNotificacaoProximidade(PontoTO pontoTO) {
+        Bundle bundle = new Bundle();
+        fillPonto(pontoTO, bundle);
+        mFirebaseAnalytics.logEvent("exibiu_notificacao", bundle);
+    }
 }

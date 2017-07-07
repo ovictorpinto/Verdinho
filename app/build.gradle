@@ -17,13 +17,21 @@ repositories {
 }
 
 android {
+    signingConfigs {
+        configVerdinho {
+            storeFile file('/Users/victorpinto/OneDrive/Java/verdinho/verdinho.jks')
+            storePassword "${VERDINHO_STORE_PASS}"
+            keyAlias 'verdinho'
+            keyPassword "${VERDINHO_KEY_PASS}"
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 19
-        versionName "1.4.0"
+        versionCode 21
+        versionName "1.4.2"
     }
     buildTypes {
         release {
@@ -38,6 +46,7 @@ android {
         }
         verdinho {
             applicationId "com.github.ovictorpinto.verdinho"
+            signingConfig signingConfigs.configVerdinho
         }
     }
 }
