@@ -63,6 +63,8 @@ public class BootReceiver extends BroadcastReceiver implements GoogleApiClient.C
     
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.e(TAG, connectionResult.getErrorMessage());
+        if (connectionResult.getErrorMessage() != null) {
+            Log.e(TAG, connectionResult.getErrorMessage());
+        }
     }
 }
