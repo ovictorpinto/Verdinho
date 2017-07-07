@@ -18,6 +18,7 @@ import com.github.ovictorpinto.verdinho.to.Estimativa;
 import com.github.ovictorpinto.verdinho.to.LinhaTO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
 import com.github.ovictorpinto.verdinho.ui.ponto.ProcessoLoadLinhasPonto;
+import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.google.android.gms.awareness.fence.FenceState;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -126,6 +127,7 @@ public class ProximidadePontoReceiver extends BroadcastReceiver {
                     notification.defaults = Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND;
                     mNotifyMgr.notify(mNotificationId, notification);
                 }
+                new AnalyticsHelper(context).exibiuNotificacaoProximidade(pontoTO);
             }
         }
     }
