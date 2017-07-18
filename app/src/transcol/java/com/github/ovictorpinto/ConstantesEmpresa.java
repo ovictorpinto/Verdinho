@@ -2,8 +2,6 @@ package com.github.ovictorpinto;
 
 import android.content.Context;
 
-import com.github.ovictorpinto.verdinho.BuildConfig;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,12 +10,12 @@ import java.util.Map;
  */
 
 public class ConstantesEmpresa {
-    private static String prefix = "https://buscabus-prodest.geocontrol.com.br/";
-    public static String listarPontos = prefix + "svc/json/db/pesquisarPontosDeParada";
-    public static String listarLinhas = prefix + "svc/json/db/listarItinerarios";
-    public static String detalharPontos = prefix + "svc/json/db/listarPontosDeParada";
-    public static String linhasPonto = prefix + "svc/estimativas/obterEstimativasPorOrigem";
-    public static String detalharLinha = prefix + "svc/estimativas/obterEstimativasPorOrigemEItinerario";
+    private static String prefix = "http://r29tecnologia.com.br/verdinho-gateway/svc/";
+    public static String listarPontos = prefix + "pesquisarPontosDeParada";
+    public static String detalharPontos = prefix + "listarPontosDeParada";
+    public static String listarLinhas = prefix + "listarItinerarios";
+    public static String linhasPonto = prefix + "obterEstimativasPorOrigem";
+    public static String detalharLinha = prefix + "obterEstimativasPorOrigemEItinerario";
     public static String ENVELOPE = "[-39.482856, -17.888743, -42.075630, -21.160240]";
     
     private Context context;
@@ -29,7 +27,6 @@ public class ConstantesEmpresa {
     public Map<String, String> getHeaders() {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-        headers.put("Authorization", BuildConfig.TRANSCOL_AUTH);
         return headers;
     }
 }
