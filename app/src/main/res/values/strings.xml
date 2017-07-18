@@ -48,7 +48,7 @@
     <string name="example_legenda">12:00 - 10 minutos</string>
     <string name="legenda_bom">Última localização transmitida há menos de 7 minutos</string>
     <string name="legenda_medio">Última localização transmitida há menos de 22 minutos</string>
-    <string name="legenda_ruim">Última localização transmitida há mais de minutos</string>
+    <string name="legenda_ruim">Última localização transmitida há mais de 22 minutos</string>
     <string name="entendi">Entendi</string>
     <string name="notificacao_habilitada">Notificações habilitadas</string>
     <string name="notificacao_desabilitada">Notificações desabilitadas</string>
