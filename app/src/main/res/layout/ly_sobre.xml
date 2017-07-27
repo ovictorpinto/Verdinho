@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:autoLink="email"
             android:gravity="center_horizontal"
-            android:text="urlan87@gmail.com"/>
+            android:text="@string/designer_email"/>
 
     </LinearLayout>
 </ScrollView>

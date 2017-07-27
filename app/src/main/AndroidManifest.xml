@@ -72,12 +72,6 @@
                 <action android:name="${applicationId}.ACTION_PUSH_DELETE"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".notificacao.InteracaoProximidadeReceiver">
-            <intent-filter>
-                <action android:name="${applicationId}.ACTION_PUSH_OPEN"/>
-                <action android:name="${applicationId}.ACTION_PUSH_DELETE"/>
-            </intent-filter>
-        </receiver>
         <receiver
             android:name=".notificacao.BootReceiver"
             android:enabled="true"
