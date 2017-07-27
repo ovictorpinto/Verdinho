@@ -3,7 +3,6 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
         classpath 'io.fabric.tools:gradle:1.21.6'
     }
 }
@@ -12,8 +11,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 repositories {
-    maven { url 'https://maven.fabric.io/public' }
     maven { url "https://maven.google.com" }
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 android {
@@ -24,14 +23,20 @@ android {
             keyAlias 'verdinho'
             keyPassword "${VERDINHO_KEY_PASS}"
         }
+        configTranscol {
+            storeFile file('/Users/victorpinto/OneDrive/Java/verdinho/verdinho.jks')
+            storePassword "${VERDINHO_STORE_PASS}"
+            keyAlias 'meutranscol'
+            keyPassword "${VERDINHO_KEY_PASS}"
+        }
     }
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 22
-        versionName "1.4.3"
+        versionCode 23
+        versionName "1.4.4"
     }
     buildTypes {
         release {
@@ -42,7 +47,7 @@ android {
     productFlavors {
         transcol {
             applicationId "com.github.ovictorpinto.meutranscol"
-            buildConfigField "String", "TRANSCOL_AUTH", "\"${TRANSCOL_AUTH}\""
+            signingConfig signingConfigs.configTranscol
         }
         verdinho {
             applicationId "com.github.ovictorpinto.verdinho"
