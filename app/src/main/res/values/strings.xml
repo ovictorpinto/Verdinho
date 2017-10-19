@@ -58,5 +58,6 @@
         habilitado
     </string>
     <string name="descricao_imagem_dialog_proximidade">Exemplo da notificação que será exibida</string>
+    <string name="onibus_">Ônibus %s</string>
 
 </resources>

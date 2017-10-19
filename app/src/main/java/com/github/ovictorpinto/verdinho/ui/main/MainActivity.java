@@ -290,6 +290,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mClusterManager.setOnClusterItemClickListener(new PontoPinClickListener());
         googleMap.setOnCameraIdleListener(mClusterManager);
         googleMap.setOnMarkerClickListener(mClusterManager);
+        googleMap.setTrafficEnabled(true);
         
         LogHelper.log(TAG, "Mapa pronto");
         mMap = googleMap;

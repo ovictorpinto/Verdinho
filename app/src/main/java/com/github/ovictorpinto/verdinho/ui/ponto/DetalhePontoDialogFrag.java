@@ -125,6 +125,7 @@ public class DetalhePontoDialogFrag extends DialogFragment {
             public void onMapReady(GoogleMap googleMap) {
                 // Gets to GoogleMap from the MapView and does initialization stuff
                 googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                googleMap.setTrafficEnabled(true);
                 if (ActivityCompat
                         .checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager
                         .PERMISSION_GRANTED || ActivityCompat
