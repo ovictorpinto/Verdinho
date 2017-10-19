@@ -9,6 +9,7 @@ buildscript {
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.github.triplet.play'
 
 repositories {
     maven { url "https://maven.google.com" }
@@ -30,13 +31,19 @@ android {
             keyPassword "${VERDINHO_KEY_PASS}"
         }
     }
+    playAccountConfigs {
+        defaultAccountConfig {
+            jsonFile = file('/Users/victorpinto/OneDrive/Java/verdinho/Verdinho-playAccount.json')
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 23
-        versionName "1.4.4"
+        versionCode 26
+        versionName "1.5.2"
+        playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
     buildTypes {
         release {
@@ -48,6 +55,9 @@ android {
         transcol {
             applicationId "com.github.ovictorpinto.meutranscol"
             signingConfig signingConfigs.configTranscol
+            play {
+                track = 'production'
+            }
         }
         verdinho {
             applicationId "com.github.ovictorpinto.verdinho"
