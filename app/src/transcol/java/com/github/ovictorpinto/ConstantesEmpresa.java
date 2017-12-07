@@ -10,7 +10,7 @@ import java.util.Map;
  */
 
 public class ConstantesEmpresa {
-    private static String prefix = "http://r29tecnologia.com.br/verdinho-gateway/svc/";
+    private static String prefix = "https://r29tecnologia.com.br/verdinho-gateway/svc/";
     public static String listarPontos = prefix + "pesquisarPontosDeParada";
     public static String detalharPontos = prefix + "listarPontosDeParada";
     public static String listarLinhas = prefix + "listarItinerarios";
