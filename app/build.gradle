@@ -37,12 +37,12 @@ android {
         }
     }
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 26
-        versionName "1.5.2"
+        versionCode 28
+        versionName "1.5.4"
         playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
     buildTypes {
@@ -51,6 +51,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "unico"
+
     productFlavors {
         transcol {
             applicationId "com.github.ovictorpinto.meutranscol"
