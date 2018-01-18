@@ -133,4 +133,8 @@ public class AnalyticsHelper {
         fillPonto(pontoTO, bundle);
         mFirebaseAnalytics.logEvent("exibiu_notificacao", bundle);
     }
+    
+    public void receiveNotification() {
+        mFirebaseAnalytics.logEvent("receive_remote_notification", new Bundle());
+    }
 }
