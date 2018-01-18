@@ -44,8 +44,9 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 29
-        versionName "1.6.0"
+        versionCode 30
+        versionName "1.6.1"
+        multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
     buildTypes {
@@ -82,6 +83,7 @@ dependencies {
     compile "com.android.support:cardview-v7:$supportVersion"
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support:recyclerview-v7:$supportVersion"
+    compile 'com.android.support:multidex:1.0.2'
     compile "com.google.android.gms:play-services-maps:$playServiceVersion"
     compile "com.google.android.gms:play-services-location:$playServiceVersion"
     compile "com.google.android.gms:play-services-awareness:$playServiceVersion"

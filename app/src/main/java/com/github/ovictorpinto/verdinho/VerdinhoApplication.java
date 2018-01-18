@@ -1,6 +1,6 @@
 package com.github.ovictorpinto.verdinho;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
 import com.github.ovictorpinto.verdinho.util.RatingHelper;
@@ -12,7 +12,7 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by victorpinto on 17/11/15.
  */
-public class VerdinhoApplication extends Application {
+public class VerdinhoApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
@@ -21,14 +21,14 @@ public class VerdinhoApplication extends Application {
         }
         RatingHelper ratingHelper = new RatingHelper(this);
         ratingHelper.count();
-    
+        
         //https://firebase.google.com/support/guides/disable-analytics?hl=pt-br
         //só loga o firebase em produção
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
-    
-        FirebaseMessaging.getInstance().subscribeToTopic("all");
-        if(BuildConfig.DEBUG){
-            FirebaseMessaging.getInstance().subscribeToTopic("debug_all");
+        
+        FirebaseMessaging.getInstance().subscribeToTopic(BuildConfig.FLAVOR + "_all");
+        if (BuildConfig.DEBUG) {
+            FirebaseMessaging.getInstance().subscribeToTopic(BuildConfig.FLAVOR + "_all_debug");
         }
     }
 }
