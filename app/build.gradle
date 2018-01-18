@@ -10,10 +10,13 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'com.github.triplet.play'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 repositories {
     maven { url "https://maven.google.com" }
     maven { url 'https://maven.fabric.io/public' }
+    mavenCentral()
 }
 
 android {
@@ -36,11 +39,11 @@ android {
             jsonFile = file('/Users/victorpinto/OneDrive/Java/verdinho/Verdinho-playAccount.json')
         }
     }
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 28
         versionName "1.5.4"
         playAccountConfig = playAccountConfigs.defaultAccountConfig
@@ -69,8 +72,8 @@ android {
     }
 }
 
-def supportVersion = "25.4.0"
-def playServiceVersion = "11.0.1"
+def supportVersion = "26.1.0"
+def playServiceVersion = "11.8.0"
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -82,12 +85,14 @@ dependencies {
     compile "com.google.android.gms:play-services-maps:$playServiceVersion"
     compile "com.google.android.gms:play-services-location:$playServiceVersion"
     compile "com.google.android.gms:play-services-awareness:$playServiceVersion"
+    compile "com.google.firebase:firebase-core:$playServiceVersion"
+    compile "com.google.firebase:firebase-messaging:$playServiceVersion"
     compile 'com.google.maps.android:android-maps-utils:0.5'
     //https://stackoverflow.com/a/43582900/2096828
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
     }
     compile 'com.hendraanggrian:collapsingtoolbarlayout-subtitle:0.6.0'
-    compile 'com.google.firebase:firebase-core:10.0.1'
     testCompile 'junit:junit:4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
