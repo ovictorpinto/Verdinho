@@ -69,6 +69,7 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
     private Timer timerAtual;
     private TimerTask task;
     private final Handler handler = new Handler();
+    private EstimativaPontoRecyclerAdapter estimativaPontoRecyclerAdapter;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,6 +188,9 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
         super.onPause();
         timerAtual.cancel();
         timerAtual = null;
+        if (estimativaPontoRecyclerAdapter != null) {
+            estimativaPontoRecyclerAdapter.onPause(isFinishing());
+        }
     }
     
     @Override
@@ -194,6 +198,9 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
         super.onResume();
         if (timerAtual == null) {
             iniciaRefresh();
+        }
+        if (estimativaPontoRecyclerAdapter != null) {
+            estimativaPontoRecyclerAdapter.onResume();
         }
     }
     
@@ -242,6 +249,9 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (estimativaPontoRecyclerAdapter != null) {
+            estimativaPontoRecyclerAdapter.onDestroy();
+        }
         task.cancel();
         if (processo != null) {
             processo.cancel(true);
@@ -303,9 +313,9 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
                     emptyView.setVisibility(has ? View.GONE : View.VISIBLE);
                     
                     if (has) {
-                        EstimativaPontoRecyclerAdapter adapter = new EstimativaPontoRecyclerAdapter(context, retornoLinhasPonto
+                        estimativaPontoRecyclerAdapter = new EstimativaPontoRecyclerAdapter(context, retornoLinhasPonto
                                 .getEstimativas(), retornoLinhasPonto.getHorarioDoServidor(), mapLinhas, pontoTO);
-                        recyclerView.setAdapter(adapter);
+                        recyclerView.setAdapter(estimativaPontoRecyclerAdapter);
                     }
                     
                 }
