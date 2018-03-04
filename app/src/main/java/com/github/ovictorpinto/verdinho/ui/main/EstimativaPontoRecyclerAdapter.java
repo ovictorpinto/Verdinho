@@ -84,7 +84,10 @@ public class EstimativaPontoRecyclerAdapter extends RecyclerView.Adapter<Recycle
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         
-        final Estimativa item = estimativas.get(position);
+        if(position == 0){
+            return; //ad ocupa 1
+        }
+        final Estimativa item = estimativas.get(position-1);
         
         if (viewHolder.getItemViewType() == ITEM) {
             ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
