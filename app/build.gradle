@@ -42,7 +42,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 26
         versionCode 30
         versionName "1.6.1"
@@ -66,6 +66,10 @@ android {
                 track = 'production'
             }
             buildConfigField("String", "IN_LOCO_APP_ID", "\"" + TRANSCOL_IN_LOCO_APP_ID + "\"")
+            manifestPlaceholders = [
+                    facebookId: TRANSCOL_FACEBOOK_ID,
+                    facebookSchema: TRANSCOL_FACEBOOK_SCHEMA
+            ]
         }
         verdinho {
             applicationId "com.github.ovictorpinto.verdinho"
@@ -74,6 +78,10 @@ android {
                 track = 'production'
             }
             buildConfigField("String", "IN_LOCO_APP_ID", "\"" + VERDINHO_IN_LOCO_APP_ID + "\"")
+            manifestPlaceholders = [
+                    facebookId: VERDINHO_FACEBOOK_ID,
+                    facebookSchema: VERDINHO_FACEBOOK_SCHEMA
+            ]
         }
     }
 }
@@ -104,4 +112,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     compile 'com.inlocomedia.android:android-sdk:3.4.+' //Ads and Location SDK's
+    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
 }

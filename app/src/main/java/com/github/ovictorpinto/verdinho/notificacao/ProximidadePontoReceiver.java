@@ -6,10 +6,10 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.os.AsyncTaskCompat;
 import android.util.Log;
 
 import com.github.ovictorpinto.verdinho.R;
@@ -49,7 +49,7 @@ public class ProximidadePontoReceiver extends BroadcastReceiver {
         if (action.startsWith("FANCE_IN_")) {//dentro do raio. Atualiza a notificação
             Log.d(TAG, "Dentro...");
             PontoTO pontoTO = new PontoDAO(context).findByPK(String.valueOf(idPonto)).getPontoTO();
-            AsyncTaskCompat.executeParallel(new LoadLinhas(context, pontoTO));
+            new LoadLinhas(context, pontoTO).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else if (action.startsWith("FANCE_OUT_")) {//saiu do raio, remove e notificação
             Log.d(TAG, "Saiu...");
             NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
