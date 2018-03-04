@@ -15,6 +15,7 @@ import com.github.ovictorpinto.verdinho.to.LinhaTO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
 import com.github.ovictorpinto.verdinho.ui.linha.LinhaDetalheActivity;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
+import com.inlocomedia.android.ads.AdView;
 
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,7 @@ public class EstimativaPontoRecyclerAdapter extends RecyclerView.Adapter<Recycle
     
     private static final int HEADER = 10;
     private static final int ITEM = 11;
+    private static final int ADS = 12;
     
     Context context;
     private List<Estimativa> estimativas;
@@ -37,6 +39,7 @@ public class EstimativaPontoRecyclerAdapter extends RecyclerView.Adapter<Recycle
     private Map<Integer, LinhaTO> mapLinhas;
     private PontoTO pontoTO;
     private AnalyticsHelper analyticsHelper;
+    private AdView adView;
     
     public EstimativaPontoRecyclerAdapter(Context context, List<Estimativa> estimativas, long horarioDoServidor, Map<Integer, LinhaTO>
             mapLinhas, PontoTO pontoTO) {
@@ -51,18 +54,26 @@ public class EstimativaPontoRecyclerAdapter extends RecyclerView.Adapter<Recycle
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         
-        if (viewType == HEADER) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ly_header, viewGroup, false);
-            return new HeadeHolder(view);
-        } else {
+        if (viewType == ITEM) {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ly_item_ponto, viewGroup, false);
             return new ItemViewHolder(view);
+        } else if (viewType == HEADER) {
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ly_header, viewGroup, false);
+            return new HeadeHolder(view);
+        } else {//ADS
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ly_ads_ponto, viewGroup, false);
+            adView = view.findViewById(R.id.adview);
+            return new HeadeHolder(view);
         }
     }
     
     @Override
     public int getItemViewType(int position) {
-        final Estimativa item = estimativas.get(position);
+        if (position == 0) {
+            return ADS;
+        }
+        
+        final Estimativa item = estimativas.get(position - 1);//o ad gasta uma
         if (item.getItinerarioId() == null) {
             return HEADER;
         } else {
@@ -73,14 +84,12 @@ public class EstimativaPontoRecyclerAdapter extends RecyclerView.Adapter<Recycle
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         
-        final Estimativa item = estimativas.get(position);
+        if(position == 0){
+            return; //ad ocupa 1
+        }
+        final Estimativa item = estimativas.get(position-1);
         
-        if (viewHolder.getItemViewType() == HEADER) {
-            HeadeHolder itemViewHolder = (HeadeHolder) viewHolder;
-            itemViewHolder.textviewNome.setText(item.getVeiculo());
-            
-        } else {
-            
+        if (viewHolder.getItemViewType() == ITEM) {
             ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
             TextView textView = itemViewHolder.textviewHorario;
             ImageView imageView = itemViewHolder.imageview;
@@ -106,12 +115,17 @@ public class EstimativaPontoRecyclerAdapter extends RecyclerView.Adapter<Recycle
                     context.startActivity(i);
                 }
             });
+        } else if (viewHolder.getItemViewType() == HEADER) {
+            HeadeHolder itemViewHolder = (HeadeHolder) viewHolder;
+            itemViewHolder.textviewNome.setText(item.getVeiculo());
+        } else {
+            //ads não faz nada
         }
     }
     
     @Override
     public int getItemCount() {
-        return estimativas.size();
+        return estimativas.size() + 1;//a publicidade
     }
     
     class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -137,6 +151,26 @@ public class EstimativaPontoRecyclerAdapter extends RecyclerView.Adapter<Recycle
         public HeadeHolder(View itemView) {
             super(itemView);
             textviewNome = (TextView) itemView.findViewById(R.id.textview_nome_linha);
+        }
+    }
+    
+    public void onResume() {
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+    
+    public void onPause(boolean isFinishing) {
+        if (adView != null) {
+            // The pause method receives a boolean that you should fill with the activity isFinishing() method, or false if you do no
+            // have the access to the method
+            adView.pause(isFinishing);
+        }
+    }
+    
+    public void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
         }
     }
 }

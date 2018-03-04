@@ -42,10 +42,10 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 26
-        versionCode 30
-        versionName "1.6.1"
+        versionCode 31
+        versionName "1.7.0"
         multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
@@ -65,10 +65,23 @@ android {
             play {
                 track = 'production'
             }
+            buildConfigField("String", "IN_LOCO_APP_ID", "\"" + TRANSCOL_IN_LOCO_APP_ID + "\"")
+            manifestPlaceholders = [
+                    facebookId: TRANSCOL_FACEBOOK_ID,
+                    facebookSchema: TRANSCOL_FACEBOOK_SCHEMA
+            ]
         }
         verdinho {
             applicationId "com.github.ovictorpinto.verdinho"
             signingConfig signingConfigs.configVerdinho
+            play {
+                track = 'production'
+            }
+            buildConfigField("String", "IN_LOCO_APP_ID", "\"" + VERDINHO_IN_LOCO_APP_ID + "\"")
+            manifestPlaceholders = [
+                    facebookId: VERDINHO_FACEBOOK_ID,
+                    facebookSchema: VERDINHO_FACEBOOK_SCHEMA
+            ]
         }
     }
 }
@@ -87,6 +100,7 @@ dependencies {
     compile "com.google.android.gms:play-services-maps:$playServiceVersion"
     compile "com.google.android.gms:play-services-location:$playServiceVersion"
     compile "com.google.android.gms:play-services-awareness:$playServiceVersion"
+    compile "com.google.android.gms:play-services-ads:$playServiceVersion"
     compile "com.google.firebase:firebase-core:$playServiceVersion"
     compile "com.google.firebase:firebase-messaging:$playServiceVersion"
     compile 'com.google.maps.android:android-maps-utils:0.5'
@@ -97,4 +111,6 @@ dependencies {
     compile 'com.hendraanggrian:collapsingtoolbarlayout-subtitle:0.6.0'
     testCompile 'junit:junit:4.12'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    compile 'com.inlocomedia.android:android-sdk:3.4.+' //Ads and Location SDK's
+    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
 }

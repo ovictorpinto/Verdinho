@@ -6,6 +6,8 @@ import com.crashlytics.android.Crashlytics;
 import com.github.ovictorpinto.verdinho.util.RatingHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.inlocomedia.android.ads.InLocoMedia;
+import com.inlocomedia.android.ads.InLocoMediaOptions;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -21,7 +23,28 @@ public class VerdinhoApplication extends MultiDexApplication {
         }
         RatingHelper ratingHelper = new RatingHelper(this);
         ratingHelper.count();
-        
+        configFirebase();
+        configInLocoMedia();
+    
+    }
+    
+    private void configInLocoMedia() {
+        // In Loco Media SDK Init
+        InLocoMediaOptions options = InLocoMediaOptions.getInstance(this);
+    
+        // The AppId you acquired in earlier steps
+        options.setAdsKey(BuildConfig.IN_LOCO_APP_ID);
+    
+        // Verbose mode flag, if this is set as true InLocoMedia SDK will let you know about errors on the Logcat
+        options.setLogEnabled(true);
+    
+        // Development Devices set here are only going to receive test ads
+        options.setDevelopmentDevices("11C85D6058B4FC8C37A2CE56799AD5");
+    
+        InLocoMedia.init(this, options);
+    }
+    
+    private void configFirebase() {
         //https://firebase.google.com/support/guides/disable-analytics?hl=pt-br
         //só loga o firebase em produção
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
