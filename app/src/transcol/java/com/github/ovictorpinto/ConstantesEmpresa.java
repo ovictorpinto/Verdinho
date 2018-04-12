@@ -18,6 +18,9 @@ public class ConstantesEmpresa {
     public static String detalharLinha = prefix + "obterEstimativasPorOrigemEItinerario";
     public static String ENVELOPE = "[-39.482856, -17.888743, -42.075630, -21.160240]";
     
+    public static String remoteConfigPassagem = "transcol_passagem";
+    public static String remoteConfigDataReajustePassagem = "transcol_atualizacao_passagem";
+    
     private Context context;
     
     public ConstantesEmpresa(Context context) {

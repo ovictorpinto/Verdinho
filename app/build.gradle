@@ -20,6 +20,10 @@ repositories {
 }
 
 android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     signingConfigs {
         configVerdinho {
             storeFile file('/Users/victorpinto/OneDrive/Java/verdinho/verdinho.jks')
@@ -39,15 +43,17 @@ android {
             jsonFile = file('/Users/victorpinto/OneDrive/Java/verdinho/Verdinho-playAccount.json')
         }
     }
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 30
         versionName "1.6.1"
         multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
+        buildConfigField("String", "TWITTER_CONSUMER_KEYS", "\"" + TWITTER_CONSUMER_KEYS + "\"")
+        buildConfigField("String", "TWITTER_CONSUMER_SECRET", "\"" + TWITTER_CONSUMER_SECRET + "\"")
     }
     buildTypes {
         release {
@@ -86,31 +92,36 @@ android {
     }
 }
 
-def supportVersion = "26.1.0"
-def playServiceVersion = "11.8.0"
+def supportVersion = "27.1.1"
+def playServiceVersion = "12.0.1"
+def twitterApiVersion = "3.2.0"
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile(name: 'MobileSaudeAndroidLib(1.21)', ext: 'aar')
-    compile "com.android.support:design:$supportVersion"
-    compile "com.android.support:cardview-v7:$supportVersion"
-    compile "com.android.support:appcompat-v7:$supportVersion"
-    compile "com.android.support:recyclerview-v7:$supportVersion"
-    compile 'com.android.support:multidex:1.0.2'
-    compile "com.google.android.gms:play-services-maps:$playServiceVersion"
-    compile "com.google.android.gms:play-services-location:$playServiceVersion"
-    compile "com.google.android.gms:play-services-awareness:$playServiceVersion"
-    compile "com.google.android.gms:play-services-ads:$playServiceVersion"
-    compile "com.google.firebase:firebase-core:$playServiceVersion"
-    compile "com.google.firebase:firebase-messaging:$playServiceVersion"
-    compile 'com.google.maps.android:android-maps-utils:0.5'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation(name: 'MobileSaudeAndroidLib(1.21)', ext: 'aar')
+    implementation "com.android.support:design:$supportVersion"
+    implementation "com.android.support:cardview-v7:$supportVersion"
+    implementation "com.android.support:appcompat-v7:$supportVersion"
+    implementation "com.android.support:recyclerview-v7:$supportVersion"
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation "com.google.android.gms:play-services-maps:$playServiceVersion"
+    implementation "com.google.android.gms:play-services-location:$playServiceVersion"
+    implementation "com.google.android.gms:play-services-awareness:$playServiceVersion"
+    implementation "com.google.android.gms:play-services-ads:$playServiceVersion"
+    implementation "com.google.firebase:firebase-config:$playServiceVersion"
+    implementation "com.google.firebase:firebase-core:$playServiceVersion"
+    implementation "com.google.firebase:firebase-messaging:$playServiceVersion"
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
     //https://stackoverflow.com/a/43582900/2096828
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
-        transitive = true;
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
+        transitive = true
     }
-    compile 'com.hendraanggrian:collapsingtoolbarlayout-subtitle:0.6.0'
-    testCompile 'junit:junit:4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    compile 'com.inlocomedia.android:android-sdk:3.4.+' //Ads and Location SDK's
+    implementation 'com.hendraanggrian:collapsingtoolbarlayout-subtitle:0.6.0'
+    testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.inlocomedia.android:android-sdk:3.4.+'
+    //Ads and Location SDK's
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
+    implementation "com.twitter.sdk.android:twitter-core:$twitterApiVersion"
+    implementation "com.twitter.sdk.android:tweet-ui:$twitterApiVersion"
 }
