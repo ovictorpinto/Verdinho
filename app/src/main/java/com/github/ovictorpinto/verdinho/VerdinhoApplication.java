@@ -1,6 +1,7 @@
 package com.github.ovictorpinto.verdinho;
 
 import android.support.multidex.MultiDexApplication;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.github.ovictorpinto.verdinho.util.RatingHelper;
@@ -8,6 +9,10 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.inlocomedia.android.ads.InLocoMedia;
 import com.inlocomedia.android.ads.InLocoMediaOptions;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -26,6 +31,17 @@ public class VerdinhoApplication extends MultiDexApplication {
         configFirebase();
         configInLocoMedia();
     
+        initTwitter();
+    
+    }
+    
+    private void initTwitter() {
+        TwitterConfig config = new TwitterConfig.Builder(this)//
+                .logger(new DefaultLogger(BuildConfig.DEBUG? Log.DEBUG:Log.WARN))
+                .twitterAuthConfig(new TwitterAuthConfig(BuildConfig.TWITTER_CONSUMER_KEYS, BuildConfig.TWITTER_CONSUMER_SECRET))
+                .debug(true)
+                .build();
+        Twitter.initialize(config);
     }
     
     private void configInLocoMedia() {

@@ -14,4 +14,7 @@
     <color name="background_header">#F0EDE5</color>
     <color name="background_barra">#282828</color>
 
+    <color name="overlay_dark_10">#1A000000</color>
+    <color name="overlay_dark_20">#33000000</color>
+    <color name="overlay_dark_70">#B3000000</color>
 </resources>
