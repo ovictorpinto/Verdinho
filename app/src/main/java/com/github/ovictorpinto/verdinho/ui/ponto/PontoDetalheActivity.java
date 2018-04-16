@@ -262,6 +262,7 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_preco, menu);
         inflater.inflate(R.menu.menu_legenda, menu);
         inflater.inflate(R.menu.menu_show_foto, menu);
         return super.onCreateOptionsMenu(menu);
@@ -269,17 +270,23 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_legenda) {
-            analyticsHelper.clickLegenda();
-            getFragmentManager().beginTransaction().add(new LegendaDialogFrag(), null).commitAllowingStateLoss();
-            return true;
-        } else if (item.getItemId() == R.id.menu_photo) {
-            analyticsHelper.clickFoto();
-            fotoExpandida = !fotoExpandida;
-            appBarLayout.setExpanded(fotoExpandida, true);
-            return true;
+        switch (item.getItemId()) {
+            case R.id.menu_legenda:
+                analyticsHelper.clickLegenda();
+                getFragmentManager().beginTransaction().add(new LegendaDialogFrag(), null).commitAllowingStateLoss();
+                return true;
+            case R.id.menu_monetization:
+                analyticsHelper.clickPreco();
+                getFragmentManager().beginTransaction().add(new PrecoDialogFrag(), null).commitAllowingStateLoss();
+                return true;
+            case R.id.menu_photo:
+                analyticsHelper.clickFoto();
+                fotoExpandida = !fotoExpandida;
+                appBarLayout.setExpanded(fotoExpandida, true);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
     
     private class ProcessoLoadLinhasPonto extends com.github.ovictorpinto.verdinho.ui.ponto.ProcessoLoadLinhasPonto {

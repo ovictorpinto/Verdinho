@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.github.ovictorpinto.verdinho.ui.ponto.PontoDetalheActivity">
+
+    <item android:id="@+id/menu_monetization"
+          android:icon="@drawable/ic_monetization"
+          android:orderInCategory="1"
+          android:title="@string/preco_passagem"
+          app:showAsAction="always"/>
+</menu>

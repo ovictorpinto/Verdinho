@@ -1,28 +1,16 @@
 package com.github.ovictorpinto.verdinho.ui.main;
 
-import android.Manifest;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.IntDef;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,87 +18,37 @@ import com.github.ovictorpinto.ConstantesEmpresa;
 import com.github.ovictorpinto.verdinho.Constantes;
 import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoDAO;
-import com.github.ovictorpinto.verdinho.persistencia.dao.PontoFavoritoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.po.PontoPO;
 import com.github.ovictorpinto.verdinho.retorno.RetornoDetalharPontos;
 import com.github.ovictorpinto.verdinho.retorno.RetornoPesquisarPontos;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
-import com.github.ovictorpinto.verdinho.ui.ponto.DetalhePontoDialogFrag;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.FragmentExtended;
 import com.github.ovictorpinto.verdinho.util.LogHelper;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.net.UnknownHostException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import br.com.mobilesaude.androidlib.widget.AlertDialogFragmentV11;
 import br.com.tcsistemas.common.net.HttpHelper;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient
-        .OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity {
     
-    private static final String TAG = "MainActivity";
-    private static final String OPCAO = "opcaoSelecionada";
-    private static final int PERMISSION_GPS_REQUEST_CODE = 201;
     public static ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     
     private ProcessoLoadPontos processo;
-    private ImageView buttonFavorito;
-    
-    private ImageView buttonSobre;
-    
-    //0 favorito, 1 mapa, 2 sobre
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({FAVORITO, MAPA, SOBRE})
-    public @interface TELA {}
-    
-    @TELA
-    private int opcao = 1;
-    public static final int FAVORITO = 0;
-    public static final int MAPA = 1;
-    public static final int SOBRE = 2;
-    
-    private GoogleMap mMap;
-    // Declare a variable for the cluster manager.
-    private ClusterManager<PontoTO> mClusterManager;
-    
-    private MapFragment mapFragment;
-    
-    private Fragment sobreFragment;
-    private Fragment favoritoFragment;
-    private LatLng devicePosition;
-    
-    private Set<Integer> setFavoritos;
-    private BroadcastReceiver favoriteReceive;
-    private GoogleApiClient mGoogleApiClient;
     
     private AnalyticsHelper analyticsHelper;
+    private MapFragment mapFragment;
+    private TabLayout tabLayout;
+    private SharedPreferences sharedPreferences;
     
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        buildGoogleApiClient();
         setContentView(R.layout.ly_main);
+        
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         
         analyticsHelper = new AnalyticsHelper(this);
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -120,122 +58,86 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             processo = new ProcessoLoadPontos();
             processo.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
-        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-        favoritoFragment = getFragmentManager().findFragmentById(R.id.fragment_favoritos);
-        sobreFragment = getFragmentManager().findFragmentById(R.id.fragment_sobre);
         
-        View buttonMapa = findViewById(R.id.image_mapa);
-        buttonMapa.setOnClickListener(new View.OnClickListener() {
+        tabLayout = findViewById(R.id.bottom_navigation);
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_pin_drop_black_24dp), 0);
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_star_black_24dp), 1);
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_twitter), 2);
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_settings_applications_black_24dp), 3);
+        
+        int ultima = sharedPreferences.getInt(Constantes.pref_last_aba, 0);
+        escolheAba(ultima);
+        
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onClick(View v) {
-                clickMapa();
+            public void onTabSelected(TabLayout.Tab tab) {
+                sharedPreferences.edit().putInt(Constantes.pref_last_aba, tab.getPosition()).apply();
+                escolheAba(tab.getPosition());
+            }
+            
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                tab.getIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+            }
+            
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            
             }
         });
-        buttonFavorito = (ImageView) findViewById(R.id.button_favoritos);
-        buttonFavorito.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickFavorito();
-            }
-        });
-        
-        buttonSobre = (ImageView) findViewById(R.id.button_sobre);
-        buttonSobre.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickSobre();
-            }
-        });
-        
-        fillFavoritos();
-        favoriteReceive = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                fillFavoritos();
-                fillMarkers();
-            }
-        };
-        LocalBroadcastManager.getInstance(this).registerReceiver(favoriteReceive, new IntentFilter(Constantes.actionUpdatePontoFavorito));
-        
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
-        
-        clickMapa();
-        
-        if (savedInstanceState != null) {
-            switch (savedInstanceState.getInt(OPCAO)) {
-                case 0:
-                    clickFavorito();
-                    break;
-                case 2:
-                    clickSobre();
-                    break;
-                default:
-                    clickMapa();
-            }
-        }
     }
     
-    private void fillFavoritos() {
-        PontoFavoritoDAO favoritoDAO = new PontoFavoritoDAO(this);
-        List<PontoPO> allFavoritos = favoritoDAO.findAllFavoritos();
-        setFavoritos = new HashSet<>();
-        for (int i = 0; i < allFavoritos.size(); i++) {
-            PontoPO po = allFavoritos.get(i);
-            setFavoritos.add(po.getPontoTO().getIdPonto());
+    private void escolheAba(int position) {
+        TabLayout.Tab tab = tabLayout.getTabAt(position);
+        tab.select();
+        tab.getIcon().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+        switch (tab.getPosition()) {
+            case 0:
+                clickMapa();
+                break;
+            case 1:
+                clickFavorito();
+                break;
+            case 2:
+                clickTwitter();
+                break;
+            case 3:
+                clickSobre();
+                break;
         }
     }
     
     private void clickMapa() {
         analyticsHelper.clickMapa();
         setTitle(R.string.app_name);
-        opcao = MAPA;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.hide(sobreFragment).hide(favoritoFragment).show(mapFragment);
+        mapFragment = (MapFragment) getFragmentManager().findFragmentByTag("mapa");
+        if (mapFragment == null) {
+            mapFragment = new MapFragment();
+        }
+        transaction.replace(R.id.frame, mapFragment, "mapa");
         transaction.commit();
-        buttonSobre.setImageResource(R.drawable.info_tabbar_desmarcado);
-        buttonFavorito.setImageResource(R.drawable.favorito_tabbar_desmarcado);
     }
     
     private void clickSobre() {
         analyticsHelper.clickSobre();
         setTitle(R.string.informacoes);
-        opcao = SOBRE;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.show(sobreFragment).hide(favoritoFragment).hide(mapFragment);
-        transaction.commit();
-        buttonSobre.setImageResource(R.drawable.info_tabbar_marcado);
-        buttonFavorito.setImageResource(R.drawable.favorito_tabbar_desmarcado);
+        transaction.replace(R.id.frame, new SobreFragment()).commit();
     }
     
-    /**
-     * Sugestão dos usuários, quando clicar em voltar entrar no mapa
-     */
-    @Override
-    public void onBackPressed() {
-        if (opcao == MAPA) {
-            super.onBackPressed();
-        } else {
-            clickMapa();
-        }
+    private void clickTwitter() {
+        analyticsHelper.clickTwitter();
+        setTitle(R.string.twitter);
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame, new TimelineFragment()).commit();
     }
     
     private void clickFavorito() {
         analyticsHelper.clickFavorito();
         setTitle(R.string.favoritos);
-        opcao = FAVORITO;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.hide(sobreFragment).show(favoritoFragment).hide(mapFragment);
-        transaction.commit();
-        buttonSobre.setImageResource(R.drawable.info_tabbar_desmarcado);
-        buttonFavorito.setImageResource(R.drawable.favorito_tabbar_marcado);
-    }
-    
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(OPCAO, opcao);
-        super.onSaveInstanceState(outState);
+        transaction.replace(R.id.frame, new PontoFavoritoFragment()).commit();
     }
     
     @Override
@@ -244,167 +146,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (processo != null) {
             processo.cancel(true);
         }
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(favoriteReceive);
-    }
-    
-    /**
-     * "Intercepta" a criação do marker no mapa
-     */
-    private class PontoRenderer extends DefaultClusterRenderer<PontoTO> {
-        
-        public PontoRenderer(Context context, GoogleMap map, ClusterManager<PontoTO> clusterManager) {
-            super(context, map, clusterManager);
-        }
-        
-        @Override
-        protected void onBeforeClusterItemRendered(PontoTO item, MarkerOptions markerOptions) {
-            int pin = setFavoritos.contains(item.getIdPonto()) ? R.drawable.pin_favorito : R.drawable.pin;
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(pin));
-            super.onBeforeClusterItemRendered(item, markerOptions);
-        }
-        
-    }
-    
-    /**
-     * Define a regra ao clicar no marker do mapa
-     */
-    private class PontoPinClickListener implements ClusterManager.OnClusterItemClickListener<PontoTO> {
-        
-        @Override
-        public boolean onClusterItemClick(PontoTO clicado) {
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(PontoTO.PARAM, clicado);
-            
-            DialogFragment frag = new DetalhePontoDialogFrag();
-            frag.setArguments(bundle);
-            frag.show(getFragmentManager(), DetalhePontoDialogFrag.TAG_FRAG);
-            return true;
-        }
-    }
-    
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        
-        mClusterManager = new ClusterManager<>(this, googleMap);
-        mClusterManager.setRenderer(new PontoRenderer(this, googleMap, mClusterManager));
-        mClusterManager.setOnClusterItemClickListener(new PontoPinClickListener());
-        googleMap.setOnCameraIdleListener(mClusterManager);
-        googleMap.setOnMarkerClickListener(mClusterManager);
-        googleMap.setTrafficEnabled(true);
-        
-        LogHelper.log(TAG, "Mapa pronto");
-        mMap = googleMap;
-        if (ActivityCompat
-                .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat
-                .checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-        }
-        
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        
-        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            
-            @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
-                fillMarkers();
-            }
-        });
-        fillMarkers();
-    }
-    
-    private void fillMarkers() {
-        LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
-        mMap.clear();
-        PontoDAO dao = new PontoDAO(this);
-        List<PontoPO> list = dao.findByRegiao(bounds);
-        LogHelper.log(TAG, "Encontrados " + list.size());
-        
-        mClusterManager.clearItems();
-        for (int i = 0; i < list.size(); i++) {
-            PontoPO pontoPO = list.get(i);
-            PontoTO to = pontoPO.getPontoTO();
-            mClusterManager.addItem(to);
-        }
-        mClusterManager.cluster();
-    }
-    
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this)
-                                                            .addApi(LocationServices.API).build();
-    }
-    
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
-    
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mGoogleApiClient.disconnect();
-    }
-    
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        LogHelper.log(TAG, "Conectou no fused");
-        
-        boolean hasPermission = (ContextCompat
-                .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
-        if (hasPermission) {
-            getLocation();
-        } else {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Toast.makeText(this, getString(R.string.explicacao_gps_sem_permissao), Toast.LENGTH_LONG).show();
-            } else {
-                ActivityCompat
-                        .requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_GPS_REQUEST_CODE);
-            }
-        }
-    }
-    
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_GPS_REQUEST_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getLocation();
-                }
-                break;
-        }
-    }
-    
-    private void getLocation() {
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            LogHelper.log(TAG, "Encontrou última posição!");
-            devicePosition = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            CameraUpdate update = CameraUpdateFactory.newLatLng(devicePosition);
-            mMap.animateCamera(update, new GoogleMap.CancelableCallback() {
-                @Override
-                public void onFinish() {
-                    fillMarkers();
-                }
-                
-                @Override
-                public void onCancel() {
-                    
-                }
-            });
-        } else {
-            Toast.makeText(this, R.string.location_not_found, Toast.LENGTH_SHORT).show();
-        }
-    }
-    
-    @Override
-    public void onConnectionSuspended(int i) {
-        LogHelper.log(TAG, "onConnectionSuspended " + i);
-    }
-    
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        LogHelper.log(TAG, "onConnectionFailed");
-        Toast.makeText(this, "Localização não disponível", Toast.LENGTH_SHORT).show();
     }
     
     private class ProcessoLoadPontos extends AsyncTask<Void, String, Boolean> {
@@ -481,7 +222,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putBoolean(Constantes.pref_loaded, true);
                     editor.apply();
-                    fillMarkers();
                 }
             }
             processo = null;

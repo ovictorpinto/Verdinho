@@ -55,6 +55,10 @@ public class AnalyticsHelper {
         mFirebaseAnalytics.logEvent("click_sobre", new Bundle());
     }
     
+    public void clickTwitter() {
+        mFirebaseAnalytics.logEvent("click_twitter", new Bundle());
+    }
+    
     public void clickFavorito() {
         mFirebaseAnalytics.logEvent("click_favorito", new Bundle());
     }
@@ -102,6 +106,10 @@ public class AnalyticsHelper {
     
     public void clickLegenda() {
         mFirebaseAnalytics.logEvent("click_legenda", new Bundle());
+    }
+    
+    public void clickPreco() {
+        mFirebaseAnalytics.logEvent("click_preco", new Bundle());
     }
     
     public void clickFoto() {
