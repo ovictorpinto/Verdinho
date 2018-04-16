@@ -18,9 +18,6 @@ public class ConstantesEmpresa {
     public static String detalharLinha = "https://pmv.geocontrol.com.br/pontovitoria/svc/estimativas/obterEstimativasPorOrigemEItinerario";
     public static String ENVELOPE = "[-40.2558446019482, -20.3411474261535, -40.3615017219324, -20.1865857661999]";
     
-    public static String remoteConfigPassagem = "verdinho_passagem";
-    public static String remoteConfigDataReajustePassagem = "verdinho_atualizacao_passagem";
-    
     private Context context;
     
     public ConstantesEmpresa(Context context) {

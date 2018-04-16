@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.github.ovictorpinto.ConstantesEmpresa;
 import com.github.ovictorpinto.verdinho.BuildConfig;
 import com.github.ovictorpinto.verdinho.R;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -22,6 +21,9 @@ import java.util.Locale;
 import br.com.tcsistemas.common.string.StringHelper;
 
 public class PrecoDialogFrag extends DialogFragment {
+    
+    public static String remoteConfigPassagem = "%s_passagem";
+    public static String remoteConfigDataReajustePassagem = "%s_atualizacao_passagem";
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -55,8 +57,8 @@ public class PrecoDialogFrag extends DialogFragment {
             config.activateFetched();
             Locale brasil = new Locale("pt", "BR");
             NumberFormat currency = NumberFormat.getCurrencyInstance(brasil);
-            double precoPassagem = config.getDouble(ConstantesEmpresa.remoteConfigPassagem);
-            String dataReajuste = config.getString(ConstantesEmpresa.remoteConfigDataReajustePassagem);
+            double precoPassagem = config.getDouble(String.format(remoteConfigPassagem, BuildConfig.FLAVOR));
+            String dataReajuste = config.getString(String.format(remoteConfigDataReajustePassagem, BuildConfig.FLAVOR));
             ((TextView) viewPrincipal.findViewById(R.id.textview_passagem)).setText(currency.format(precoPassagem));
             ((TextView) viewPrincipal.findViewById(R.id.textview_troco_5)).setText(currency.format(5 - precoPassagem));
             ((TextView) viewPrincipal.findViewById(R.id.textview_troco_10)).setText(currency.format(10 - precoPassagem));
