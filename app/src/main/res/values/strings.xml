@@ -67,5 +67,9 @@
     <string name="troco_para_5">Troco para 5,00:</string>
     <string name="valor_passagem">Valor passagem:</string>
     <string name="ultimo_reajuste__">Último reajustes: %s</string>
+    <string name="renomear">Renomear</string>
+    <string name="salvar">Salvar</string>
+    <string name="apelido">Apelido</string>
+    <string name="titulo_renomear">Renomear ponto</string>
 
 </resources>

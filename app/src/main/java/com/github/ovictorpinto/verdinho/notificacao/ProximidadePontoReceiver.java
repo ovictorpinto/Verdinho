@@ -83,7 +83,7 @@ public class ProximidadePontoReceiver extends BroadcastReceiver {
                 // Builds the notification and issues it.
                 
                 NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-                inboxStyle.setBigContentTitle(context.getString(R.string.proximo_onibus__, pontoTO.getDescricao()));
+                inboxStyle.setBigContentTitle(context.getString(R.string.proximo_onibus__, pontoTO.getNomeApresentacao(context)));
                 
                 for (Estimativa estimativa : retornoLinhasPonto.getEstimativas()) {
                     //TODO task está montando o header da listagem.

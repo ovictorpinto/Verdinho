@@ -59,26 +59,23 @@ public class DetalhePontoDialogFrag extends DialogFragment {
         getDialog().getWindow()
                    .setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT)); //remove fundo do dialog e obedece o shape
         getDialog().setCanceledOnTouchOutside(true);
-        //        getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         
         viewPrincipal = inflater.inflate(R.layout.ly_detalhe_ponto_dialog, null);
-        TextView textViewPonto = (TextView) viewPrincipal.findViewById(R.id.textview_ponto);
-        textViewPonto.setText(getString(R.string.ponto_n_, pontoTO.getIdentificador()));
+        TextView textViewPonto = viewPrincipal.findViewById(R.id.textview_ponto);
         
-        TextView textViewReferencia = (TextView) viewPrincipal.findViewById(R.id.textview_referencia);
+        textViewPonto.setText(pontoTO.getNomeApresentacao(getActivity()));
+        
+        TextView textViewReferencia = viewPrincipal.findViewById(R.id.textview_referencia);
         textViewReferencia.setText(pontoTO.getDescricao());
         
         View button = viewPrincipal.findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                analyticsHelper.selecionouPonto(pontoTO, ORIGEM);
-                Intent i = new Intent(getActivity(), PontoDetalheActivity.class);
-                i.putExtra(PontoTO.PARAM, pontoTO);
-                startActivity(i);
-                //depois de abrir a nova tela fecha o popup
-                dismiss();
-            }
+        button.setOnClickListener(v -> {
+            analyticsHelper.selecionouPonto(pontoTO, ORIGEM);
+            Intent i = new Intent(getActivity(), PontoDetalheActivity.class);
+            i.putExtra(PontoTO.PARAM, pontoTO);
+            startActivity(i);
+            //depois de abrir a nova tela fecha o popup
+            dismiss();
         });
     
         final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(Awareness.API).build();
