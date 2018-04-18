@@ -26,6 +26,7 @@ import com.github.ovictorpinto.verdinho.persistencia.dao.PontoFavoritoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.po.PontoPO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
 import com.github.ovictorpinto.verdinho.ui.ponto.PontoDetalheActivity;
+import com.github.ovictorpinto.verdinho.ui.ponto.RenomearDialogFrag;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.AwarenessHelper;
 import com.github.ovictorpinto.verdinho.util.DividerItemDecoration;
@@ -82,7 +83,7 @@ public class PontoFavoritoFragment extends Fragment {
         View mainView = inflater.inflate(R.layout.ly_recycler, null);
         coordinator = mainView.findViewById(R.id.coordinator);
         
-        recyclerView = (RecyclerView) mainView.findViewById(R.id.recyclerview);
+        recyclerView = mainView.findViewById(R.id.recyclerview);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
         
@@ -131,6 +132,17 @@ public class PontoFavoritoFragment extends Fragment {
                 Snackbar.make(coordinator, R.string.notificacao_desabilitada, Snackbar.LENGTH_SHORT).show();
                 new AwarenessHelper(getActivity()).removeFenda(pontoTO, mGoogleApiClient);
             }
+            
+            @Override
+            public void onRename(PontoTO pontoTO) {
+                analyticsHelper.openRename();
+                RenomearDialogFrag fragment = new RenomearDialogFrag();
+                Bundle arguments = new Bundle();
+                arguments.putSerializable(PontoTO.PARAM, pontoTO);
+                fragment.setArguments(arguments);
+                getFragmentManager().beginTransaction().add(fragment, null).commitAllowingStateLoss();
+            }
+            
         };
         adapter = new FavoritoRecyclerAdapter(getActivity(), all, listener);
         recyclerView.setAdapter(adapter);

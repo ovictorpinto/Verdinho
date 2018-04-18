@@ -145,4 +145,8 @@ public class AnalyticsHelper {
     public void receiveNotification() {
         mFirebaseAnalytics.logEvent("receive_remote_notification", new Bundle());
     }
+    
+    public void openRename() {
+        mFirebaseAnalytics.logEvent("click_rename", new Bundle());
+    }
 }

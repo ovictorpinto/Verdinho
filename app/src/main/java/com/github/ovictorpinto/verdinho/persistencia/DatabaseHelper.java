@@ -16,7 +16,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
     
     private static final String NOME_BANCO = "com.github.ovictorpinto.verdinho.sqlite3";
-    private static final int VERSAO = 2;
+    private static final int VERSAO = 3;
     private final Context context;
     
     public DatabaseHelper(Context context) {
@@ -44,6 +44,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         if (!existsColumnInTable(db, PontoPO.Mapeamento.TABLE, PontoPO.Mapeamento.NOTIFICACAO)) {
             commandsList.add(PontoPO.Mapeamento.ADD_NOTIFICACAO);
+        }
+        if (!existsColumnInTable(db, PontoPO.Mapeamento.TABLE, PontoPO.Mapeamento.APELIDO)) {
+            commandsList.add(PontoPO.Mapeamento.ADD_APELIDO);
         }
         runScript(db, commandsList);
     }
