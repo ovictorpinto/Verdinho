@@ -24,12 +24,14 @@ public class PontoPO extends TransferObject {
         String DIRECAO = "direcao";
         
         String NOTIFICACAO = "notificacao";
+        String APELIDO = "apelido";
         
         String CREATE = String
                 .format("create table %s (%s integer primary key, %s text, %s text, %s text, %s number, %s number, %s text, %s " +
                         "number);", TABLE, ID, IDENTIFICADOR, LOGRADOURO, DESCRICAO, LATITUDE, LONGITUDE, MUNICIPIO, DIRECAO);
         
         String ADD_NOTIFICACAO = String.format("alter table %s add column %s number default 0;", TABLE, NOTIFICACAO);
+        String ADD_APELIDO = String.format("alter table %s add column %s text;", TABLE, APELIDO);
     }
     
     public PontoPO() {
@@ -58,6 +60,7 @@ public class PontoPO extends TransferObject {
         values.put(Mapeamento.MUNICIPIO, pontoTO.getMunicipio());
         values.put(Mapeamento.DIRECAO, pontoTO.getDirecao());
         values.put(Mapeamento.NOTIFICACAO, pontoTO.getNotificacao() ? 1 : 0);
+        values.put(Mapeamento.APELIDO, pontoTO.getApelido());
         return values;
     }
     
@@ -76,6 +79,7 @@ public class PontoPO extends TransferObject {
         if (!cursor.isNull(columnIndex)) {
             pontoTO.setNotificacao(cursor.getInt(columnIndex) > 0);
         }
+        pontoTO.setApelido(cursor.getString(cursor.getColumnIndex(Mapeamento.APELIDO)));
     }
     
     @Override

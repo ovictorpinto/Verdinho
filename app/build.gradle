@@ -48,8 +48,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 32
-        versionName "1.8.0"
+        versionCode 33
+        versionName "1.9.0"
         multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
         buildConfigField("String", "TWITTER_CONSUMER_KEYS", "\"" + TWITTER_CONSUMER_KEYS + "\"")
@@ -70,6 +70,7 @@ android {
             signingConfig signingConfigs.configTranscol
             play {
                 track = 'production'
+                uploadImages = true
             }
             buildConfigField("String", "IN_LOCO_APP_ID", "\"" + TRANSCOL_IN_LOCO_APP_ID + "\"")
             manifestPlaceholders = [
@@ -82,6 +83,7 @@ android {
             signingConfig signingConfigs.configVerdinho
             play {
                 track = 'production'
+                uploadImages = true
             }
             buildConfigField("String", "IN_LOCO_APP_ID", "\"" + VERDINHO_IN_LOCO_APP_ID + "\"")
             manifestPlaceholders = [

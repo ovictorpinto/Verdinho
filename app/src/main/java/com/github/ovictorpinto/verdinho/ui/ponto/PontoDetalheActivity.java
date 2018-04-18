@@ -80,12 +80,13 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
         analyticsHelper = new AnalyticsHelper(this);
         pontoTO = (PontoTO) getIntent().getSerializableExtra(PontoTO.PARAM);
         
-        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        appBarLayout = findViewById(R.id.app_bar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setTitle(getString(R.string.ponto_n_, pontoTO.getIdentificador()));
         
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        setTitle(pontoTO.getNomeApresentacao(this));
+        
+        recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
@@ -98,57 +99,51 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
         ((TextView) emptyView.findViewById(R.id.textview_title)).setText(R.string.ponto_empty_title);
         ((TextView) emptyView.findViewById(R.id.textview_subtitle)).setText(R.string.ponto_empty_subtitle);
         
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe);
+        swipeRefreshLayout = findViewById(R.id.swipe);
         
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                analyticsHelper.forceRefresh(pontoTO);
-                refresh();
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            analyticsHelper.forceRefresh(pontoTO);
+            refresh();
         });
         refresh();
         
         final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(Awareness.API).build();
         mGoogleApiClient.connect();
         
-        buttonFavorito = (FloatingActionButton) findViewById(R.id.fab);
-        buttonFavorito.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final PontoFavoritoDAO dao = new PontoFavoritoDAO(PontoDetalheActivity.this);
-                PontoFavoritoPO banco = dao.findByPK(pontoTO.getIdPonto().toString());
-                if (banco == null) {
-                    analyticsHelper.favoritou(pontoTO, "ponto_detalhe");
-                    dao.create(new PontoFavoritoPO(pontoTO));
-                    View.OnClickListener desfazerListener = new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dao.removeByPK(new PontoFavoritoPO(pontoTO));
-                            LocalBroadcastManager.getInstance(PontoDetalheActivity.this)
-                                                 .sendBroadcast(new Intent(Constantes.actionUpdatePontoFavorito));
-                        }
-                    };
-                    Snackbar.make(view, R.string.ponto_adicionado, Snackbar.LENGTH_SHORT).setAction(R.string.desfazer, desfazerListener)
-                            .show();
-                } else {
-                    analyticsHelper.removeuFavoritou(pontoTO, "ponto_detalhe");
-                    dao.removeByPK(new PontoFavoritoPO(pontoTO));
-                    View.OnClickListener desfazerListener = new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dao.create(new PontoFavoritoPO(pontoTO));
-                            LocalBroadcastManager.getInstance(PontoDetalheActivity.this)
-                                                 .sendBroadcast(new Intent(Constantes.actionUpdatePontoFavorito));
-                        }
-                    };
-                    Snackbar.make(view, R.string.ponto_removido, Snackbar.LENGTH_SHORT).setAction(R.string.desfazer, desfazerListener)
-                            .show();
-                    new AwarenessHelper(PontoDetalheActivity.this).removeFenda(pontoTO, mGoogleApiClient);
-                }
-                LocalBroadcastManager.getInstance(PontoDetalheActivity.this)
-                                     .sendBroadcast(new Intent(Constantes.actionUpdatePontoFavorito));
+        buttonFavorito = findViewById(R.id.fab);
+        buttonFavorito.setOnClickListener(view -> {
+            final PontoFavoritoDAO dao = new PontoFavoritoDAO(PontoDetalheActivity.this);
+            PontoFavoritoPO banco = dao.findByPK(pontoTO.getIdPonto().toString());
+            if (banco == null) {
+                analyticsHelper.favoritou(pontoTO, "ponto_detalhe");
+                dao.create(new PontoFavoritoPO(pontoTO));
+                View.OnClickListener desfazerListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dao.removeByPK(new PontoFavoritoPO(pontoTO));
+                        LocalBroadcastManager.getInstance(PontoDetalheActivity.this)
+                                             .sendBroadcast(new Intent(Constantes.actionUpdatePontoFavorito));
+                    }
+                };
+                Snackbar.make(view, R.string.ponto_adicionado, Snackbar.LENGTH_SHORT).setAction(R.string.desfazer, desfazerListener)
+                        .show();
+            } else {
+                analyticsHelper.removeuFavoritou(pontoTO, "ponto_detalhe");
+                dao.removeByPK(new PontoFavoritoPO(pontoTO));
+                View.OnClickListener desfazerListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dao.create(new PontoFavoritoPO(pontoTO));
+                        LocalBroadcastManager.getInstance(PontoDetalheActivity.this)
+                                             .sendBroadcast(new Intent(Constantes.actionUpdatePontoFavorito));
+                    }
+                };
+                Snackbar.make(view, R.string.ponto_removido, Snackbar.LENGTH_SHORT).setAction(R.string.desfazer, desfazerListener)
+                        .show();
+                new AwarenessHelper(PontoDetalheActivity.this).removeFenda(pontoTO, mGoogleApiClient);
             }
+            LocalBroadcastManager.getInstance(PontoDetalheActivity.this)
+                                 .sendBroadcast(new Intent(Constantes.actionUpdatePontoFavorito));
         });
         setButtonFavorito();
         updatePontoFavoritoReceive = new BroadcastReceiver() {

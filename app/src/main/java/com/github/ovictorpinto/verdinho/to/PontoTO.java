@@ -1,10 +1,15 @@
 package com.github.ovictorpinto.verdinho.to;
 
+import android.content.Context;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.ovictorpinto.verdinho.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
 import java.io.Serializable;
+
+import br.com.tcsistemas.common.string.StringHelper;
 
 /**
  * Created by victorpinto on 18/10/15.
@@ -25,7 +30,11 @@ public class PontoTO implements Serializable, ClusterItem {
     private Double latitude;
     private Integer direcao;
     private boolean notificacao;
+    private String apelido;
     
+    public String getNomeApresentacao(Context context){
+        return StringHelper.coalesce(apelido, context.getString(R.string.ponto_n_, getIdentificador()));
+    }
     @Override
     public LatLng getPosition() {
         return new LatLng(latitude, longitude);
@@ -111,5 +120,13 @@ public class PontoTO implements Serializable, ClusterItem {
     
     public void setNotificacao(boolean notificacao) {
         this.notificacao = notificacao;
+    }
+    
+    public String getApelido() {
+        return apelido;
+    }
+    
+    public void setApelido(String apelido) {
+        this.apelido = apelido;
     }
 }
