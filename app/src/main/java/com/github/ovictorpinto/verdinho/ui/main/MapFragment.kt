@@ -68,7 +68,7 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
         mClusterManager = ClusterManager(activity, mMap)
         mClusterManager!!.renderer = PontoRenderer(activity, mMap, mClusterManager!!)
         mClusterManager!!.setOnClusterItemClickListener(PontoPinClickListener())
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(14f))
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(12f))
         mMap.setOnCameraIdleListener(mClusterManager)
         mMap.setOnMarkerClickListener(mClusterManager)
 
@@ -83,7 +83,7 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
         }
 
         mMap.uiSettings.isMyLocationButtonEnabled = true
-        mMap.setOnCameraChangeListener(GoogleMap.OnCameraChangeListener { fillMarkers() })
+        mMap.setOnCameraChangeListener({ fillMarkers() })
         fillMarkers()
     }
 

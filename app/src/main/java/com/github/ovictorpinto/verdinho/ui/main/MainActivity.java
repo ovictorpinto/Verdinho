@@ -109,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
     
     private void clickMapa() {
         analyticsHelper.clickMapa();
-        setTitle(R.string.app_name);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         mapFragment = (MapFragment) getFragmentManager().findFragmentByTag("mapa");
         if (mapFragment == null) {
@@ -123,19 +122,17 @@ public class MainActivity extends AppCompatActivity {
         analyticsHelper.clickSobre();
         setTitle(R.string.informacoes);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame, new SobreFragment()).commit();
+        transaction.replace(R.id.frame, new ConfiguracaoFragment()).commit();
     }
     
     private void clickTwitter() {
         analyticsHelper.clickTwitter();
-        setTitle(R.string.twitter);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.frame, new TimelineFragment()).commit();
     }
     
     private void clickFavorito() {
         analyticsHelper.clickFavorito();
-        setTitle(R.string.favoritos);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.frame, new PontoFavoritoFragment()).commit();
     }

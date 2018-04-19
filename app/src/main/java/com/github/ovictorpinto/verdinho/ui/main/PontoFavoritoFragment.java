@@ -13,6 +13,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,6 +83,7 @@ public class PontoFavoritoFragment extends Fragment {
         
         View mainView = inflater.inflate(R.layout.ly_recycler, null);
         coordinator = mainView.findViewById(R.id.coordinator);
+        ((Toolbar) mainView.findViewById(R.id.toolbar)).setTitle(R.string.favoritos);
         
         recyclerView = mainView.findViewById(R.id.recyclerview);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);

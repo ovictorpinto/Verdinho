@@ -71,5 +71,8 @@
     <string name="salvar">Salvar</string>
     <string name="apelido">Apelido</string>
     <string name="titulo_renomear">Renomear ponto</string>
+    <string name="reiniciar_pontos">Reiniciar pontos</string>
+    <string name="titulo_sobre">Sobre</string>
+    <string name="avaliar">Avaliar</string>
 
 </resources>

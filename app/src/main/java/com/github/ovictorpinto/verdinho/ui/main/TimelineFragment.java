@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ public class TimelineFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         
         View mainView = inflater.inflate(R.layout.ly_recycler, null);
+    
+        ((Toolbar) mainView.findViewById(R.id.toolbar)).setTitle(R.string.twitter);
         
         recyclerView = mainView.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
