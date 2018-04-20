@@ -2,7 +2,6 @@ package com.github.ovictorpinto.verdinho.ui.main;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -14,24 +13,11 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.ovictorpinto.ConstantesEmpresa;
 import com.github.ovictorpinto.verdinho.Constantes;
 import com.github.ovictorpinto.verdinho.R;
-import com.github.ovictorpinto.verdinho.persistencia.dao.PontoDAO;
-import com.github.ovictorpinto.verdinho.persistencia.po.PontoPO;
-import com.github.ovictorpinto.verdinho.retorno.RetornoDetalharPontos;
-import com.github.ovictorpinto.verdinho.retorno.RetornoPesquisarPontos;
-import com.github.ovictorpinto.verdinho.to.PontoTO;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
-import com.github.ovictorpinto.verdinho.util.FragmentExtended;
-import com.github.ovictorpinto.verdinho.util.LogHelper;
-
-import java.net.UnknownHostException;
-import java.util.List;
-import java.util.Map;
 
 import br.com.mobilesaude.androidlib.widget.AlertDialogFragmentV11;
-import br.com.tcsistemas.common.net.HttpHelper;
 
 public class MainActivity extends AppCompatActivity {
     
@@ -145,67 +131,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     
-    private class ProcessoLoadPontos extends AsyncTask<Void, String, Boolean> {
-        
-        private final String TAG = "ProcessoLoadPontos";
-        protected Context context;
+    private class ProcessoLoadPontos extends com.github.ovictorpinto.verdinho.ui.main.ProcessoLoadPontos {
+    
         private FragmentManager fragmentManager;
         
         public ProcessoLoadPontos() {
-            this.context = MainActivity.this;
+            super(MainActivity.this);
             this.fragmentManager = getFragmentManager();
         }
-        
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            
-            try {
-                if (FragmentExtended.isOnline(context)) {
-                    try {
-                        
-                        String url = ConstantesEmpresa.listarPontos;
-                        String urlParam = "{\"envelope\":" + ConstantesEmpresa.ENVELOPE + "}";
-                        Map<String, String> headers = new ConstantesEmpresa(context).getHeaders();
-                        
-                        LogHelper.log(TAG, url);
-                        LogHelper.log(TAG, urlParam);
-                        
-                        String retorno = HttpHelper.doPost(url, urlParam, HttpHelper.UTF8, headers);
-                        LogHelper.log(TAG, retorno);
-                        
-                        RetornoPesquisarPontos retornoPesquisarPontos = mapper.readValue(retorno, RetornoPesquisarPontos.class);
-                        LogHelper.log(TAG, retornoPesquisarPontos.getPontosDeParada().size() + " item(s)");
-                        
-                        url = ConstantesEmpresa.detalharPontos;
-                        urlParam = "{\"listaIds\": " + retornoPesquisarPontos.getPontosDeParada().toString() + " }";
-                        LogHelper.log(TAG, url);
-                        LogHelper.log(TAG, urlParam);
-                        
-                        retorno = HttpHelper.doPost(url, urlParam, HttpHelper.UTF8, headers);
-                        LogHelper.log(TAG, retorno);
-                        
-                        RetornoDetalharPontos retornoDetalharPontos = mapper.readValue(retorno, RetornoDetalharPontos.class);
-                        LogHelper.log(TAG, retornoDetalharPontos.getPontosDeParada().size() + " item(s)");
-                        
-                        List<PontoTO> pontosDeParada = retornoDetalharPontos.getPontosDeParada();
-                        PontoDAO dao = new PontoDAO(context);
-                        dao.removeAll();
-                        for (int i = 0; i < pontosDeParada.size(); i++) {
-                            PontoTO pontoTO = pontosDeParada.get(i);
-                            dao.create(new PontoPO(pontoTO));
-                        }
-                        return true;
-                        
-                    } catch (UnknownHostException e) {
-                        LogHelper.log(e);
-                    }
-                }
-            } catch (Exception e) {
-                LogHelper.log(e);
-            }
-            return false;
-        }
-        
+    
         @Override
         protected void onPostExecute(Boolean success) {
             
@@ -223,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
             }
             processo = null;
         }
-        
     }
     
 }

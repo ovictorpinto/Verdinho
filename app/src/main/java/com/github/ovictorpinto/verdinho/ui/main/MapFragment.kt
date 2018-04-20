@@ -8,9 +8,14 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v13.app.FragmentCompat
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import com.github.ovictorpinto.verdinho.Constantes
 import com.github.ovictorpinto.verdinho.R
@@ -31,6 +36,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
+import kotlinx.android.synthetic.main.ly_teste.view.*
 import java.util.*
 
 /**
@@ -38,6 +44,11 @@ import java.util.*
  */
 
 class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    companion object {
+        val ZOOM = 16f
+        val POSICAO_SEDE = LatLng(-20.321367, -40.339607)//palacio anchieta
+    }
 
     private val TAG = "MapaFragment"
     val PERMISSION_GPS_REQUEST_CODE = 201
@@ -63,12 +74,21 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
         LocalBroadcastManager.getInstance(activity).registerReceiver(favoriteReceive, IntentFilter(Constantes.actionUpdatePontoFavorito))
     }
 
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val layout = inflater!!.inflate(R.layout.ly_map, container, false) as LinearLayout
+        layout.toolbar.setTitle(R.string.app_name)
+
+        val v = super.onCreateView(inflater, container, savedInstanceState)
+        layout.addView(v)
+        return layout
+    }
+
     override fun onMapReady(mMap: GoogleMap) {
         map = mMap
         mClusterManager = ClusterManager(activity, mMap)
         mClusterManager!!.renderer = PontoRenderer(activity, mMap, mClusterManager!!)
         mClusterManager!!.setOnClusterItemClickListener(PontoPinClickListener())
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(12f))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(POSICAO_SEDE, ZOOM))
         mMap.setOnCameraIdleListener(mClusterManager)
         mMap.setOnMarkerClickListener(mClusterManager)
 
@@ -134,10 +154,9 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
                 getLocation()
             } else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    Toast.makeText(activity, getString(R.string.explicacao_gps_sem_permissao), Toast.LENGTH_LONG).show()
+                    FragmentCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSION_GPS_REQUEST_CODE)
                 } else {
-                    ActivityCompat
-                            .requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSION_GPS_REQUEST_CODE)
+                    Toast.makeText(activity, getString(R.string.explicacao_gps_sem_permissao), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -145,7 +164,9 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            PERMISSION_GPS_REQUEST_CODE -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            PERMISSION_GPS_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                @SuppressLint("MissingPermission")
+                map?.isMyLocationEnabled = true
                 getLocation()
             }
         }
@@ -157,7 +178,8 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
         if (mLastLocation != null) {
             LogHelper.log(TAG, "Encontrou última posição!");
             var devicePosition = LatLng(mLastLocation.latitude, mLastLocation.longitude)
-            val update = CameraUpdateFactory.newLatLng(devicePosition)
+            map?.moveCamera(CameraUpdateFactory.newLatLng(devicePosition))
+            val update = CameraUpdateFactory.zoomTo(ZOOM)
             moveuLocal = true
             map?.animateCamera(update, object : GoogleMap.CancelableCallback {
                 override fun onFinish() {

@@ -67,12 +67,18 @@
     <string name="troco_para_5">Troco para 5,00:</string>
     <string name="valor_passagem">Valor passagem:</string>
     <string name="ultimo_reajuste__">Último reajustes: %s</string>
+
+    <string name="titulo_renomear">Renomear ponto</string>
     <string name="renomear">Renomear</string>
     <string name="salvar">Salvar</string>
     <string name="apelido">Apelido</string>
-    <string name="titulo_renomear">Renomear ponto</string>
-    <string name="reiniciar_pontos">Reiniciar pontos</string>
+
     <string name="titulo_sobre">Sobre</string>
     <string name="avaliar">Avaliar</string>
+
+    <string name="reiniciar_pontos">Reiniciar pontos</string>
+    <string name="reiniciar_pontos_help">A posição e descrição de cada ponto é armazenada localmente. Caso a prefeitura inclua novos,
+        remova ou mude os pontos de lugar, é ncessário atualizar os dados armanezados
+    </string>
 
 </resources>
