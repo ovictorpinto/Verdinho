@@ -48,8 +48,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 33
-        versionName "1.9.0"
+        versionCode 34
+        versionName "1.10.0"
         multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
         buildConfigField("String", "TWITTER_CONSUMER_KEYS", "\"" + TWITTER_CONSUMER_KEYS + "\"")
@@ -105,6 +105,7 @@ dependencies {
     implementation "com.android.support:cardview-v7:$supportVersion"
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation "com.android.support:recyclerview-v7:$supportVersion"
+    implementation "com.android.support:support-v13:$supportVersion"
     implementation 'com.android.support:multidex:1.0.3'
     implementation "com.google.android.gms:play-services-maps:$playServiceVersion"
     implementation "com.google.android.gms:play-services-location:$playServiceVersion"

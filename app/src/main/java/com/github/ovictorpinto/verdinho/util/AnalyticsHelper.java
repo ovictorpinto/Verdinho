@@ -149,4 +149,8 @@ public class AnalyticsHelper {
     public void openRename() {
         mFirebaseAnalytics.logEvent("click_rename", new Bundle());
     }
+    
+    public void openAvaliar() {
+        mFirebaseAnalytics.logEvent("click_rename", new Bundle());
+    }
 }

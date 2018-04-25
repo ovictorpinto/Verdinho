@@ -87,22 +87,7 @@ public class RatingHelper {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 new AnalyticsHelper(context).clickRatingSim();
-                //https://stackoverflow.com/questions/10816757/rate-this-app-link-in-google-play-store-app-on-the-phone
-                Uri uri = Uri.parse("market://details?id=" + context.getPackageName());
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                // To count with Play market backstack, After pressing back button,
-                // to taken back to our application, we need to add following flags to intent.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-                }
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                try {
-                    context.startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(context, "Não foi possível abrir a loja", Toast.LENGTH_SHORT).show();
-                }
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putBoolean(PREF_PODE_AVALIAR, false).apply();
+                abreLoja();
             }
         });
         alert.setNeutralButton(R.string.rating_neutral, new DialogInterface.OnClickListener() {
@@ -124,5 +109,24 @@ public class RatingHelper {
             }
         });
         alert.create().show();
+    }
+    
+    public void abreLoja() {
+        //https://stackoverflow.com/questions/10816757/rate-this-app-link-in-google-play-store-app-on-the-phone
+        Uri uri = Uri.parse("market://details?id=" + context.getPackageName());
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        // To count with Play market backstack, After pressing back button,
+        // to taken back to our application, we need to add following flags to intent.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        try {
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, "Não foi possível abrir a loja", Toast.LENGTH_SHORT).show();
+        }
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(PREF_PODE_AVALIAR, false).apply();
     }
 }

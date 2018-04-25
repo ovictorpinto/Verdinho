@@ -10,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import com.github.ovictorpinto.verdinho.Constantes
 import com.github.ovictorpinto.verdinho.R
@@ -26,6 +27,7 @@ class RenomearDialogFrag : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.setTitle(R.string.renomear)
+        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         return dialog
     }
 
@@ -38,6 +40,9 @@ class RenomearDialogFrag : DialogFragment() {
         val ponto: PontoTO = arguments.getSerializable(PontoTO.PARAM) as PontoTO
         val viewPrincipal = inflater.inflate(R.layout.ly_rename_dialog, null)
         viewPrincipal.edittext.setText(ponto.apelido)
+        if (ponto.apelido != null) {
+            viewPrincipal.edittext.setSelection(ponto.apelido.length)
+        }
         viewPrincipal.edittext.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 salvar(ponto, viewPrincipal)
@@ -55,6 +60,9 @@ class RenomearDialogFrag : DialogFragment() {
 
     private fun salvar(ponto: PontoTO, viewPrincipal: View) {
         ponto.apelido = viewPrincipal.edittext.text.toString()
+        //se deixar em branco gravo como null
+        if (ponto.apelido.isEmpty())
+            ponto.apelido = null
         PontoDAO(activity).update(PontoPO(ponto))
         LocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(Intent(Constantes.actionUpdatePontoFavorito))

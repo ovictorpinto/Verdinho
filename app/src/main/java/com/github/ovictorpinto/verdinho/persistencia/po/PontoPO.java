@@ -94,7 +94,7 @@ public class PontoPO extends TransferObject {
     
     @Override
     public String getColumnOrder() {
-        return Mapeamento.ID + " desc";
+        return Mapeamento.APELIDO + ", " + Mapeamento.IDENTIFICADOR;
     }
     
     public PontoTO getPontoTO() {

@@ -29,6 +29,8 @@ public class PontoFavoritoDAO extends DAO<PontoFavoritoPO> {
         sql.append(PontoFavoritoPO.Mapeamento.TABLE).append(" f ");
         sql.append(" where p.").append(PontoPO.Mapeamento.ID).append(" = ");
         sql.append(" f.").append(PontoFavoritoPO.Mapeamento.ID);
+        sql.append(" order by coalesce(p.").append(PontoPO.Mapeamento.APELIDO).append(", 'zz'), p.").append(PontoPO.Mapeamento
+                .IDENTIFICADOR);
         SQL_FIND_ALL = sql.toString();
     }
 
