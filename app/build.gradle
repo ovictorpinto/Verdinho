@@ -48,8 +48,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 33
-        versionName "1.9.0"
+        versionCode 34
+        versionName "1.10.0"
         multiDexEnabled true
         playAccountConfig = playAccountConfigs.defaultAccountConfig
         buildConfigField("String", "TWITTER_CONSUMER_KEYS", "\"" + TWITTER_CONSUMER_KEYS + "\"")
