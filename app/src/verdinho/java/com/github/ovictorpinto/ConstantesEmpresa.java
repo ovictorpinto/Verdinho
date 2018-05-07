@@ -11,11 +11,14 @@ import java.util.Map;
 
 public class ConstantesEmpresa {
     
-    public static String listarPontos = "https://pmv.geocontrol.com.br/pontovitoria/svc/json/db/pesquisarPontosDeParada";
-    public static String listarLinhas = "https://pmv.geocontrol.com.br/pontovitoria/svc/json/db/listarItinerarios";
-    public static String detalharPontos = "https://pmv.geocontrol.com.br/pontovitoria/svc/json/db/listarPontosDeParada";
-    public static String linhasPonto = "https://pmv.geocontrol.com.br/pontovitoria/svc/estimativas/obterEstimativasPorOrigem";
-    public static String detalharLinha = "https://pmv.geocontrol.com.br/pontovitoria/svc/estimativas/obterEstimativasPorOrigemEItinerario";
+    private static String PREFIXO = "https://pmv.geocontrol.com.br/pontovitoria/svc/";
+    public static String listarPontos = PREFIXO + "json/db/pesquisarPontosDeParada";
+    public static String listarLinhas = PREFIXO + "json/db/listarItinerarios";
+    public static String detalharPontos = PREFIXO + "json/db/listarPontosDeParada";
+    public static String linhasPonto = PREFIXO + "estimativas/obterEstimativasPorOrigem";
+    public static String detalharLinha = PREFIXO + "estimativas/obterEstimativasPorOrigemEItinerario";
+    public static String linhasTrecho = PREFIXO + "estimativas/obterEstimativasPorOrigemEDestino";
+    
     public static String ENVELOPE = "[-40.2558446019482, -20.3411474261535, -40.3615017219324, -20.1865857661999]";
     
     private Context context;

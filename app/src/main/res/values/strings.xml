@@ -81,4 +81,12 @@
         remova ou mude os pontos de lugar, é ncessário atualizar os dados armanezados
     </string>
 
+    <string name="origem__">Origem: %s</string>
+    <string name="destino__">Destino: %s</string>
+    <string name="trecho">Trecho</string>
+    <string name="origem_">Origem:</string>
+    <string name="destino_">Destino:</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="selecione_ponto_destino">Selecione no mapa o ponto de destino</string>
+
 </resources>

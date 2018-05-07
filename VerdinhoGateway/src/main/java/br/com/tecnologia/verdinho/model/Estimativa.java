@@ -7,68 +7,85 @@ import java.io.Serializable;
  */
 public class Estimativa implements Serializable {
 
-	private String veiculo;
-	private Boolean acessibilidade;
-	private Integer itinerarioId;
-	private long horarioDePartida;
-	private String horarioNaOrigem;
-	private long horarioDaTransmissao;
-	private long previsaoNaOrigemEmMinutos;
+    private String veiculo;
+    private Boolean acessibilidade;
+    private Integer itinerarioId;
+    private long horarioDePartida;
+    private String horarioNaOrigem;
+    private String horarioNoDestino;
+    private long horarioDaTransmissao;
+    private long previsaoNaOrigemEmMinutos;
+    private long previsaoNoDestinoEmMinutos;
 
-	public String getVeiculo() {
-		return veiculo;
-	}
+    public String getVeiculo() {
+        return veiculo;
+    }
 
-	public void setVeiculo(String veiculo) {
-		this.veiculo = veiculo;
-	}
+    public void setVeiculo(String veiculo) {
+        this.veiculo = veiculo;
+    }
 
-	public Boolean getAcessibilidade() {
-		return acessibilidade;
-	}
+    public Boolean getAcessibilidade() {
+        return acessibilidade;
+    }
 
-	public void setAcessibilidade(Boolean acessibilidade) {
-		this.acessibilidade = acessibilidade;
-	}
+    public void setAcessibilidade(Boolean acessibilidade) {
+        this.acessibilidade = acessibilidade;
+    }
 
-	public Integer getItinerarioId() {
-		return itinerarioId;
-	}
+    public Integer getItinerarioId() {
+        return itinerarioId;
+    }
 
-	public void setItinerarioId(Integer itinerarioId) {
-		this.itinerarioId = itinerarioId;
-	}
+    public void setItinerarioId(Integer itinerarioId) {
+        this.itinerarioId = itinerarioId;
+    }
 
-	public long getHorarioDePartida() {
-		return horarioDePartida;
-	}
+    public long getHorarioDePartida() {
+        return horarioDePartida;
+    }
 
-	public void setHorarioDePartida(long horarioDePartida) {
-		this.horarioDePartida = horarioDePartida;
-	}
+    public void setHorarioDePartida(long horarioDePartida) {
+        this.horarioDePartida = horarioDePartida;
+    }
 
-	public long getHorarioDaTransmissao() {
-		return horarioDaTransmissao;
-	}
+    public long getHorarioDaTransmissao() {
+        return horarioDaTransmissao;
+    }
 
-	public void setHorarioDaTransmissao(long horarioDaTransmissao) {
-		this.horarioDaTransmissao = horarioDaTransmissao;
-	}
+    public void setHorarioDaTransmissao(long horarioDaTransmissao) {
+        this.horarioDaTransmissao = horarioDaTransmissao;
+    }
 
-	public String getHorarioNaOrigem() {
-		return horarioNaOrigem;
-	}
+    public String getHorarioNaOrigem() {
+        return horarioNaOrigem;
+    }
 
-	public void setHorarioNaOrigem(String horarioNaOrigem) {
-		this.horarioNaOrigem = horarioNaOrigem;
-	}
+    public void setHorarioNaOrigem(String horarioNaOrigem) {
+        this.horarioNaOrigem = horarioNaOrigem;
+    }
 
-	public long getPrevisaoNaOrigemEmMinutos() {
-		return previsaoNaOrigemEmMinutos;
-	}
+    public long getPrevisaoNaOrigemEmMinutos() {
+        return previsaoNaOrigemEmMinutos;
+    }
 
-	public void setPrevisaoNaOrigemEmMinutos(long previsaoNaOrigemEmMinutos) {
-		this.previsaoNaOrigemEmMinutos = previsaoNaOrigemEmMinutos;
-	}
+    public void setPrevisaoNaOrigemEmMinutos(long previsaoNaOrigemEmMinutos) {
+        this.previsaoNaOrigemEmMinutos = previsaoNaOrigemEmMinutos;
+    }
 
+    public String getHorarioNoDestino() {
+        return horarioNoDestino;
+    }
+
+    public void setHorarioNoDestino(String horarioNoDestino) {
+        this.horarioNoDestino = horarioNoDestino;
+    }
+
+    public long getPrevisaoNoDestinoEmMinutos() {
+        return previsaoNoDestinoEmMinutos;
+    }
+
+    public void setPrevisaoNoDestinoEmMinutos(long previsaoNoDestinoEmMinutos) {
+        this.previsaoNoDestinoEmMinutos = previsaoNoDestinoEmMinutos;
+    }
 }

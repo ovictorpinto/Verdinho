@@ -12,20 +12,21 @@ import br.com.tcsistemas.common.date.HoraHelper;
  * Created by victorpinto on 24/10/15.
  */
 public class Estimativa implements Serializable {
-
+    
     public static final String PARAM = "EstimativaParam";
-
+    
     private Boolean favorito;
     private String veiculo;
     private Boolean acessibilidade;
     private Integer itinerarioId;
     private long horarioDePartida;
     private Long horarioNaOrigem;
+    private Long horarioNoDestino;
     private long horarioDaTransmissao;
-
+    
     public static final long CONFIABILIDADE_RUIM = 36 * HoraHelper.MINUTO_IN_MILI;
     public static final long CONFIABILIDADE_MEDIO = 22 * HoraHelper.MINUTO_IN_MILI;
-
+    
     public int getBackgroundConfiabilidade(long horarioDoServidor) {
         long distanciaOrigem = horarioNaOrigem - horarioDaTransmissao;
         long distanciaAgora = horarioDoServidor - horarioDaTransmissao;
@@ -37,10 +38,18 @@ public class Estimativa implements Serializable {
         }
         return R.drawable.badge_ok;
     }
-
-    public String getHorarioText(Context context, long horarioDoServidor) {
+    
+    public String getHorarioOrigemText(Context context, long horarioDoServidor) {
+        return getHorarioText(context, horarioNaOrigem, horarioDoServidor);
+    }
+    
+    public String getHorarioDestinoText(Context context, long horarioDoServidor) {
+        return getHorarioText(context, horarioNoDestino, horarioDoServidor);
+    }
+    
+    private String getHorarioText(Context context, long horarioBase, long horarioDoServidor) {
         String hora;
-        long miliRestante = getHorarioNaOrigem() - horarioDoServidor;
+        long miliRestante = horarioBase - horarioDoServidor;
         if (miliRestante < HoraHelper.MINUTO_IN_MILI) {
             hora = context.getString(R.string.meno_minuto);
         } else if (miliRestante < HoraHelper.HORA_IN_MILI) {
@@ -54,60 +63,68 @@ public class Estimativa implements Serializable {
         }
         return hora;
     }
-
+    
     public Boolean isFavorito() {
         return favorito;
     }
-
+    
     public void setFavorito(Boolean favorito) {
         this.favorito = favorito;
     }
-
+    
     public String getVeiculo() {
         return veiculo;
     }
-
+    
     public void setVeiculo(String veiculo) {
         this.veiculo = veiculo;
     }
-
+    
     public Boolean getAcessibilidade() {
         return acessibilidade;
     }
-
+    
     public void setAcessibilidade(Boolean acessibilidade) {
         this.acessibilidade = acessibilidade;
     }
-
+    
     public Integer getItinerarioId() {
         return itinerarioId;
     }
-
+    
     public void setItinerarioId(Integer itinerarioId) {
         this.itinerarioId = itinerarioId;
     }
-
+    
     public long getHorarioDePartida() {
         return horarioDePartida;
     }
-
+    
     public void setHorarioDePartida(long horarioDePartida) {
         this.horarioDePartida = horarioDePartida;
     }
-
+    
     public Long getHorarioNaOrigem() {
         return horarioNaOrigem;
     }
-
+    
     public void setHorarioNaOrigem(Long horarioNaOrigem) {
         this.horarioNaOrigem = horarioNaOrigem;
     }
-
+    
     public long getHorarioDaTransmissao() {
         return horarioDaTransmissao;
     }
-
+    
     public void setHorarioDaTransmissao(long horarioDaTransmissao) {
         this.horarioDaTransmissao = horarioDaTransmissao;
+    }
+    
+    public Long getHorarioNoDestino() {
+        return horarioNoDestino;
+    }
+    
+    public void setHorarioNoDestino(Long horarioNoDestino) {
+        this.horarioNoDestino = horarioNoDestino;
     }
 }

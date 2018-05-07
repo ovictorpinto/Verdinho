@@ -1,3 +1,6 @@
+1.11
+Nova funcionalidade de Destino. Escolha um ponto de origem e destino e veja a lista de linhas e horários dos ônibus que fazem o trajeto
+
 1.10
 Novo menu de configuração. Possível avaliar e reiniciar os pontos
 
@@ -13,7 +16,3 @@ Inclusão de ads
 
 1.5.3
 Correção do endereço do servidor
-
-1.5.2
-Mapa agora informa situação do tráfego
-No horário do ônibus agora mostra o número do ônibus
