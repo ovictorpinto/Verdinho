@@ -15,18 +15,11 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/button_cancelar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="@dimen/spacing_large"
-        android:clickable="true"
-        android:gravity="center"
-        android:src="@drawable/ic_close"
-        android:tint="@android:color/white"
-        android:visibility="gone"
-        app:backgroundTint="@color/colorPrimary"
-        app:rippleColor="@color/grey_5"
-        tools:visibility="visible"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/mapcontent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

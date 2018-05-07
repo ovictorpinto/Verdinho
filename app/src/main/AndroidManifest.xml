@@ -56,8 +56,8 @@
 
         <activity
             android:name=".ui.main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -81,6 +81,14 @@
                 android:value=".ui.ponto.PontoDetalheActivity"/>
         </activity>
         <activity android:name=".teste.MainActivity">
+        </activity>
+
+        <activity android:name=".ui.ponto.TrechoDetalheActivity"
+                  android:parentActivityName=".ui.main.MainActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.main.MainActivity"/>
         </activity>
 
         <receiver

@@ -17,6 +17,7 @@ import br.com.tcsistemas.common.string.StringHelper;
 public class PontoTO implements Serializable, ClusterItem {
     
     public static final String PARAM = "paramPontoTO";
+    public static final String PARAM_DESTINO = "paramPontoTODestino";
     public static final String PARAM_ID = "paramIdPonto";
     
     @JsonProperty("id")
@@ -34,6 +35,10 @@ public class PontoTO implements Serializable, ClusterItem {
     
     public String getNomeApresentacao(Context context){
         return StringHelper.coalesce(apelido, context.getString(R.string.ponto_n_, getIdentificador()));
+    }
+    
+    public String getNomeApresentacaoComDescricao(Context context){
+        return StringHelper.coalesce(apelido, descricao, context.getString(R.string.ponto_n_, getIdentificador()));
     }
     @Override
     public LatLng getPosition() {

@@ -8,8 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v13.app.FragmentCompat
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -17,8 +19,8 @@ import android.support.v4.content.LocalBroadcastManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.Toast
+import br.com.mobilesaude.androidlib.widget.DialogCarregandoV11
 import br.com.tcsistemas.common.net.HttpHelper
 import com.github.ovictorpinto.ConstantesEmpresa
 import com.github.ovictorpinto.verdinho.Constantes
@@ -28,6 +30,7 @@ import com.github.ovictorpinto.verdinho.persistencia.dao.PontoFavoritoDAO
 import com.github.ovictorpinto.verdinho.retorno.RetornoPesquisarPontos
 import com.github.ovictorpinto.verdinho.to.PontoTO
 import com.github.ovictorpinto.verdinho.ui.ponto.DetalhePontoDialogFrag
+import com.github.ovictorpinto.verdinho.ui.ponto.TrechoDetalheActivity
 import com.github.ovictorpinto.verdinho.util.LogHelper
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
@@ -39,6 +42,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import kotlinx.android.synthetic.main.ly_map.view.*
@@ -54,54 +58,23 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
 
     var retornoPesquisarPontos: RetornoPesquisarPontos? = null
 
-    override fun onDestino(pontoTO: PontoTO) {
-        Toast.makeText(activity, "Procurando destinos do ponto ${pontoTO.getNomeApresentacao(activity)}", Toast.LENGTH_SHORT).show()
-        ProcessoDestino(activity, pontoTO).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-    }
-
-    inner class ProcessoDestino(var context: Context, var pontoTO: PontoTO) : AsyncTask<Void, String, Boolean>() {
-
-        override fun doInBackground(vararg p0: Void?): Boolean {
-            val mapper = MainActivity.mapper
-
-            val url = ConstantesEmpresa.listarPontos
-            val urlParam = "{\"pontoDeOrigemId\": ${pontoTO.idPonto}}"
-            val headers = ConstantesEmpresa(context).headers
-            LogHelper.log(TAG, url)
-            LogHelper.log(TAG, urlParam)
-
-            val retorno = HttpHelper.doPost(url, urlParam, HttpHelper.UTF8, headers)
-            LogHelper.log(TAG, retorno)
-
-            retornoPesquisarPontos = mapper.readValue(retorno, RetornoPesquisarPontos::class.java)
-            LogHelper.log(TAG, retornoPesquisarPontos!!.getPontosDeParada().size.toString() + " item(s)")
-
-            return true
-        }
-
-        override fun onPostExecute(result: Boolean?) {
-            super.onPostExecute(result)
-            if (!isCancelled) {
-
-                fillMarkers()
-                layout.button_cancelar.visibility = View.VISIBLE
-            }
-        }
-    }
-
     companion object {
         val ZOOM = 16f
         val POSICAO_SEDE = LatLng(-20.321367, -40.339607)//palacio anchieta
+        val PERMISSION_GPS_REQUEST_CODE = 201
+        val TAG = "MapaFragment"
     }
 
-    private val TAG = "MapaFragment"
-    val PERMISSION_GPS_REQUEST_CODE = 201
     private lateinit var mGoogleApiClient: GoogleApiClient
+    private lateinit var favoriteReceive: BroadcastReceiver
+    private lateinit var layout: ViewGroup
+    private lateinit var mapView: View
     private var map: GoogleMap? = null
     private var mClusterManager: ClusterManager<PontoTO>? = null
     private var moveuLocal = false
     private var setFavoritos = HashSet<Int>()
-    private lateinit var favoriteReceive: BroadcastReceiver
+    private var processoDestino: ProcessoDestino? = null
+    private var pontoOrigem: PontoTO? = null
 
     override fun onCreate(p0: Bundle?) {
         super.onCreate(p0)
@@ -118,15 +91,27 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
         LocalBroadcastManager.getInstance(activity).registerReceiver(favoriteReceive, IntentFilter(Constantes.actionUpdatePontoFavorito))
     }
 
-    private lateinit var layout: LinearLayout
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        layout = inflater!!.inflate(R.layout.ly_map, container, false) as LinearLayout
+        layout = inflater!!.inflate(R.layout.ly_map, container, false) as ViewGroup
         layout.toolbar.setTitle(R.string.app_name)
 
-        val v = super.onCreateView(inflater, container, savedInstanceState)
-        layout.addView(v)
+        mapView = super.onCreateView(inflater, container, savedInstanceState)
+        layout.mapcontent.addView(mapView)
         return layout
+    }
+
+    private fun cancelarPesquisa() {
+        retornoPesquisarPontos = null
+        pontoOrigem = null
+        fillMarkers()
+    }
+
+    override fun onDestino(pontoTO: PontoTO) {
+        this.pontoOrigem = pontoTO
+        processoDestino?.cancel(true)
+        processoDestino = ProcessoDestino(activity, pontoTO)
+        processoDestino!!.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
     }
 
     override fun onMapReady(mMap: GoogleMap) {
@@ -266,6 +251,7 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
     override fun onDestroy() {
         super.onDestroy()
         LocalBroadcastManager.getInstance(activity).unregisterReceiver(favoriteReceive)
+        processoDestino?.cancel(true)
     }
 
     /**
@@ -279,6 +265,15 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
             super.onBeforeClusterItemRendered(item, markerOptions)
         }
 
+        /**
+         * Se não estiver filtrado segue padrão<br>
+         *     Se estiver, nunca filtra<br>
+         *     https://stackoverflow.com/questions/27273857/how-to-temporarily-disable-map-marker-clustering
+         */
+        override fun shouldRenderAsCluster(cluster: Cluster<PontoTO>?): Boolean {
+            return if (retornoPesquisarPontos == null) super.shouldRenderAsCluster(cluster) else false
+        }
+
     }
 
     /**
@@ -288,14 +283,68 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
     .OnClusterItemClickListener<PontoTO> {
 
         override fun onClusterItemClick(clicado: PontoTO): Boolean {
-            val bundle = Bundle()
-            bundle.putSerializable(PontoTO.PARAM, clicado)
 
-            val frag = DetalhePontoDialogFrag()
-            frag.setTargetFragment(listener, 1)
-            frag.arguments = bundle
-            frag.show(fragmentManager, DetalhePontoDialogFrag.TAG_FRAG)
+            //abre o dialogo
+            if (pontoOrigem == null) {
+                val bundle = Bundle()
+                bundle.putSerializable(PontoTO.PARAM, clicado)
+
+                val frag = DetalhePontoDialogFrag()
+                frag.setTargetFragment(listener, 1)
+                frag.arguments = bundle
+                frag.show(fragmentManager, DetalhePontoDialogFrag.TAG_FRAG)
+            } else {
+                //escolher o destino, já abre a tela de detalhes
+                val i = Intent(activity, TrechoDetalheActivity::class.java)
+                i.putExtra(PontoTO.PARAM, pontoOrigem)
+                i.putExtra(PontoTO.PARAM_DESTINO, clicado)
+                startActivity(i)
+            }
             return true
+        }
+    }
+
+    inner class ProcessoDestino(var context: Context, var pontoTO: PontoTO) : AsyncTask<Void, String, Boolean>() {
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+            val carregando = DialogCarregandoV11()
+            fragmentManager.beginTransaction().add(carregando, DialogCarregandoV11.FRAGMENT_ID).commitAllowingStateLoss()
+        }
+
+        override fun doInBackground(vararg p0: Void?): Boolean {
+            val mapper = MainActivity.mapper
+
+            val url = ConstantesEmpresa.listarPontos
+            val urlParam = "{\"pontoDeOrigemId\": ${pontoTO.idPonto}}"
+            val headers = ConstantesEmpresa(context).headers
+            LogHelper.log(TAG, url)
+            LogHelper.log(TAG, urlParam)
+
+            val retorno = HttpHelper.doPost(url, urlParam, HttpHelper.UTF8, headers)
+            LogHelper.log(TAG, retorno)
+
+            retornoPesquisarPontos = mapper.readValue(retorno, RetornoPesquisarPontos::class.java)
+            LogHelper.log(TAG, retornoPesquisarPontos!!.getPontosDeParada().size.toString() + " item(s)")
+
+            return true
+        }
+
+        override fun onPostExecute(result: Boolean?) {
+            super.onPostExecute(result)
+            var findFragmentByTag = fragmentManager.findFragmentByTag(DialogCarregandoV11.FRAGMENT_ID) as DialogCarregandoV11?
+            findFragmentByTag?.dismiss()
+            if (!isCancelled) {
+
+                fillMarkers()
+                val snackbar = Snackbar.make(mapView, getString(R.string.selecione_ponto_destino), Snackbar.LENGTH_INDEFINITE)
+                snackbar.setAction(R.string.cancelar, {
+                    snackbar.dismiss()
+                    cancelarPesquisa()
+                }).setActionTextColor(Color.RED)
+                snackbar.show()
+            }
+            processoDestino = null
         }
     }
 }
