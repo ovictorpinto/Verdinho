@@ -95,7 +95,7 @@ public class EstimativaPontoRecyclerAdapter extends RecyclerView.Adapter<Recycle
             ImageView imageView = itemViewHolder.imageview;
             imageView.setVisibility(item.getAcessibilidade() ? View.VISIBLE : View.GONE);
             
-            String hora = item.getHorarioText(context, horarioDoServidor);
+            String hora = item.getHorarioOrigemText(context, horarioDoServidor);
             String horario = DataHelper.format(new Date(item.getHorarioNaOrigem()), "HH:mm");
             
             textView.setText(StringHelper.mergeSeparator(" - ", horario, hora));

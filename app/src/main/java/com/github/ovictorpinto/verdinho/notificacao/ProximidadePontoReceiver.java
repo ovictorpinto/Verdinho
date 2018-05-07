@@ -92,7 +92,7 @@ public class ProximidadePontoReceiver extends BroadcastReceiver {
                     }
                     LinhaTO linha = mapLinhas.get(estimativa.getItinerarioId());
                     
-                    String hora = estimativa.getHorarioText(context, retornoLinhasPonto.getHorarioDoServidor());
+                    String hora = estimativa.getHorarioOrigemText(context, retornoLinhasPonto.getHorarioDoServidor());
                     String descricao = StringHelper.mergeSeparator(" - ", linha.getIdentificadorLinhaFiltrado(), hora, linha.getBandeira());
                     inboxStyle.addLine(descricao);
                 }

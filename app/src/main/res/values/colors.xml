@@ -17,6 +17,8 @@
     <color name="overlay_dark_10">#1A000000</color>
     <color name="overlay_dark_20">#33000000</color>
     <color name="overlay_dark_70">#B3000000</color>
+
+    <color name="grey_5">#f2f2f2</color>
     <color name="grey_10">#e6e6e6</color>
     <color name="grey_40">#999999</color>
 </resources>

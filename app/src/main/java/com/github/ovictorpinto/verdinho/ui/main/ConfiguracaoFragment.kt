@@ -23,6 +23,14 @@ import kotlinx.android.synthetic.main.ly_toolbar.view.*
  */
 class ConfiguracaoFragment : Fragment() {
 
+    private var processoLoadPontos : ProcessoLoadPontos? = null
+
+    private val function = {
+        //verifica se está online
+        var processoLoadPontos = ProcessoLoadPontos()
+        processoLoadPontos.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         var view = inflater.inflate(R.layout.ly_config, null)
@@ -53,7 +61,9 @@ class ConfiguracaoFragment : Fragment() {
         })
         view.reiniciar_ponto.setOnClickListener({
             //verifica se está online
-            ProcessoLoadPontos().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+            processoLoadPontos?.cancel(true)
+            processoLoadPontos = ProcessoLoadPontos()
+            processoLoadPontos!!.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
         })
         return view
     }
@@ -89,7 +99,13 @@ class ConfiguracaoFragment : Fragment() {
                     editor.apply()
                 }
             }
+            processoLoadPontos = null
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        processoLoadPontos?.cancel(true)
     }
 
 }

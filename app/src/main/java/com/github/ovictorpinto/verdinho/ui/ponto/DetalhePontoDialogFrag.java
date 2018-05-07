@@ -2,6 +2,7 @@ package com.github.ovictorpinto.verdinho.ui.ponto;
 
 import android.Manifest;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
@@ -46,6 +47,7 @@ public class DetalhePontoDialogFrag extends DialogFragment {
     private MapView mapView;
     private AnalyticsHelper analyticsHelper;
     private String ORIGEM = "ponto_dialog";
+    private PontoDialogoListener pontoDialogoListener;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,12 +79,22 @@ public class DetalhePontoDialogFrag extends DialogFragment {
             //depois de abrir a nova tela fecha o popup
             dismiss();
         });
-    
+        
+        View buttonDestino = viewPrincipal.findViewById(R.id.button_destino);
+        buttonDestino.setOnClickListener(view -> {
+            Fragment targetFragment = getTargetFragment();
+            if (targetFragment instanceof PontoDialogoListener) {
+                pontoDialogoListener = (PontoDialogoListener) targetFragment;
+                pontoDialogoListener.onDestino(pontoTO);
+            }
+            dismiss();
+        });
+        
         final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(Awareness.API).build();
         mGoogleApiClient.connect();
-        buttonFavoritos = (ImageView) viewPrincipal.findViewById(R.id.button_favoritos);
+        buttonFavoritos = viewPrincipal.findViewById(R.id.button_favoritos);
         
-        fillButton();
+        fillFavButton();
         buttonFavoritos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,7 +110,7 @@ public class DetalhePontoDialogFrag extends DialogFragment {
                     Toast.makeText(getActivity(), R.string.ponto_removido, Toast.LENGTH_SHORT).show();
                     new AwarenessHelper(getActivity()).removeFenda(pontoTO, mGoogleApiClient);
                 }
-                fillButton();
+                fillFavButton();
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(Constantes.actionUpdatePontoFavorito));
             }
         });
@@ -106,7 +118,7 @@ public class DetalhePontoDialogFrag extends DialogFragment {
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(getActivity().getApplicationContext());
         
-        mapView = (MapView) viewPrincipal.findViewById(R.id.mapview);
+        mapView = viewPrincipal.findViewById(R.id.mapview);
         // *** IMPORTANT ***
         // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK
         // objects or sub-Bundles.
@@ -149,7 +161,7 @@ public class DetalhePontoDialogFrag extends DialogFragment {
         return viewPrincipal;
     }
     
-    private void fillButton() {
+    private void fillFavButton() {
         PontoFavoritoDAO dao = new PontoFavoritoDAO(getActivity());
         PontoFavoritoPO banco = dao.findByPK(pontoTO.getIdPonto().toString());
         if (banco != null) {
@@ -194,5 +206,9 @@ public class DetalhePontoDialogFrag extends DialogFragment {
     public void onPause() {
         super.onPause();
         mapView.onPause();
+    }
+    
+    public interface PontoDialogoListener {
+        void onDestino(PontoTO pontoTO);
     }
 }
