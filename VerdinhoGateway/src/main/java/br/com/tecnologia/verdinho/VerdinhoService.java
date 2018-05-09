@@ -85,6 +85,9 @@ public class VerdinhoService {
             for (Estimativa estimativa : parsed) {
                 long proximo = agora + estimativa.getPrevisaoNaOrigemEmMinutos() * minutoInMili;
                 estimativa.setHorarioNaOrigem(String.valueOf(proximo));
+
+                proximo = agora + estimativa.getPrevisaoNoDestinoEmMinutos() * minutoInMili;
+                estimativa.setHorarioNoDestino(String.valueOf(proximo));
             }
             RetornoLinhasPonto retornoLinhasPonto = new RetornoLinhasPonto();
             retornoLinhasPonto.setEstimativas(parsed);
