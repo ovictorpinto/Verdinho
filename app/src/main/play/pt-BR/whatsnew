@@ -1,3 +1,6 @@
+1.11.2
+Correção da localização do usuário
+
 1.11
 Nova funcionalidade de Destino. Escolha um ponto de origem e destino e veja a lista de linhas e horários dos ônibus que fazem o trajeto
 
@@ -13,6 +16,3 @@ Nova funcionalidade que exibe o preço da passagem e o troco
 
 1.7
 Inclusão de ads
-
-1.5.3
-Correção do endereço do servidor
