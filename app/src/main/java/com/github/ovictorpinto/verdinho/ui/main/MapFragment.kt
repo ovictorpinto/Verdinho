@@ -12,7 +12,6 @@ import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v13.app.FragmentCompat
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
@@ -186,11 +185,7 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
             if (hasPermission) {
                 getLocation()
             } else {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    FragmentCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSION_GPS_REQUEST_CODE)
-                } else {
-                    Toast.makeText(activity, getString(R.string.explicacao_gps_sem_permissao), Toast.LENGTH_LONG).show()
-                }
+                ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSION_GPS_REQUEST_CODE)
             }
         }
     }
