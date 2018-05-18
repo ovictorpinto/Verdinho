@@ -12,8 +12,10 @@ import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoDAO;
+import com.github.ovictorpinto.verdinho.persistencia.po.PontoPO;
 import com.github.ovictorpinto.verdinho.to.Estimativa;
 import com.github.ovictorpinto.verdinho.to.LinhaTO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
@@ -48,8 +50,13 @@ public class ProximidadePontoReceiver extends BroadcastReceiver {
         }
         if (action.startsWith("FANCE_IN_")) {//dentro do raio. Atualiza a notificação
             Log.d(TAG, "Dentro...");
-            PontoTO pontoTO = new PontoDAO(context).findByPK(String.valueOf(idPonto)).getPontoTO();
-            new LoadLinhas(context, pontoTO).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            PontoPO po = new PontoDAO(context).findByPK(String.valueOf(idPonto));
+            if (po != null) {
+                PontoTO pontoTO = po.getPontoTO();
+                new LoadLinhas(context, pontoTO).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            } else {
+                Crashlytics.log("Tentando mostrar um ponto inexistente no banco: " + idPonto);
+            }
         } else if (action.startsWith("FANCE_OUT_")) {//saiu do raio, remove e notificação
             Log.d(TAG, "Saiu...");
             NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);

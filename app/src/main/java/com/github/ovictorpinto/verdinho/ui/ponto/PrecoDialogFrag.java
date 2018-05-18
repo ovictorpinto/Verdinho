@@ -53,21 +53,23 @@ public class PrecoDialogFrag extends DialogFragment {
         }
         final View viewPrincipal = inflater.inflate(R.layout.ly_preco_dialog, null);
         config.fetch(cacheExpiration).addOnSuccessListener(aVoid -> {
-            // Make the fetched config available via FirebaseRemoteConfig get<type> calls.
-            config.activateFetched();
-            Locale brasil = new Locale("pt", "BR");
-            NumberFormat currency = NumberFormat.getCurrencyInstance(brasil);
-            double precoPassagem = config.getDouble(String.format(remoteConfigPassagem, BuildConfig.FLAVOR));
-            String dataReajuste = config.getString(String.format(remoteConfigDataReajustePassagem, BuildConfig.FLAVOR));
-            ((TextView) viewPrincipal.findViewById(R.id.textview_passagem)).setText(currency.format(precoPassagem));
-            ((TextView) viewPrincipal.findViewById(R.id.textview_troco_5)).setText(currency.format(5 - precoPassagem));
-            ((TextView) viewPrincipal.findViewById(R.id.textview_troco_10)).setText(currency.format(10 - precoPassagem));
-            ((TextView) viewPrincipal.findViewById(R.id.textview_troco_20)).setText(currency.format(20 - precoPassagem));
-            ((TextView) viewPrincipal.findViewById(R.id.textview_troco_50)).setText(currency.format(50 - precoPassagem));
-            TextView textviewData = viewPrincipal.findViewById(R.id.textview_data_reajuste);
-            textviewData.setText(getString(R.string.ultimo_reajuste__, dataReajuste));
-            if (StringHelper.isNotBlank(dataReajuste)) {
-                textviewData.setVisibility(View.VISIBLE);
+            if(getDialog() != null && getDialog().isShowing()) {
+                // Make the fetched config available via FirebaseRemoteConfig get<type> calls.
+                config.activateFetched();
+                Locale brasil = new Locale("pt", "BR");
+                NumberFormat currency = NumberFormat.getCurrencyInstance(brasil);
+                double precoPassagem = config.getDouble(String.format(remoteConfigPassagem, BuildConfig.FLAVOR));
+                String dataReajuste = config.getString(String.format(remoteConfigDataReajustePassagem, BuildConfig.FLAVOR));
+                ((TextView) viewPrincipal.findViewById(R.id.textview_passagem)).setText(currency.format(precoPassagem));
+                ((TextView) viewPrincipal.findViewById(R.id.textview_troco_5)).setText(currency.format(5 - precoPassagem));
+                ((TextView) viewPrincipal.findViewById(R.id.textview_troco_10)).setText(currency.format(10 - precoPassagem));
+                ((TextView) viewPrincipal.findViewById(R.id.textview_troco_20)).setText(currency.format(20 - precoPassagem));
+                ((TextView) viewPrincipal.findViewById(R.id.textview_troco_50)).setText(currency.format(50 - precoPassagem));
+                TextView textviewData = viewPrincipal.findViewById(R.id.textview_data_reajuste);
+                textviewData.setText(getString(R.string.ultimo_reajuste__, dataReajuste));
+                if (StringHelper.isNotBlank(dataReajuste)) {
+                    textviewData.setVisibility(View.VISIBLE);
+                }
             }
         }).addOnFailureListener(e -> {
             // There has been an error fetching the config

@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.ly_toolbar.view.*
  */
 class ConfiguracaoFragment : Fragment() {
 
-    private var processoLoadPontos : ProcessoLoadPontos? = null
+    private var processoLoadPontos: ProcessoLoadPontos? = null
 
     private val function = {
         //verifica se está online
@@ -82,12 +82,13 @@ class ConfiguracaoFragment : Fragment() {
             fragmentManager.beginTransaction().add(carregando, DialogCarregandoV11.FRAGMENT_ID).commitAllowingStateLoss()
 
         }
+
         override fun onPostExecute(success: Boolean) {
 
-            var findFragmentByTag = fragmentManager.findFragmentByTag(DialogCarregandoV11.FRAGMENT_ID) as DialogCarregandoV11?
-            findFragmentByTag?.dismiss()
-
             if (!isCancelled) {
+
+                var findFragmentByTag = fragmentManager.findFragmentByTag(DialogCarregandoV11.FRAGMENT_ID) as DialogCarregandoV11?
+                findFragmentByTag?.dismiss()
                 if (!success) {
                     //abrir uma nova janela de erro
                     val alert = AlertDialogFragmentV11.newInstance(null, null, R.string.falha_acesso_servidor)
