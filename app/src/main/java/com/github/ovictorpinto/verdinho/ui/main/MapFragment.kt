@@ -316,28 +316,36 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
             LogHelper.log(TAG, url)
             LogHelper.log(TAG, urlParam)
 
-            val retorno = HttpHelper.doPost(url, urlParam, HttpHelper.UTF8, headers)
-            LogHelper.log(TAG, retorno)
+            try {
+                val retorno = HttpHelper.doPost(url, urlParam, HttpHelper.UTF8, headers)
+                LogHelper.log(TAG, retorno)
+                retornoPesquisarPontos = mapper.readValue(retorno, RetornoPesquisarPontos::class.java)
+                LogHelper.log(TAG, retornoPesquisarPontos!!.getPontosDeParada().size.toString() + " item(s)")
+            } catch (e: Exception) {
+                return false
+            }
 
-            retornoPesquisarPontos = mapper.readValue(retorno, RetornoPesquisarPontos::class.java)
-            LogHelper.log(TAG, retornoPesquisarPontos!!.getPontosDeParada().size.toString() + " item(s)")
 
             return true
         }
 
-        override fun onPostExecute(result: Boolean?) {
-            super.onPostExecute(result)
-            var findFragmentByTag = fragmentManager.findFragmentByTag(DialogCarregandoV11.FRAGMENT_ID) as DialogCarregandoV11?
-            findFragmentByTag?.dismiss()
+        override fun onPostExecute(success: Boolean) {
+            super.onPostExecute(success)
             if (!isCancelled) {
+                var findFragmentByTag = fragmentManager.findFragmentByTag(DialogCarregandoV11.FRAGMENT_ID) as DialogCarregandoV11?
+                findFragmentByTag?.dismiss()
+                if (!success) {
+                    Toast.makeText(activity, R.string.erro_requisicao, Toast.LENGTH_LONG).show()
+                } else {
 
-                fillMarkers()
-                val snackbar = Snackbar.make(mapView, getString(R.string.selecione_ponto_destino), Snackbar.LENGTH_INDEFINITE)
-                snackbar.setAction(R.string.cancelar, {
-                    snackbar.dismiss()
-                    cancelarPesquisa()
-                }).setActionTextColor(Color.RED)
-                snackbar.show()
+                    fillMarkers()
+                    val snackbar = Snackbar.make(mapView, getString(R.string.selecione_ponto_destino), Snackbar.LENGTH_INDEFINITE)
+                    snackbar.setAction(R.string.cancelar, {
+                        snackbar.dismiss()
+                        cancelarPesquisa()
+                    }).setActionTextColor(Color.RED)
+                    snackbar.show()
+                }
             }
             processoDestino = null
         }

@@ -88,5 +88,6 @@
     <string name="destino_">Destino:</string>
     <string name="cancelar">Cancelar</string>
     <string name="selecione_ponto_destino">Selecione no mapa o ponto de destino</string>
+    <string name="erro_requisicao">Não foi possível concluir a requisição. Tente novamente mais tarde.</string>
 
 </resources>
