@@ -8,18 +8,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:88588581865:android:737971d87759e62b",
+        "mobilesdk_app_id": "1:88588581865:android:335662fb67bf90ab",
         "android_client_info": {
-          "package_name": "com.github.ovictorpinto.verdinho"
+          "package_name": "com.github.ovictorpinto.meutranscol"
         }
       },
       "oauth_client": [
         {
-          "client_id": "88588581865-bh1p4r2cmhj9qo2766pc22elsephn93f.apps.googleusercontent.com",
+          "client_id": "88588581865-kp4ghgv4u9k0n9972rjddru6kud8k48q.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.github.ovictorpinto.verdinho",
-            "certificate_hash": "f7d25fdbbd8ab8be20155c4ea55571ca8e803626"
+            "package_name": "com.github.ovictorpinto.meutranscol",
+            "certificate_hash": "bc544ac60600db6165220f713e40224dbfe8c7e1"
           }
         },
         {
@@ -52,12 +52,20 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:88588581865:android:335662fb67bf90ab",
+        "mobilesdk_app_id": "1:88588581865:android:1f73885bc4199eba",
         "android_client_info": {
-          "package_name": "com.github.ovictorpinto.meutranscol"
+          "package_name": "com.github.ovictorpinto.pontobrasilia"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "88588581865-d8iiu6kt4a5t7rrpg7q2ac6ud8a8jc6q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.ovictorpinto.pontobrasilia",
+            "certificate_hash": "b100b0363fdb1ebf400eeea1e937b0bb5fc567d9"
+          }
+        },
         {
           "client_id": "88588581865-oqng8op2mi9v9eogoooko7qag3ohp8ji.apps.googleusercontent.com",
           "client_type": 3
@@ -73,8 +81,65 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "88588581865-oqng8op2mi9v9eogoooko7qag3ohp8ji.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:88588581865:android:737971d87759e62b",
+        "android_client_info": {
+          "package_name": "com.github.ovictorpinto.verdinho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "88588581865-bh1p4r2cmhj9qo2766pc22elsephn93f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.ovictorpinto.verdinho",
+            "certificate_hash": "f7d25fdbbd8ab8be20155c4ea55571ca8e803626"
+          }
+        },
+        {
+          "client_id": "88588581865-ugsb9odfgtak2kjbkuhvsheq90aguagc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.ovictorpinto.verdinho",
+            "certificate_hash": "1dd5d426aa998b914071e9c58e8f6c7fe5269102"
+          }
+        },
+        {
+          "client_id": "88588581865-oqng8op2mi9v9eogoooko7qag3ohp8ji.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATYt2yNUdheJwG6hvaz6bohMqBA61YeNw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "88588581865-oqng8op2mi9v9eogoooko7qag3ohp8ji.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
