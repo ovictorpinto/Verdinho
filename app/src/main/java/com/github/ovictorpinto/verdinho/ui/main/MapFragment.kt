@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
@@ -18,7 +20,11 @@ import android.support.v4.content.LocalBroadcastManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.RotateAnimation
 import android.widget.Toast
+import br.com.mobilesaude.androidlib.AndroidUtils
 import br.com.mobilesaude.androidlib.widget.DialogCarregandoV11
 import br.com.tcsistemas.common.net.HttpHelper
 import com.github.ovictorpinto.ConstantesEmpresa
@@ -45,6 +51,7 @@ import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import kotlinx.android.synthetic.main.ly_map.view.*
+import kotlinx.android.synthetic.main.ly_new_pin.view.*
 import kotlinx.android.synthetic.main.ly_teste.view.*
 import java.util.*
 
@@ -249,14 +256,42 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
         processoDestino?.cancel(true)
     }
 
+
+    fun loadBitmapFromView(viewOriginal: View, item: PontoTO?): Bitmap? {
+
+        if (viewOriginal.measuredHeight <= 0) {
+            viewOriginal.measure(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT)
+            val bitmap = Bitmap.createBitmap(viewOriginal.measuredWidth, viewOriginal.measuredHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            viewOriginal.layout(0, 0, viewOriginal.measuredWidth, viewOriginal.measuredHeight)
+//            var angulo: Float = item?.direcao?.toFloat()!!
+//            c.rotate(angulo, 20f, 20f)
+            viewOriginal.draw(canvas)
+            return bitmap
+        }
+        return null
+    }
+
     /**
      * "Intercepta" a criação do marker no mapa
      */
     private inner class PontoRenderer(context: Context, map: GoogleMap, clusterManager: ClusterManager<PontoTO>) : DefaultClusterRenderer<PontoTO>(context, map, clusterManager) {
 
-        override fun onBeforeClusterItemRendered(item: PontoTO?, markerOptions: MarkerOptions?) {
-            val pin = if (setFavoritos.contains(item!!.idPonto)) R.drawable.pin_favorito else R.drawable.pin
-            markerOptions!!.icon(BitmapDescriptorFactory.fromResource(pin))
+        override fun onBeforeClusterItemRendered(item: PontoTO, markerOptions: MarkerOptions?) {
+//            val pin = if (setFavoritos.contains(item!!.idPonto)) R.drawable.pin_favorito else R.drawable.pin
+            val pin = R.layout.ly_new_pin
+            val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val v = inflater.inflate(pin, null)
+            v.grau.text = item.direcao.toString()
+            v.imageview_seta.pivotY = AndroidUtils.pxFromDp(activity, 30f)
+            v.imageview_seta.rotation = item.direcao.toFloat()
+
+
+            val rotate = RotateAnimation(0f, item.direcao.toFloat(), Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1f)
+            v.animation = rotate
+            rotate.start()
+
+            markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(loadBitmapFromView(v, item)))
             super.onBeforeClusterItemRendered(item, markerOptions)
         }
 
