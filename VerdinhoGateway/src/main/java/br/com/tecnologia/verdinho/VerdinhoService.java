@@ -33,10 +33,10 @@ public class VerdinhoService {
 
     private static long minutoInMili = 60 * 1000;
 
-    static ObjectMapper mapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    public static ObjectMapper mapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    static JavaType listJsonNode = mapper.getTypeFactory().constructParametricType(List.class, JsonNode.class);
-    static Map<String, String> headers;
+    public static JavaType listJsonNode = mapper.getTypeFactory().constructParametricType(List.class, JsonNode.class);
+    public static Map<String, String> headers;
 
     static {
         headers = new HashMap<String, String>();
