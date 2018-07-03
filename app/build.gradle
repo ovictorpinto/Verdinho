@@ -111,7 +111,7 @@ android {
                 uploadImages = true
             }
             buildConfigField("String", "IN_LOCO_APP_ID", "\"" + BRASILIA_IN_LOCO_APP_ID + "\"")
-            buildConfigField("String", "TWITTER_USER", '"lucasromanom"')
+            buildConfigField("String", "TWITTER_USER", '"ovictorpinto"')
             buildConfigField("String", "TWITTER_LIST", '"brasilia-news"')
             buildConfigField("boolean", "USA_PRECO", "false")
             manifestPlaceholders = [

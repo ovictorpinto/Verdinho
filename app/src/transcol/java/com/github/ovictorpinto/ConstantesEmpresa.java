@@ -2,6 +2,8 @@ package com.github.ovictorpinto;
 
 import android.content.Context;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +21,7 @@ public class ConstantesEmpresa {
     public static String linhasTrecho = prefix + "obterEstimativasPorOrigemEDestino";
     
     public static String ENVELOPE = "[-39.482856, -17.888743, -42.075630, -21.160240]";
+    public static final LatLng POSICAO_SEDE = new LatLng(-20.321367, -40.339607);//palacio anchieta
     
     private Context context;
     
