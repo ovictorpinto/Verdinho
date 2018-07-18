@@ -37,6 +37,12 @@ android {
             keyAlias 'meutranscol'
             keyPassword "${VERDINHO_KEY_PASS}"
         }
+        configBrasilia {
+            storeFile file('/Users/victorpinto/OneDrive/Java/verdinho/verdinho.jks')
+            storePassword "${VERDINHO_STORE_PASS}"
+            keyAlias 'brasilia'
+            keyPassword "${VERDINHO_KEY_PASS}"
+        }
     }
     playAccountConfigs {
         defaultAccountConfig {
@@ -73,6 +79,9 @@ android {
                 uploadImages = true
             }
             buildConfigField("String", "IN_LOCO_APP_ID", "\"" + TRANSCOL_IN_LOCO_APP_ID + "\"")
+            buildConfigField("String", "TWITTER_USER", '"lucasromanom"')
+            buildConfigField("String", "TWITTER_LIST", '"verdinho-news"')
+            buildConfigField("boolean", "USA_PRECO", "true")
             manifestPlaceholders = [
                     facebookId: TRANSCOL_FACEBOOK_ID,
                     facebookSchema: TRANSCOL_FACEBOOK_SCHEMA
@@ -86,9 +95,28 @@ android {
                 uploadImages = true
             }
             buildConfigField("String", "IN_LOCO_APP_ID", "\"" + VERDINHO_IN_LOCO_APP_ID + "\"")
+            buildConfigField("String", "TWITTER_USER", '"lucasromanom"')
+            buildConfigField("String", "TWITTER_LIST", '"verdinho-news"')
+            buildConfigField("boolean", "USA_PRECO", "true")
             manifestPlaceholders = [
                     facebookId: VERDINHO_FACEBOOK_ID,
                     facebookSchema: VERDINHO_FACEBOOK_SCHEMA
+            ]
+        }
+        brasilia {
+            applicationId "com.github.ovictorpinto.pontobrasilia"
+            signingConfig signingConfigs.configBrasilia
+            play {
+                track = 'production'
+                uploadImages = true
+            }
+            buildConfigField("String", "IN_LOCO_APP_ID", "\"" + BRASILIA_IN_LOCO_APP_ID + "\"")
+            buildConfigField("String", "TWITTER_USER", '"ovictorpinto"')
+            buildConfigField("String", "TWITTER_LIST", '"brasilia-news"')
+            buildConfigField("boolean", "USA_PRECO", "false")
+            manifestPlaceholders = [
+                    facebookId: BRASILIA_FACEBOOK_ID,
+                    facebookSchema: BRASILIA_FACEBOOK_SCHEMA
             ]
         }
     }

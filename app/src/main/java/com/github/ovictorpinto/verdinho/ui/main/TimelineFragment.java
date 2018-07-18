@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.ovictorpinto.verdinho.BuildConfig;
 import com.github.ovictorpinto.verdinho.R;
 import com.twitter.sdk.android.tweetui.TweetTimelineRecyclerViewAdapter;
 import com.twitter.sdk.android.tweetui.TwitterListTimeline;
@@ -58,7 +59,7 @@ public class TimelineFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... voids) {
             TwitterListTimeline.Builder builderTimeline = new TwitterListTimeline.Builder();
-            builderTimeline.slugWithOwnerScreenName("verdinho-news", "lucasromanom");
+            builderTimeline.slugWithOwnerScreenName(BuildConfig.TWITTER_LIST, BuildConfig.TWITTER_USER);
             final TwitterListTimeline timeline = builderTimeline.build();
             
             TweetTimelineRecyclerViewAdapter.Builder builderAdapter = new TweetTimelineRecyclerViewAdapter.Builder(getActivity());
