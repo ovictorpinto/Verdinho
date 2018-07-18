@@ -17,6 +17,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import br.com.mobilesaude.androidlib.widget.AlertDialogFragmentV11
+import com.github.ovictorpinto.verdinho.BuildConfig
 import com.github.ovictorpinto.verdinho.Constantes
 import com.github.ovictorpinto.verdinho.R
 import com.github.ovictorpinto.verdinho.to.PontoTO
@@ -144,7 +145,9 @@ class TrechoDetalheActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
-        inflater.inflate(R.menu.menu_preco, menu)
+        if (BuildConfig.USA_PRECO) {
+            inflater.inflate(R.menu.menu_preco, menu)
+        }
         inflater.inflate(R.menu.menu_legenda, menu)
         return super.onCreateOptionsMenu(menu)
     }

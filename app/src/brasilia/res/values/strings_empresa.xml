@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Ponto Brasília(Beta)</string>
+    <string name="sobre">
+    </string>
+    <string name="idealizador">Idealizador: Lucas Romano M. Rizzi</string>
+    <string name="desenvolvedor">Desenvolvedor: Victor Pinto</string>
+    <string name="designer_">Designer: Urlan Maciel</string>
+    <string name="designer_email">urlan87@gmail.com</string>
+
+</resources>

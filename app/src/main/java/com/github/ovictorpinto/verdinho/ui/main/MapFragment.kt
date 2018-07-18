@@ -59,7 +59,6 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
 
     companion object {
         val ZOOM = 16f
-        val POSICAO_SEDE = LatLng(-20.321367, -40.339607)//palacio anchieta
         val PERMISSION_GPS_REQUEST_CODE = 201
         val TAG = "MapaFragment"
     }
@@ -118,7 +117,7 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
         mClusterManager = ClusterManager(activity, mMap)
         mClusterManager!!.renderer = PontoRenderer(activity, mMap, mClusterManager!!)
         mClusterManager!!.setOnClusterItemClickListener(PontoPinClickListener(this))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(POSICAO_SEDE, ZOOM))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ConstantesEmpresa.POSICAO_SEDE, ZOOM))
         mMap.setOnCameraIdleListener(mClusterManager)
         mMap.setOnMarkerClickListener(mClusterManager)
 

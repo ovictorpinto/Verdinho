@@ -27,6 +27,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.ovictorpinto.verdinho.BuildConfig;
 import com.github.ovictorpinto.verdinho.Constantes;
 import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoFavoritoDAO;
@@ -257,7 +258,9 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_preco, menu);
+        if (BuildConfig.USA_PRECO) {
+            inflater.inflate(R.menu.menu_preco, menu);
+        }
         inflater.inflate(R.menu.menu_legenda, menu);
         inflater.inflate(R.menu.menu_show_foto, menu);
         return super.onCreateOptionsMenu(menu);
