@@ -1,12 +1,9 @@
 package br.com.tecnologia.verdinho;
 
-import br.com.tcsistemas.common.net.HttpHelper;
-import br.com.tecnologia.verdinho.model.Estimativa;
+import br.com.tecnologia.verdinho.model.LinhaTO;
 import br.com.tecnologia.verdinho.retorno.RetornoDetalharPontos;
-import br.com.tecnologia.verdinho.retorno.RetornoLinhasPonto;
+import br.com.tecnologia.verdinho.retorno.RetornoListarLinhas;
 import br.com.tecnologia.verdinho.util.SslUtil;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
 import okhttp3.*;
 
 import javax.ws.rs.Consumes;
@@ -14,7 +11,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import java.io.IOException;
-import java.util.List;
 
 @Path(value = "brasilia")
 @Produces("application/json")
@@ -83,12 +79,15 @@ public class BrasiliaService {
 
     @POST
     @Path("listarItinerarios")
-    public String getListarItinerarios(String json) {
+    public RetornoListarLinhas getListarItinerarios(String json) {
         String url = listarLinhas;
-        String retorno;
         try {
-            retorno = post(url, json);
-            return retorno;
+            String retorno = post(url, json);
+            RetornoListarLinhas parsed = VerdinhoService.mapper.readValue(retorno, RetornoListarLinhas.class);
+            for (LinhaTO item : parsed.getLinhas()) {
+                item.setBandeira(item.getBandeira() + " - " + item.getComplemento());
+            }
+            return parsed;
         } catch (IOException e) {
             e.printStackTrace();
         }
