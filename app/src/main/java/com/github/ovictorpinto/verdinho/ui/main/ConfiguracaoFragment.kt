@@ -27,25 +27,25 @@ class ConfiguracaoFragment : Fragment() {
 
     private val function = {
         //verifica se está online
-        var processoLoadPontos = ProcessoLoadPontos()
+        val processoLoadPontos = ProcessoLoadPontos()
         processoLoadPontos.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        var view = inflater.inflate(R.layout.ly_config, null)
+        val view = inflater.inflate(R.layout.ly_config, null)
         view.toolbar.setTitle(R.string.informacoes)
 
-        view.help_sobre.setOnClickListener({
-            var dialog = AjudaDialogFrag()
-            var bundle = Bundle()
+        view.help_sobre.setOnClickListener {
+            val dialog = AjudaDialogFrag()
+            val bundle = Bundle()
             bundle.putString(AjudaDialogFrag.PARAM_TITULO, getString(R.string.reiniciar_pontos))
             bundle.putString(AjudaDialogFrag.PARAM_CONTEUDO, getString(R.string.reiniciar_pontos_help))
             dialog.arguments = bundle
             fragmentManager.beginTransaction().add(dialog, null).commitAllowingStateLoss()
-        })
+        }
 
-        view.sobre.setOnClickListener({
+        view.sobre.setOnClickListener {
             val fragmentManager = fragmentManager
             val newFragment = SobreFragment()
             fragmentManager.beginTransaction().apply {
@@ -54,40 +54,45 @@ class ConfiguracaoFragment : Fragment() {
                 addToBackStack(null)
                 commit()
             }
-        })
-        view.avaliar.setOnClickListener({
+        }
+        view.avaliar.setOnClickListener {
             AnalyticsHelper(activity).openAvaliar()
             RatingHelper(activity).abreLoja()
-        })
-        view.reiniciar_ponto.setOnClickListener({
+        }
+        view.reiniciar_ponto.setOnClickListener {
             //verifica se está online
             processoLoadPontos?.cancel(true)
             processoLoadPontos = ProcessoLoadPontos()
             processoLoadPontos!!.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-        })
+        }
         return view
     }
 
     private inner class ProcessoLoadPontos : com.github.ovictorpinto.verdinho.ui.main.ProcessoLoadPontos(activity) {
 
-        private val fragmentManager: FragmentManager
+        private val fragmentManager: FragmentManager = getFragmentManager()
 
-        init {
-            this.fragmentManager = getFragmentManager()
-        }
+        private val carregando = DialogCarregandoV11()
 
         override fun onPreExecute() {
             super.onPreExecute()
-            val carregando = DialogCarregandoV11()
             fragmentManager.beginTransaction().add(carregando, DialogCarregandoV11.FRAGMENT_ID).commitAllowingStateLoss()
+        }
 
+        override fun onProgressUpdate(vararg values: String?) {
+            super.onProgressUpdate(*values)
+            if (!isCancelled) {
+                activity?.runOnUiThread {
+                    carregando.setMessage(values[0])
+                }
+            }
         }
 
         override fun onPostExecute(success: Boolean) {
 
             if (!isCancelled) {
 
-                var findFragmentByTag = fragmentManager.findFragmentByTag(DialogCarregandoV11.FRAGMENT_ID) as DialogCarregandoV11?
+                val findFragmentByTag = fragmentManager.findFragmentByTag(DialogCarregandoV11.FRAGMENT_ID) as DialogCarregandoV11?
                 findFragmentByTag?.dismiss()
                 if (!success) {
                     //abrir uma nova janela de erro
