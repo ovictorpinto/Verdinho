@@ -35,6 +35,11 @@ class ProcessoLoadPontos extends AsyncTask<Void, String, Boolean> {
     }
     
     @Override
+    protected void onProgressUpdate(String... values) {
+        super.onProgressUpdate(values);
+    }
+    
+    @Override
     protected Boolean doInBackground(Void... params) {
         
         try {
@@ -81,6 +86,7 @@ class ProcessoLoadPontos extends AsyncTask<Void, String, Boolean> {
                     PontoDAO dao = new PontoDAO(context);
                     dao.removeAll();
                     for (int i = 0; i < pontosDeParada.size(); i++) {
+                        onProgressUpdate("Atualizando " + i + " de " + pontosDeParada.size() +" pontos…");
                         PontoTO pontoTO = pontosDeParada.get(i);
                         //salva os apelidos dos pontos cadastrados pelo usuário
                         String apelido = apelidosPontos.get(pontoTO.getIdPonto());

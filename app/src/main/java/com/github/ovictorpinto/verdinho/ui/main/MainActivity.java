@@ -18,6 +18,7 @@ import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 
 import br.com.mobilesaude.androidlib.widget.AlertDialogFragmentV11;
+import br.com.mobilesaude.androidlib.widget.DialogCarregandoV11;
 
 public class MainActivity extends AppCompatActivity {
     
@@ -132,18 +133,46 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private class ProcessoLoadPontos extends com.github.ovictorpinto.verdinho.ui.main.ProcessoLoadPontos {
-    
+        
         private FragmentManager fragmentManager;
+        
+        private DialogCarregandoV11 carregando = new DialogCarregandoV11();
         
         public ProcessoLoadPontos() {
             super(MainActivity.this);
             this.fragmentManager = getFragmentManager();
         }
-    
+        
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            fragmentManager.beginTransaction().add(carregando, DialogCarregandoV11.FRAGMENT_ID).commitAllowingStateLoss();
+        }
+        
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            if (!isCancelled()) {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        carregando.setMessage(values[0]);
+                        
+                    }
+                });
+            }
+        }
+        
         @Override
         protected void onPostExecute(Boolean success) {
             
             if (!isCancelled()) {
+                DialogCarregandoV11 findFragmentByTag = (DialogCarregandoV11) fragmentManager
+                        .findFragmentByTag(DialogCarregandoV11.FRAGMENT_ID);
+                if (findFragmentByTag != null) {
+                    findFragmentByTag.dismiss();
+                }
+                
                 if (!success) {
                     //abrir uma nova janela de erro
                     AlertDialogFragmentV11 alert = AlertDialogFragmentV11.newInstance(null, null, R.string.falha_acesso_servidor);
