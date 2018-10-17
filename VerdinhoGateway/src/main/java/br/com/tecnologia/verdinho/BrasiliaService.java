@@ -3,8 +3,7 @@ package br.com.tecnologia.verdinho;
 import br.com.tecnologia.verdinho.model.LinhaTO;
 import br.com.tecnologia.verdinho.retorno.RetornoDetalharPontos;
 import br.com.tecnologia.verdinho.retorno.RetornoListarLinhas;
-import br.com.tecnologia.verdinho.util.SslUtil;
-import okhttp3.*;
+import br.com.tecnologia.verdinho.util.RequestHelper;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -25,39 +24,27 @@ public class BrasiliaService {
     public static String detalharLinha = prefix + "svc/estimativas/obterEstimativasPorOrigemEItinerario";
     public static String linhasTrecho = prefix + "svc/estimativas/obterEstimativasPorOrigemEDestino";
 
-    MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    OkHttpClient client = new OkHttpClient();
+    private RequestHelper requestHelper = new RequestHelper();
 
     @POST
     @Path("pesquisarPontosDeParada")
     public String getPesquisarPontosDeParada(String json) {
         try {
-            return post(listarPontos, json);
+            return requestHelper.post(listarPontos, json);
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         return null;
     }
-
-    private String post(String url, String json) throws IOException {
-        RequestBody body = RequestBody.create(JSON, json);
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
-        Response response = SslUtil.trustAllSslClient(client).newCall(request).execute();
-        return response.body().string();
-    }
-
 
     @POST
     @Path("listarPontosDeParada")
     public RetornoDetalharPontos getListarPontosDeParada(String json) {
         String retorno;
         try {
-            retorno = post(detalharPontos, json);
-            return VerdinhoService.mapper.readValue(retorno, RetornoDetalharPontos.class);
+            retorno = requestHelper.post(detalharPontos, json);
+            return TranscolService.mapper.readValue(retorno, RetornoDetalharPontos.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,7 +57,7 @@ public class BrasiliaService {
         System.out.println("obterEstimativasPorOrigem");
         String url = linhasPonto;
         try {
-            return post(url, json);
+            return requestHelper.post(url, json);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -82,8 +69,8 @@ public class BrasiliaService {
     public RetornoListarLinhas getListarItinerarios(String json) {
         String url = listarLinhas;
         try {
-            String retorno = post(url, json);
-            RetornoListarLinhas parsed = VerdinhoService.mapper.readValue(retorno, RetornoListarLinhas.class);
+            String retorno = requestHelper.post(url, json);
+            RetornoListarLinhas parsed = TranscolService.mapper.readValue(retorno, RetornoListarLinhas.class);
             for (LinhaTO item : parsed.getLinhas()) {
                 item.setBandeira(item.getBandeira() + " - " + item.getComplemento());
             }
@@ -98,7 +85,7 @@ public class BrasiliaService {
     @Path("obterEstimativasPorOrigemEItinerario")
     public String getObterEstimativasPorOrigemEItinerario(String json) {
         try {
-            return post(detalharLinha, json);
+            return requestHelper.post(detalharLinha, json);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,7 +96,7 @@ public class BrasiliaService {
     @Path("obterEstimativasPorOrigemEDestino")
     public String getObterEstimativasPorOrigemEDestino(String json) {
         try {
-            return post(linhasTrecho, json);
+            return requestHelper.post(linhasTrecho, json);
         } catch (IOException e) {
             e.printStackTrace();
         }
