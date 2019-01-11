@@ -47,11 +47,6 @@ android {
             keyPassword "${VERDINHO_KEY_PASS}"
         }
     }
-    playAccountConfigs {
-        defaultAccountConfig {
-            jsonFile = file('/Users/victor/OneDrive/Java/verdinho/Verdinho-playAccount.json')
-        }
-    }
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
     defaultConfig {
@@ -60,9 +55,13 @@ android {
         versionCode 41
         versionName "1.13.0"
         multiDexEnabled true
-        playAccountConfig = playAccountConfigs.defaultAccountConfig
         buildConfigField("String", "TWITTER_CONSUMER_KEYS", "\"" + TWITTER_CONSUMER_KEYS + "\"")
         buildConfigField("String", "TWITTER_CONSUMER_SECRET", "\"" + TWITTER_CONSUMER_SECRET + "\"")
+
+        play {
+            track = 'production'
+            serviceAccountCredentials = file('/Users/victor/OneDrive/Java/verdinho/Verdinho-playAccount.json')
+        }
     }
     buildTypes {
         release {
@@ -77,10 +76,6 @@ android {
         transcol {
             applicationId "com.github.ovictorpinto.meutranscol"
             signingConfig signingConfigs.configTranscol
-            play {
-                track = 'production'
-                uploadImages = true
-            }
             buildConfigField("String", "IN_LOCO_APP_ID", "\"" + TRANSCOL_IN_LOCO_APP_ID + "\"")
             buildConfigField("String", "TWITTER_USER", '"lucasromanom"')
             buildConfigField("String", "TWITTER_LIST", '"verdinho-news"')
@@ -93,10 +88,6 @@ android {
         verdinho {
             applicationId "com.github.ovictorpinto.verdinho"
             signingConfig signingConfigs.configVerdinho
-            play {
-                track = 'production'
-                uploadImages = true
-            }
             buildConfigField("String", "IN_LOCO_APP_ID", "\"" + VERDINHO_IN_LOCO_APP_ID + "\"")
             buildConfigField("String", "TWITTER_USER", '"lucasromanom"')
             buildConfigField("String", "TWITTER_LIST", '"verdinho-news"')
@@ -106,22 +97,22 @@ android {
                     facebookSchema: "\"" + VERDINHO_FACEBOOK_SCHEMA + "\""
             ]
         }
-        brasilia {
-            applicationId "com.github.ovictorpinto.pontobrasilia"
-            signingConfig signingConfigs.configBrasilia
-            play {
-                track = 'production'
-                uploadImages = true
-            }
-            buildConfigField("String", "IN_LOCO_APP_ID", "\"" + BRASILIA_IN_LOCO_APP_ID + "\"")
-            buildConfigField("String", "TWITTER_USER", '"ovictorpinto"')
-            buildConfigField("String", "TWITTER_LIST", '"brasilia-news"')
-            buildConfigField("boolean", "USA_PRECO", "false")
-            manifestPlaceholders = [
-                    facebookId    : "\"" + BRASILIA_FACEBOOK_ID + "\"",
-                    facebookSchema: "\"" + BRASILIA_FACEBOOK_SCHEMA + "\""
-            ]
-        }
+//        brasilia {
+//            applicationId "com.github.ovictorpinto.pontobrasilia"
+//            signingConfig signingConfigs.configBrasilia
+//            play {
+//                track = 'production'
+//                uploadImages = true
+//            }
+//            buildConfigField("String", "IN_LOCO_APP_ID", "\"" + BRASILIA_IN_LOCO_APP_ID + "\"")
+//            buildConfigField("String", "TWITTER_USER", '"ovictorpinto"')
+//            buildConfigField("String", "TWITTER_LIST", '"brasilia-news"')
+//            buildConfigField("boolean", "USA_PRECO", "false")
+//            manifestPlaceholders = [
+//                    facebookId    : "\"" + BRASILIA_FACEBOOK_ID + "\"",
+//                    facebookSchema: "\"" + BRASILIA_FACEBOOK_SCHEMA + "\""
+//            ]
+//        }BRASILIA_FACEBOOK_SCHEMA
     }
 }
 
@@ -160,6 +151,6 @@ dependencies {
 }
 
 task "publishAll"(type: GradleBuild) {
-    tasks = ["assembleRelease", "publishapktranscolrelease", "publishapkverdinhorelease", "publishapkbrasiliarelease"]
+    tasks = ["assembleRelease", "publishListing", "publishapktranscolrelease", "publishapkverdinhorelease"]
 }
 
