@@ -4,6 +4,7 @@ buildscript {
     repositories {
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
+        maven { url "https://plugins.gradle.org/m2/" }
         google()
         mavenCentral()
     }
@@ -13,7 +14,7 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath 'com.google.gms:google-services:4.0.1'
-        classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
+        classpath 'com.github.triplet.gradle:play-publisher:2.0.0-rc2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.51"
 
     }
