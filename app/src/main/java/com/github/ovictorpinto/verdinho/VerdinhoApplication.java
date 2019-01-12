@@ -1,5 +1,8 @@
 package com.github.ovictorpinto.verdinho;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
@@ -20,6 +23,9 @@ import io.fabric.sdk.android.Fabric;
  * Created by victorpinto on 17/11/15.
  */
 public class VerdinhoApplication extends MultiDexApplication {
+
+    public static final String NOTIFICATION_CHANNEL_ID = "defaultChannel";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -30,7 +36,7 @@ public class VerdinhoApplication extends MultiDexApplication {
         ratingHelper.count();
         configFirebase();
         configInLocoMedia();
-    
+        createNotificationChannel();
         initTwitter();
     
     }
@@ -68,6 +74,21 @@ public class VerdinhoApplication extends MultiDexApplication {
         FirebaseMessaging.getInstance().subscribeToTopic(BuildConfig.FLAVOR + "_all");
         if (BuildConfig.DEBUG) {
             FirebaseMessaging.getInstance().subscribeToTopic(BuildConfig.FLAVOR + "_all_debug");
+        }
+    }
+
+    private void createNotificationChannel() {
+
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            final CharSequence name = getString(R.string.channel_name);
+            final int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
         }
     }
 }

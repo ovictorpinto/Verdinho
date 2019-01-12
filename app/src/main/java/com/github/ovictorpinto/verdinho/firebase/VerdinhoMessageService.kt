@@ -1,5 +1,6 @@
 package com.github.ovictorpinto.verdinho.firebase
 
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -9,8 +10,11 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.support.v4.app.NotificationCompat
 import com.github.ovictorpinto.verdinho.R
+import com.github.ovictorpinto.verdinho.VerdinhoApplication
 import com.github.ovictorpinto.verdinho.ui.main.MainActivity
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper
+import com.github.ovictorpinto.verdinho.util.LogHelper
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import java.util.*
@@ -20,6 +24,13 @@ import java.util.*
  */
 class VerdinhoMessageService : FirebaseMessagingService() {
 
+
+    private val TAG = "VerdinhoMessageService"
+
+    override fun onNewToken(token: String?) {
+        super.onNewToken(token)
+        LogHelper.log(TAG, token)
+    }
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
@@ -60,22 +71,33 @@ class VerdinhoMessageService : FirebaseMessagingService() {
                 Intent(this, MainActivity::class.java)
             }
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_ONE_SHOT)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent,0)
 
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder = NotificationCompat.Builder(this, "default")
+        val notificationBuilder = NotificationCompat.Builder(this, VerdinhoApplication.NOTIFICATION_CHANNEL_ID)
                 .setContentText(mensagemTO.conteudo)
                 .setContentTitle(mensagemTO.titulo)
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)
+                .setStyle(NotificationCompat.BigTextStyle()
+                        .bigText(mensagemTO.conteudo))
+
+        val notification = notificationBuilder.build()
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        var notificationId = Random().nextInt()
-        notificationManager.notify(notificationId, notificationBuilder.build())
+
+        val notificationId = System.currentTimeMillis().toInt()
+        try {
+            notificationManager.notify(notificationId, notification)
+        } catch (e: SecurityException) {
+            // Some phones throw an exception for unapproved vibration
+            notification.defaults = Notification.DEFAULT_LIGHTS or Notification.DEFAULT_SOUND
+            notificationManager.notify(notificationId, notification)
+        }
+
     }
 
     fun hasApp(packagename: String): Boolean {
