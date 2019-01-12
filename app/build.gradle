@@ -52,8 +52,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 41
-        versionName "1.13.0"
+        versionCode 42
+        versionName "1.14.0"
         multiDexEnabled true
         buildConfigField("String", "TWITTER_CONSUMER_KEYS", "\"" + TWITTER_CONSUMER_KEYS + "\"")
         buildConfigField("String", "TWITTER_CONSUMER_SECRET", "\"" + TWITTER_CONSUMER_SECRET + "\"")
