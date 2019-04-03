@@ -17,7 +17,8 @@ public class ConstantesEmpresa {
     public static String detalharPontos = prefix + "listarPontosDeParada";
     public static String listarLinhas = prefix + "listarItinerarios";
     public static String linhasPonto = prefix + "obterEstimativasPorOrigem";
-    public static String detalharLinha = prefix + "obterEstimativasPorOrigemEItinerario";
+//    public static String detalharLinha = prefix + "obterEstimativasPorOrigemEItinerario";
+    public static String detalharLinha = prefix + "obterEstimativasPorOrigemELinha";
     public static String linhasTrecho = prefix + "obterEstimativasPorOrigemEDestino";
     
     public static String ENVELOPE = "[-39.482856, -17.888743, -42.075630, -21.160240]";

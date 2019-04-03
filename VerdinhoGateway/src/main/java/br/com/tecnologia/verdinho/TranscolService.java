@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -23,12 +25,15 @@ import java.util.Map;
 @Consumes("application/json")
 public class TranscolService {
 
+    private final Logger logger = LogManager.getLogger(getClass().getName());
+
     private static String prefix = "https://api.es.gov.br/ceturb/transcolOnline/";
     public static String listarPontos = prefix + "svc/json/db/pesquisarPontosDeParada";
     public static String detalharPontos = prefix + "svc/json/db/listarPontosDeParada";
     public static String linhasPonto = prefix + "svc/estimativas/obterEstimativasPorOrigem";
     public static String listarLinhas = prefix + "svc/json/db/listarItinerarios";
-    public static String detalharLinha = prefix + "svc/estimativas/obterEstimativasPorOrigemEItinerario";
+    public static String detalharItinerario = prefix + "svc/estimativas/obterEstimativasPorOrigemEItinerario";
+    public static String detalharLinha = prefix + "svc/estimativas/obterEstimativasPorOrigemELinha";
     public static String linhasTrecho = prefix + "svc/estimativas/obterEstimativasPorOrigemEDestino";
 
     private static long minutoInMili = 60 * 1000;
@@ -53,7 +58,7 @@ public class TranscolService {
             retorno = requestHelper.post(listarPontos, json);
             return retorno;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("pesquisarPontosDeParada", e);
         }
         return null;
     }
@@ -69,7 +74,7 @@ public class TranscolService {
             detalharPontos.setPontosDeParada(parsed);
             return detalharPontos;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("listarPontosDeParada", e);
         }
         return null;
     }
@@ -77,28 +82,37 @@ public class TranscolService {
     @POST
     @Path("obterEstimativasPorOrigem")
     public RetornoLinhasPonto getObterEstimativasPorOrigem(String json) {
-        System.out.println("obterEstimativasPorOrigem");
+        logger.info("obterEstimativasPorOrigem");
         String url = linhasPonto;
         try {
-            String retorno = requestHelper.post(url, json);
-            JavaType listEstimativaClazz = mapper.getTypeFactory().constructParametricType(List.class, Estimativa.class);
-            List<Estimativa> parsed = mapper.readValue(retorno, listEstimativaClazz);
-            long agora = System.currentTimeMillis();
-            for (Estimativa estimativa : parsed) {
-                long proximo = agora + estimativa.getPrevisaoNaOrigemEmMinutos() * minutoInMili;
-                estimativa.setHorarioNaOrigem(String.valueOf(proximo));
-
-                proximo = agora + estimativa.getPrevisaoNoDestinoEmMinutos() * minutoInMili;
-                estimativa.setHorarioNoDestino(String.valueOf(proximo));
-            }
-            RetornoLinhasPonto retornoLinhasPonto = new RetornoLinhasPonto();
-            retornoLinhasPonto.setEstimativas(parsed);
-            retornoLinhasPonto.setHorarioDoServidor(System.currentTimeMillis());
-            return retornoLinhasPonto;
+            return getRetornoLinhasPonto(json, url);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("obterEstimativasPorOrigem", e);
         }
         return null;
+    }
+
+    private RetornoLinhasPonto getRetornoLinhasPonto(String json, String url) throws IOException {
+        String retorno = requestHelper.post(url, json);
+        JavaType listEstimativaClazz = mapper.getTypeFactory().constructParametricType(List.class, Estimativa.class);
+        List<Estimativa> parsed = mapper.readValue(retorno, listEstimativaClazz);
+        long agora = System.currentTimeMillis();
+        for (Estimativa estimativa : parsed) {
+            long proximo = agora + estimativa.getPrevisaoNaOrigemEmMinutos() * minutoInMili;
+            estimativa.setHorarioNaOrigem(String.valueOf(proximo));
+
+            proximo = agora + estimativa.getPrevisaoNoDestinoEmMinutos() * minutoInMili;
+            estimativa.setHorarioNoDestino(String.valueOf(proximo));
+            if (estimativa.getAcessibilidade() == null && estimativa.getAccessibility() != null){
+                estimativa.setAcessibilidade(estimativa.getAccessibility());
+            }
+            if (estimativa.getAcessibilidade() == null)
+                estimativa.setAcessibilidade(false);
+        }
+        RetornoLinhasPonto retornoLinhasPonto = new RetornoLinhasPonto();
+        retornoLinhasPonto.setEstimativas(parsed);
+        retornoLinhasPonto.setHorarioDoServidor(System.currentTimeMillis());
+        return retornoLinhasPonto;
     }
 
     @POST
@@ -110,7 +124,7 @@ public class TranscolService {
             retorno = requestHelper.post(url, json);
             return retorno;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("listarItinerarios", e);
         }
         return null;
     }
@@ -118,13 +132,39 @@ public class TranscolService {
     @POST
     @Path("obterEstimativasPorOrigemEItinerario")
     public String getObterEstimativasPorOrigemEItinerario(String json) {
-        String url = detalharLinha;
+        String url = detalharItinerario;
         String retorno;
         try {
             retorno = requestHelper.post(url, json);
             return retorno;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("obterEstimativasPorOrigemEItinerario", e);
+        }
+        return null;
+    }
+
+//    @POST
+//    @Path("obterEstimativasPorOrigemELinha")
+//    public String getObterEstimativasPorOrigemELinha(String json) {
+//        String url = detalharLinha;
+//        String retorno;
+//        try {
+//            retorno = requestHelper.post(url, json);
+//            return retorno;
+//        } catch (IOException e) {
+//            logger.error("obterEstimativasPorOrigemELinha", e);
+//        }
+//        return null;
+//    }
+
+    @POST
+    @Path("obterEstimativasPorOrigemELinha")
+    public RetornoLinhasPonto getObterEstimativasPorOrigemELinha(String json) {
+        String url = detalharLinha;
+        try {
+            return getRetornoLinhasPonto(json, url);
+        } catch (IOException e) {
+            logger.error("obterEstimativasPorOrigemEDestino", e);
         }
         return null;
     }
@@ -132,26 +172,12 @@ public class TranscolService {
     @POST
     @Path("obterEstimativasPorOrigemEDestino")
     public RetornoLinhasPonto getObterEstimativasPorOrigemEDestino(String json) {
-        System.out.println("obterEstimativasPorOrigemEDestino");
+        logger.info("obterEstimativasPorOrigemEDestino");
         String url = linhasTrecho;
         try {
-            String retorno = requestHelper.post(url, json);
-            JavaType listEstimativaClazz = mapper.getTypeFactory().constructParametricType(List.class, Estimativa.class);
-            List<Estimativa> parsed = mapper.readValue(retorno, listEstimativaClazz);
-            long agora = System.currentTimeMillis();
-            for (Estimativa estimativa : parsed) {
-                long proximo = agora + estimativa.getPrevisaoNaOrigemEmMinutos() * minutoInMili;
-                estimativa.setHorarioNaOrigem(String.valueOf(proximo));
-
-                proximo = agora + estimativa.getPrevisaoNoDestinoEmMinutos() * minutoInMili;
-                estimativa.setHorarioNoDestino(String.valueOf(proximo));
-            }
-            RetornoLinhasPonto retornoLinhasPonto = new RetornoLinhasPonto();
-            retornoLinhasPonto.setEstimativas(parsed);
-            retornoLinhasPonto.setHorarioDoServidor(System.currentTimeMillis());
-            return retornoLinhasPonto;
+            return getRetornoLinhasPonto(json, url);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("obterEstimativasPorOrigemEDestino", e);
         }
         return null;
     }
