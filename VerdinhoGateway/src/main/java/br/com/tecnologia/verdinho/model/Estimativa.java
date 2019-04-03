@@ -9,6 +9,7 @@ public class Estimativa implements Serializable {
 
     private String veiculo;
     private Boolean acessibilidade;
+    private Boolean accessibility;
     private Integer itinerarioId;
     private long horarioDePartida;
     private String horarioNaOrigem;
@@ -87,5 +88,13 @@ public class Estimativa implements Serializable {
 
     public void setPrevisaoNoDestinoEmMinutos(long previsaoNoDestinoEmMinutos) {
         this.previsaoNoDestinoEmMinutos = previsaoNoDestinoEmMinutos;
+    }
+
+    public Boolean getAccessibility() {
+        return accessibility;
+    }
+
+    public void setAccessibility(Boolean accessibility) {
+        this.accessibility = accessibility;
     }
 }
