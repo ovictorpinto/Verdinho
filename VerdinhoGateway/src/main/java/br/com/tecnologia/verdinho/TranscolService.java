@@ -1,7 +1,6 @@
 package br.com.tecnologia.verdinho;
 
 import br.com.tecnologia.verdinho.model.Estimativa;
-import br.com.tecnologia.verdinho.retorno.RetornoDetalharPontos;
 import br.com.tecnologia.verdinho.retorno.RetornoLinhasPonto;
 import br.com.tecnologia.verdinho.util.RequestHelper;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -27,7 +26,7 @@ public class TranscolService {
 
     private final Logger logger = LogManager.getLogger(getClass().getName());
 
-    private static String prefix = "https://api.es.gov.br/ceturb/transcolOnline/";
+    private static String prefix = "https://gvbus.geocontrol.com.br/pontual-previsao/";
     public static String listarPontos = prefix + "svc/json/db/pesquisarPontosDeParada";
     public static String detalharPontos = prefix + "svc/json/db/listarPontosDeParada";
     public static String linhasPonto = prefix + "svc/estimativas/obterEstimativasPorOrigem";
@@ -65,14 +64,11 @@ public class TranscolService {
 
     @POST
     @Path("listarPontosDeParada")
-    public RetornoDetalharPontos getListarPontosDeParada(String json) {
+    public String getListarPontosDeParada(String json) {
         String retorno;
         try {
             retorno = requestHelper.post(detalharPontos, json);
-            List<JsonNode> parsed = mapper.readValue(retorno, listJsonNode);
-            RetornoDetalharPontos detalharPontos = new RetornoDetalharPontos();
-            detalharPontos.setPontosDeParada(parsed);
-            return detalharPontos;
+            return retorno;
         } catch (IOException e) {
             logger.error("listarPontosDeParada", e);
         }
@@ -94,25 +90,15 @@ public class TranscolService {
 
     private RetornoLinhasPonto getRetornoLinhasPonto(String json, String url) throws IOException {
         String retorno = requestHelper.post(url, json);
-        JavaType listEstimativaClazz = mapper.getTypeFactory().constructParametricType(List.class, Estimativa.class);
-        List<Estimativa> parsed = mapper.readValue(retorno, listEstimativaClazz);
-        long agora = System.currentTimeMillis();
-        for (Estimativa estimativa : parsed) {
-            long proximo = agora + estimativa.getPrevisaoNaOrigemEmMinutos() * minutoInMili;
-            estimativa.setHorarioNaOrigem(String.valueOf(proximo));
-
-            proximo = agora + estimativa.getPrevisaoNoDestinoEmMinutos() * minutoInMili;
-            estimativa.setHorarioNoDestino(String.valueOf(proximo));
+        RetornoLinhasPonto parsed = mapper.readValue(retorno, RetornoLinhasPonto.class);
+        for (Estimativa estimativa : parsed.getEstimativas()) {
             if (estimativa.getAcessibilidade() == null && estimativa.getAccessibility() != null){
                 estimativa.setAcessibilidade(estimativa.getAccessibility());
             }
             if (estimativa.getAcessibilidade() == null)
                 estimativa.setAcessibilidade(false);
         }
-        RetornoLinhasPonto retornoLinhasPonto = new RetornoLinhasPonto();
-        retornoLinhasPonto.setEstimativas(parsed);
-        retornoLinhasPonto.setHorarioDoServidor(System.currentTimeMillis());
-        return retornoLinhasPonto;
+        return parsed;
     }
 
     @POST
