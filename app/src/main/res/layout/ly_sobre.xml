@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/white"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
@@ -22,7 +23,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_close"
-                android:tint="@android:color/white"/>
+                android:tint="@android:color/white" />
 
             <TextView
                 android:layout_width="0dp"
@@ -31,7 +32,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/titulo_sobre"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
-                android:textColor="@android:color/white"/>
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
 
@@ -42,64 +43,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:scrollingCache="true">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:padding="@dimen/padding_huge">
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/tela_info"/>
+                android:src="@drawable/tela_info" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_huge"
                 android:gravity="center_horizontal"
-                android:text="@string/sobre"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_huge"
-                android:gravity="center_horizontal"
-                android:text="@string/idealizador"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="email"
-                android:gravity="center_horizontal"
-                android:text="lucasromanomr@gmail.com"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_huge"
-                android:gravity="center_horizontal"
-                android:text="@string/desenvolvedor"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="email"
-                android:gravity="center_horizontal"
-                android:text="ovictorpinto@gmail.com"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_huge"
-                android:gravity="center_horizontal"
-                android:text="@string/designer_"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="email"
-                android:gravity="center_horizontal"
-                android:text="@string/designer_email"/>
+                android:text="@string/sobre" />
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
