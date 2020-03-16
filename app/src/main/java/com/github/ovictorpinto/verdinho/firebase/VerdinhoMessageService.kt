@@ -8,7 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.RingtoneManager
 import android.net.Uri
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import com.github.ovictorpinto.verdinho.R
 import com.github.ovictorpinto.verdinho.VerdinhoApplication
 import com.github.ovictorpinto.verdinho.ui.main.MainActivity
@@ -27,7 +27,7 @@ class VerdinhoMessageService : FirebaseMessagingService() {
 
     private val TAG = "VerdinhoMessageService"
 
-    override fun onNewToken(token: String?) {
+    override fun onNewToken(token: String) {
         super.onNewToken(token)
         LogHelper.log(TAG, token)
     }

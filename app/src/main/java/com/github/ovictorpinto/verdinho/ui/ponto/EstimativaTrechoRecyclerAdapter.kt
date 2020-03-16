@@ -1,18 +1,21 @@
 package com.github.ovictorpinto.verdinho.ui.ponto
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import br.com.tcsistemas.common.date.DataHelper
 import br.com.tcsistemas.common.string.StringHelper
+import com.github.ovictorpinto.verdinho.BuildConfig
 import com.github.ovictorpinto.verdinho.R
 import com.github.ovictorpinto.verdinho.to.Estimativa
 import com.github.ovictorpinto.verdinho.to.LinhaTO
 import com.github.ovictorpinto.verdinho.to.PontoTO
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper
-import com.inlocomedia.android.ads.AdView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import kotlinx.android.synthetic.main.ly_item_trecho.view.*
 import java.util.*
 
@@ -25,7 +28,7 @@ class EstimativaTrechoRecyclerAdapter(
         private val horarioDoServidor: Long,
         private val mapLinhas: Map<Int, LinhaTO>,
         private val pontoOrigem: PontoTO,
-        private val pontoDestino: PontoTO) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        private val pontoDestino: PontoTO) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
         private val ITEM = 11
@@ -35,14 +38,24 @@ class EstimativaTrechoRecyclerAdapter(
     private val analyticsHelper = AnalyticsHelper(context)
     private var adView: AdView? = null
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
 
         if (viewType == ITEM) {
             val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.ly_item_trecho, viewGroup, false)
             return ItemViewHolder(view)
         } else {//ADS
-            val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.ly_ads_ponto, viewGroup, false)
-            adView = view.findViewById(R.id.adview)
+            val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.ly_ads_ponto, viewGroup, false) as LinearLayout
+
+            var unitId = context.getString(R.string.mob_unit_id_tests)
+            if (!BuildConfig.DEBUG) {
+                unitId = BuildConfig.AD_MOD_UNIT_ID
+            }
+            adView = AdView(context)
+            adView?.adUnitId = unitId
+            adView?.adSize = AdSize.BANNER
+            view.addView(adView)
+            val adRequest = AdRequest.Builder().build()
+            adView?.loadAd(adRequest)
             return HeadeHolder(view)
         }
     }
@@ -54,7 +67,7 @@ class EstimativaTrechoRecyclerAdapter(
         }
     }
 
-    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
 
         if (position == 0) {
             return  //ad ocupa 1
@@ -90,7 +103,7 @@ class EstimativaTrechoRecyclerAdapter(
         return estimativas.size + 1//a publicidade
     }
 
-    internal inner class ItemViewHolder(mainView: View) : RecyclerView.ViewHolder(mainView) {
+    internal inner class ItemViewHolder(mainView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(mainView) {
 
         var textviewHorarioOrigem = mainView.textview_horario_origem
         var textviewHorarioDestino = mainView.textview_horario_destino
@@ -100,26 +113,20 @@ class EstimativaTrechoRecyclerAdapter(
         var imageview = mainView.image_acessibilidade
     }
 
-    internal inner class HeadeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    internal inner class HeadeHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
     }
 
     fun onResume() {
-        if (adView != null) {
-            adView!!.resume()
-        }
+        adView?.resume()
     }
 
-    fun onPause(isFinishing: Boolean) {
-        if (adView != null) {
-            // The pause method receives a boolean that you should fill with the activity isFinishing() method, or false if you do no
-            // have the access to the method
-            adView!!.pause(isFinishing)
-        }
+    fun onPause() {
+        // The pause method receives a boolean that you should fill with the activity isFinishing() method, or false if you do no
+        // have the access to the method
+        adView?.pause()
     }
 
     fun onDestroy() {
-        if (adView != null) {
-            adView!!.destroy()
-        }
+        adView?.destroy()
     }
 }

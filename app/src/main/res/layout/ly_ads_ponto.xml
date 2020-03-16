@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:gravity="center"
+    android:orientation="horizontal">
 
-    <com.inlocomedia.android.ads.AdView
-        android:id="@+id/adview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:ilmAdType="display_banner_small"
-        app:ilmLoadOnAttach="true"/>
-
+<!--    <com.google.android.gms.ads.AdView-->
+<!--        android:id="@+id/adView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content">-->
+<!--    </com.google.android.gms.ads.AdView>-->
 </LinearLayout>

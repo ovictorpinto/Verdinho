@@ -1,22 +1,17 @@
 package com.github.ovictorpinto.verdinho.ui.main;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.TabLayout;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.tabs.TabLayout;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,9 +21,6 @@ import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-
-import java.text.NumberFormat;
-import java.util.Locale;
 
 import br.com.mobilesaude.androidlib.widget.AlertDialogFragmentV11;
 import br.com.mobilesaude.androidlib.widget.DialogCarregandoV11;

@@ -4,12 +4,10 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.support.design.widget.AppBarLayout
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import com.google.android.material.appbar.AppBarLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -34,7 +32,7 @@ class TrechoDetalheActivity : AppCompatActivity() {
     private var progress: View? = null
     private var emptyView: View? = null
     private var swipeRefreshLayout: SwipeRefreshLayout? = null
-    private var recyclerView: RecyclerView? = null
+    private var recyclerView: androidx.recyclerview.widget.RecyclerView? = null
     private var appBarLayout: AppBarLayout? = null
 
     private var processo: ProcessoLoadLinhasPonto? = null
@@ -64,7 +62,7 @@ class TrechoDetalheActivity : AppCompatActivity() {
         title = pontoTOOrigem.getNomeApresentacao(this)
 
         recyclerView = findViewById(R.id.recyclerview)
-        recyclerView!!.layoutManager = LinearLayoutManager(this)
+        recyclerView!!.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST)
         recyclerView!!.addItemDecoration(itemDecoration)
 
@@ -91,9 +89,7 @@ class TrechoDetalheActivity : AppCompatActivity() {
         super.onPause()
         timerAtual!!.cancel()
         timerAtual = null
-        if (estimativaTrechoRecyclerAdapter != null) {
-            estimativaTrechoRecyclerAdapter!!.onPause(isFinishing)
-        }
+        estimativaTrechoRecyclerAdapter?.onPause()
     }
 
     override fun onResume() {
@@ -101,9 +97,7 @@ class TrechoDetalheActivity : AppCompatActivity() {
         if (timerAtual == null) {
             iniciaRefresh()
         }
-        if (estimativaTrechoRecyclerAdapter != null) {
-            estimativaTrechoRecyclerAdapter!!.onResume()
-        }
+        estimativaTrechoRecyclerAdapter?.onResume()
     }
 
     private fun iniciaRefresh() {
@@ -129,9 +123,7 @@ class TrechoDetalheActivity : AppCompatActivity() {
     }
 
     private fun refresh() {
-        if (processo != null) {
-            processo!!.cancel(true)
-        }
+        processo?.cancel(true)
         processo = ProcessoLoadLinhasPonto()
         processo!!.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
     }
