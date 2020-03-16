@@ -16,6 +16,12 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
+    <!-- For apps targeting Android Pie (28) and higher only -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- For apps targeting Android 10 (29) and higher only -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
 
     <application
         android:name=".VerdinhoApplication"
@@ -40,6 +46,11 @@
         <meta-data
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true" />
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${adMobId}"/>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="${facebookId}" />
@@ -48,23 +59,6 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
-        <activity
-            android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
-        <activity
-            android:name="com.facebook.CustomTabActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="${facebookSchema}" />
-            </intent-filter>
-        </activity>
 
         <activity
             android:name=".ui.main.MainActivity"
