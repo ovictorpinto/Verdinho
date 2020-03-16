@@ -1,3 +1,13 @@
+1.16.0
+Atualização de bibliotecas
+Troca do motor de ads
+
+1.15
+Ajustes sobre
+
+1.14
+Alerta inicial
+
 1.12.3
 Novos ícones
 

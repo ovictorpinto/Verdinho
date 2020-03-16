@@ -52,8 +52,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 46
-        versionName "1.16.0"
+        versionCode 47
+        versionName "1.16.1"
         multiDexEnabled true
 //        useAndroidX true
         buildConfigField("String", "TWITTER_CONSUMER_KEYS", "\"" + TWITTER_CONSUMER_KEYS + "\"")
@@ -74,17 +74,17 @@ android {
     flavorDimensions "unico"
 
     productFlavors {
-        transcol {
-            applicationId "com.github.ovictorpinto.meutranscol"
-            signingConfig signingConfigs.configTranscol
-            buildConfigField("String", "IN_LOCO_APP_ID", "\"" + TRANSCOL_IN_LOCO_APP_ID + "\"")
-            buildConfigField("String", "TWITTER_USER", '"lucasromanom"')
-            buildConfigField("String", "TWITTER_LIST", '"verdinho-news"')
-            buildConfigField("boolean", "USA_PRECO", "true")
-            manifestPlaceholders = [
-                    facebookId    : TRANSCOL_FACEBOOK_ID,
-            ]
-        }
+//        transcol {
+//            applicationId "com.github.ovictorpinto.meutranscol"
+//            signingConfig signingConfigs.configTranscol
+//            buildConfigField("String", "IN_LOCO_APP_ID", "\"" + TRANSCOL_IN_LOCO_APP_ID + "\"")
+//            buildConfigField("String", "TWITTER_USER", '"lucasromanom"')
+//            buildConfigField("String", "TWITTER_LIST", '"verdinho-news"')
+//            buildConfigField("boolean", "USA_PRECO", "true")
+//            manifestPlaceholders = [
+//                    facebookId    : TRANSCOL_FACEBOOK_ID,
+//            ]
+//        }
         verdinho {
             applicationId "com.github.ovictorpinto.verdinho"
             signingConfig signingConfigs.configVerdinho
@@ -150,6 +150,6 @@ dependencies {
 }
 
 task "publishAll"(type: GradleBuild) {
-    tasks = ["assembleRelease", "publishListing", "publishapktranscolrelease", "publishapkverdinhorelease"]
+    tasks = ["assembleRelease", "publishListing", "publishVerdinhoReleaseApk"]
 }
 
