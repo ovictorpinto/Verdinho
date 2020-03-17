@@ -39,17 +39,13 @@ import com.github.ovictorpinto.verdinho.util.AwarenessHelper;
 import com.github.ovictorpinto.verdinho.util.DividerItemDecoration;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
-import com.google.android.gms.maps.StreetViewPanorama;
-import com.google.android.gms.maps.StreetViewPanoramaFragment;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 import br.com.mobilesaude.androidlib.widget.AlertDialogFragmentV11;
 
-public class PontoDetalheActivity extends AppCompatActivity implements OnStreetViewPanoramaReadyCallback {
+ public class PontoDetalheActivity extends AppCompatActivity{
     
     public static final long TIME_REFRESH_MILI = 30 * 1000;
     private PontoTO pontoTO;
@@ -59,14 +55,12 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private FloatingActionButton buttonFavorito;
-    private AppBarLayout appBarLayout;
-    
+
     private BroadcastReceiver updatePontoFavoritoReceive;
     private BroadcastReceiver updateLinhaFavoritoReceive;
     private ProcessoLoadLinhasPonto processo;
     private AnalyticsHelper analyticsHelper;
     
-    private boolean fotoExpandida = false;
     private Timer timerAtual;
     private TimerTask task;
     private final Handler handler = new Handler();
@@ -81,7 +75,6 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
         analyticsHelper = new AnalyticsHelper(this);
         pontoTO = (PontoTO) getIntent().getSerializableExtra(PontoTO.PARAM);
         
-        appBarLayout = findViewById(R.id.app_bar);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         
@@ -165,18 +158,6 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
                              .registerReceiver(updateLinhaFavoritoReceive, new IntentFilter(Constantes.actionUpdateLinhaFavorito));
         
         exibeLegenda();
-        configuraFoto();
-    }
-    
-    private void configuraFoto() {
-        StreetViewPanoramaFragment streetViewPanoramaFragment = (StreetViewPanoramaFragment) getFragmentManager()
-                .findFragmentById(R.id.streetviewpanorama);
-        streetViewPanoramaFragment.getStreetViewPanoramaAsync(this);
-    }
-    
-    @Override
-    public void onStreetViewPanoramaReady(StreetViewPanorama panorama) {
-        panorama.setPosition(new LatLng(pontoTO.getLatitude(), pontoTO.getLongitude()));
     }
     
     @Override
@@ -262,7 +243,6 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
             inflater.inflate(R.menu.menu_preco, menu);
         }
         inflater.inflate(R.menu.menu_legenda, menu);
-        inflater.inflate(R.menu.menu_show_foto, menu);
         return super.onCreateOptionsMenu(menu);
     }
     
@@ -276,11 +256,6 @@ public class PontoDetalheActivity extends AppCompatActivity implements OnStreetV
             case R.id.menu_monetization:
                 analyticsHelper.clickPreco();
                 getFragmentManager().beginTransaction().add(new PrecoDialogFrag(), null).commitAllowingStateLoss();
-                return true;
-            case R.id.menu_photo:
-                analyticsHelper.clickFoto();
-                fotoExpandida = !fotoExpandida;
-                appBarLayout.setExpanded(fotoExpandida, true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
