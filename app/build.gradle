@@ -52,8 +52,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 48
-        versionName "1.16.2"
+        versionCode 50
+        versionName "1.17.1"
         multiDexEnabled true
 //        useAndroidX true
         buildConfigField("String", "TWITTER_CONSUMER_KEYS", "\"" + TWITTER_CONSUMER_KEYS + "\"")
@@ -149,6 +149,7 @@ dependencies {
     implementation "com.twitter.sdk.android:tweet-ui:$twitterApiVersion"
 }
 
+//./gradlew assembleRelease publishVerdinhoReleaseApk
 task "publishAll"(type: GradleBuild) {
     tasks = ["assembleRelease", "publishListing", "publishVerdinhoReleaseApk"]
 }
