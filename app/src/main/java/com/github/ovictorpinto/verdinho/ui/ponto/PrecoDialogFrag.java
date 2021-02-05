@@ -42,20 +42,21 @@ public class PrecoDialogFrag extends DialogFragment {
         
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         FirebaseRemoteConfigSettings firebaseRemoteConfigSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG).build();
-        config.setConfigSettings(firebaseRemoteConfigSettings);
+                //.setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .build();
+        config.setConfigSettingsAsync(firebaseRemoteConfigSettings);
         long cacheExpiration = 3600; // 1 hour in seconds
         // If developer mode is enabled reduce cacheExpiration to 0 so that
         // each fetch goes to the server. This should not be used in release
         // builds.
-        if (config.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
+        if (BuildConfig.DEBUG) {
             cacheExpiration = 60;
         }
         final View viewPrincipal = inflater.inflate(R.layout.ly_preco_dialog, null);
         config.fetch(cacheExpiration).addOnSuccessListener(aVoid -> {
             if(getDialog() != null && getDialog().isShowing()) {
                 // Make the fetched config available via FirebaseRemoteConfig get<type> calls.
-                config.activateFetched();
+                config.activate();
                 Locale brasil = new Locale("pt", "BR");
                 NumberFormat currency = NumberFormat.getCurrencyInstance(brasil);
                 double precoPassagem = config.getDouble(String.format(remoteConfigPassagem, BuildConfig.FLAVOR));

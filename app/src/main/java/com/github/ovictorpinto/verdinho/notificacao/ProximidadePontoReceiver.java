@@ -12,7 +12,6 @@ import android.provider.Settings;
 import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoDAO;
 import com.github.ovictorpinto.verdinho.persistencia.po.PontoPO;
@@ -21,6 +20,7 @@ import com.github.ovictorpinto.verdinho.to.LinhaTO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
 import com.github.ovictorpinto.verdinho.ui.ponto.ProcessoLoadLinhasPonto;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
+import com.github.ovictorpinto.verdinho.util.LogHelper;
 import com.google.android.gms.awareness.fence.FenceState;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -55,7 +55,7 @@ public class ProximidadePontoReceiver extends BroadcastReceiver {
                 PontoTO pontoTO = po.getPontoTO();
                 new LoadLinhas(context, pontoTO).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else {
-                Crashlytics.log("Tentando mostrar um ponto inexistente no banco: " + idPonto);
+                LogHelper.log("ProximidadePonto", "Tentando mostrar um ponto inexistente no banco: " + idPonto);
             }
         } else if (action.startsWith("FANCE_OUT_")) {//saiu do raio, remove e notificação
             Log.d(TAG, "Saiu...");

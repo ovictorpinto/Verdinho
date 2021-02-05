@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import androidx.core.app.ActivityCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.github.ovictorpinto.verdinho.Constantes;
 import com.github.ovictorpinto.verdinho.R;
 import com.github.ovictorpinto.verdinho.persistencia.dao.PontoFavoritoDAO;
@@ -24,8 +25,6 @@ import com.github.ovictorpinto.verdinho.persistencia.po.PontoFavoritoPO;
 import com.github.ovictorpinto.verdinho.to.PontoTO;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.AwarenessHelper;
-import com.google.android.gms.awareness.Awareness;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -90,8 +89,6 @@ public class DetalhePontoDialogFrag extends DialogFragment {
             dismiss();
         });
         
-        final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(Awareness.API).build();
-        mGoogleApiClient.connect();
         buttonFavoritos = viewPrincipal.findViewById(R.id.button_favoritos);
         
         fillFavButton();
@@ -108,7 +105,7 @@ public class DetalhePontoDialogFrag extends DialogFragment {
                     analyticsHelper.removeuFavoritou(pontoTO, ORIGEM);
                     dao.removeByPK(new PontoFavoritoPO(pontoTO));
                     Toast.makeText(getActivity(), R.string.ponto_removido, Toast.LENGTH_SHORT).show();
-                    new AwarenessHelper(getActivity()).removeFenda(pontoTO, mGoogleApiClient);
+                    new AwarenessHelper(getActivity()).removeFenda(pontoTO);
                 }
                 fillFavButton();
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(Constantes.actionUpdatePontoFavorito));

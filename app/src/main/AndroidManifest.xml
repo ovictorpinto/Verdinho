@@ -19,10 +19,6 @@
     <!-- For apps targeting Android Pie (28) and higher only -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-    <!-- For apps targeting Android 10 (29) and higher only -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-
-
     <application
         android:name=".VerdinhoApplication"
         android:allowBackup="true"
@@ -37,9 +33,6 @@
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
             android:value="@string/google_maps_key" />
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="aecbc4518d787ae1641de6590f73993905cbc08a" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

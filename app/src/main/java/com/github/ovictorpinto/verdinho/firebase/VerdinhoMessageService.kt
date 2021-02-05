@@ -57,7 +57,7 @@ class VerdinhoMessageService : FirebaseMessagingService() {
 
                 //se tiver o app já abre
                 if (hasApp(mensagemTO.endereco!!)) {
-                    packageManager.getLaunchIntentForPackage(mensagemTO.endereco)
+                    packageManager.getLaunchIntentForPackage(mensagemTO.endereco!!)
                 } else {//se não tiver, manda pra loja
                     Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + mensagemTO.endereco))
                 }
