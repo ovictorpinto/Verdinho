@@ -46,7 +46,6 @@ public class PontoFavoritoFragment extends Fragment {
     private View coordinator;
     private AnalyticsHelper analyticsHelper;
     
-    private GoogleApiClient mGoogleApiClient;
     private FavoritoRecyclerAdapter adapter;
     
     public PontoFavoritoFragment() {
@@ -64,8 +63,6 @@ public class PontoFavoritoFragment extends Fragment {
         LocalBroadcastManager.getInstance(getActivity())
                              .registerReceiver(favoritosUpdate, new IntentFilter(Constantes.actionUpdatePontoFavorito));
         
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(Awareness.API).build();
-        mGoogleApiClient.connect();
     }
     
     @Override
@@ -122,7 +119,7 @@ public class PontoFavoritoFragment extends Fragment {
                 PontoDAO dao = new PontoDAO(getActivity());
                 dao.update(new PontoPO(pontoTO));
                 Snackbar.make(coordinator, R.string.notificacao_habilitada, Snackbar.LENGTH_SHORT).show();
-                new AwarenessHelper(getActivity()).criaFenda(pontoTO, mGoogleApiClient);
+                new AwarenessHelper(getActivity()).criaFenda(pontoTO);
             }
             
             @Override
@@ -132,7 +129,7 @@ public class PontoFavoritoFragment extends Fragment {
                 PontoDAO dao = new PontoDAO(getActivity());
                 dao.update(new PontoPO(pontoTO));
                 Snackbar.make(coordinator, R.string.notificacao_desabilitada, Snackbar.LENGTH_SHORT).show();
-                new AwarenessHelper(getActivity()).removeFenda(pontoTO, mGoogleApiClient);
+                new AwarenessHelper(getActivity()).removeFenda(pontoTO);
             }
             
             @Override

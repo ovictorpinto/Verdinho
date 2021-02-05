@@ -86,17 +86,17 @@ public class MainActivity extends AppCompatActivity {
         String remoteConfigMensagem = "%s_mensagem_inicial";
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         FirebaseRemoteConfigSettings firebaseRemoteConfigSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG).build();
-        config.setConfigSettings(firebaseRemoteConfigSettings);
+                .build();
+        config.setConfigSettingsAsync(firebaseRemoteConfigSettings);
         long cacheExpiration = 3600; // 1 hour in seconds
         // If developer mode is enabled reduce cacheExpiration to 0 so that
         // each fetch goes to the server. This should not be used in release
         // builds.
-        if (config.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
+        if (BuildConfig.DEBUG) {
             cacheExpiration = 60;
         }
         config.fetch(cacheExpiration).addOnSuccessListener(aVoid -> {
-            config.activateFetched();
+            config.activate();
             String mensagem = config.getString(String.format(remoteConfigMensagem, BuildConfig.FLAVOR));
             if (StringHelper.isNotBlank(mensagem)) {
                 new AlertDialog.Builder(MainActivity.this).setTitle(R.string.app_name).setMessage(mensagem).setPositiveButton(R.string.mobile_lib_ok_, null).show();

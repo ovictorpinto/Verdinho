@@ -89,12 +89,11 @@ class MapFragment : MapFragment(), OnMapReadyCallback, GoogleApiClient.Connectio
         LocalBroadcastManager.getInstance(activity).registerReceiver(favoriteReceive, IntentFilter(Constantes.actionUpdatePontoFavorito))
     }
 
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        layout = inflater!!.inflate(R.layout.ly_map, container, false) as ViewGroup
+        layout = inflater?.inflate(R.layout.ly_map, container, false) as ViewGroup
         layout.toolbar.setTitle(R.string.app_name)
 
-        mapView = super.onCreateView(inflater, container, savedInstanceState)
+        mapView = super.onCreateView(inflater, container, savedInstanceState)!!
         layout.mapcontent.addView(mapView)
         return layout
     }

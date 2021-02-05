@@ -10,15 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,6 +17,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.ovictorpinto.verdinho.BuildConfig;
 import com.github.ovictorpinto.verdinho.Constantes;
@@ -37,8 +35,8 @@ import com.github.ovictorpinto.verdinho.ui.main.EstimativaPontoRecyclerAdapter;
 import com.github.ovictorpinto.verdinho.util.AnalyticsHelper;
 import com.github.ovictorpinto.verdinho.util.AwarenessHelper;
 import com.github.ovictorpinto.verdinho.util.DividerItemDecoration;
-import com.google.android.gms.awareness.Awareness;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -101,9 +99,6 @@ import br.com.mobilesaude.androidlib.widget.AlertDialogFragmentV11;
         });
         refresh();
         
-        final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(Awareness.API).build();
-        mGoogleApiClient.connect();
-        
         buttonFavorito = findViewById(R.id.fab);
         buttonFavorito.setOnClickListener(view -> {
             final PontoFavoritoDAO dao = new PontoFavoritoDAO(PontoDetalheActivity.this);
@@ -134,7 +129,7 @@ import br.com.mobilesaude.androidlib.widget.AlertDialogFragmentV11;
                 };
                 Snackbar.make(view, R.string.ponto_removido, Snackbar.LENGTH_SHORT).setAction(R.string.desfazer, desfazerListener)
                         .show();
-                new AwarenessHelper(PontoDetalheActivity.this).removeFenda(pontoTO, mGoogleApiClient);
+                new AwarenessHelper(PontoDetalheActivity.this).removeFenda(pontoTO);
             }
             LocalBroadcastManager.getInstance(PontoDetalheActivity.this)
                                  .sendBroadcast(new Intent(Constantes.actionUpdatePontoFavorito));

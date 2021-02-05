@@ -2,8 +2,8 @@ package com.github.ovictorpinto.verdinho.util;
 
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.github.ovictorpinto.verdinho.BuildConfig;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 /**
  * Created by victor on 25/08/15.
@@ -20,7 +20,8 @@ public class LogHelper {
         if (BuildConfig.DEBUG) {
             e.printStackTrace();
         } else {
-            Crashlytics.logException(e);
+            FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+            crashlytics.recordException(e);
         }
     }
     

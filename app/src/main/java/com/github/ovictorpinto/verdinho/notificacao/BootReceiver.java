@@ -52,7 +52,7 @@ public class BootReceiver extends BroadcastReceiver implements GoogleApiClient.C
         for (PontoPO pontoPO : allFavoritos) {
             PontoTO pontoTO = pontoPO.getPontoTO();
             if (pontoTO.getNotificacao()) {
-                awarenessHelper.criaFenda(pontoTO, mGoogleApiClient);
+                awarenessHelper.criaFenda(pontoTO);
             }
         }
     }
