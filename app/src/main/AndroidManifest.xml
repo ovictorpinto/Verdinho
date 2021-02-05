@@ -19,10 +19,6 @@
     <!-- For apps targeting Android Pie (28) and higher only -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-    <!-- For apps targeting Android 10 (29) and higher only -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-
-
     <application
         android:name=".VerdinhoApplication"
         android:allowBackup="true"
